@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 - Page Not Found</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: radial-gradient(circle at 30% 30%, #1f1f1f, #000);
+        color: #fff;
+        font-family: "Poppins", sans-serif;
+        text-align: center;
+      }
+      h1 {
+        font-size: 3rem;
+        margin-top: 1rem;
+        letter-spacing: 2px;
+      }
+      p {
+        font-size: 1.2rem;
+        opacity: 0.8;
+        margin-top: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+      button {
+        padding: 0.7rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        background: #ff6b6b;
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s ease;
+      }
+      button:hover {
+        background: #ff3b3b;
+        transform: scale(1.05);
+      }
+      lottie-player {
+        width: 300px;
+        height: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <lottie-player
+      src="https://assets3.lottiefiles.com/packages/lf20_qp1q7mct.json"
+      background="transparent"
+      speed="1"
+      loop
+      autoplay
+    >
+    </lottie-player>
+
+    <h1>Oops! Page Not Found</h1>
+    <p>Looks like you took a wrong turn... Let’s get you back home.</p>
+    <button onclick="window.location.href='/'">Go Home</button>
+
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+{
+  "hosting": {
+    "public": "public",
+    "site": "alokdasofficiall",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "headers": [
+      {
+        "source": "/sitemap.xml",
+        "headers": [
+          { "key": "Content-Type", "value": "application/xml; charset=utf-8" }
+        ]
+      },
+      {
+        "source": "/robots.txt",
+        "headers": [
+          { "key": "Content-Type", "value": "text/plain; charset=utf-8" }
+        ]
+      },
+      {
+        "source": "/llm.txt",
+        "headers": [
+          { "key": "Content-Type", "value": "text/plain; charset=utf-8" }
+        ]
+      }
+    ],
+    "rewrites": [
+      { "source": "/robots.txt", "destination": "/robots.txt" },
+      { "source": "/sitemap.xml", "destination": "/sitemap.xml" },
+      { "source": "/llm.txt", "destination": "/llm.txt" },
+      { "source": "**", "destination": "/index.html" }
+    ],
+    "errorPage": "/404.html"
+  }
+}

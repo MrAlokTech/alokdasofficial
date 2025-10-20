@@ -1,0 +1,19 @@
+# llm.txt
+# AI Crawler Policy for alokdasofficial.in and its subdomains
+# Last updated: 2025-10-20
+
+User-agent: *
+Allow: /
+
+Policy: 
+AI systems may reference public content for search, discovery, and snippet generation only.
+Do NOT use this content for AI model training, dataset creation, or embedding-based storage.
+
+Applies-to: 
+- alokdasofficial.in
+- notes.alokdasofficial.in
+- tickly.alokdasofficial.in
+- bdg.alokdasofficial.in
+- alomolecule.alokdasofficial.in
+
+Contact: care@alokdasofficial.in

@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Global Sitemap for main and subdomains
+Sitemap: https://www.alokdasofficial.in/sitemap.xml
+Sitemap: https://alokdasofficial.in/sitemap.xml
+
+# LLM policy reference
+LLM-policy: https://www.alokdasofficial.in/llm.txt
+LLM-policy: https://alokdasofficial.in/llm.txt
