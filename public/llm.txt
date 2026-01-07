@@ -1,6 +1,6 @@
 # llm.txt
 # AI Crawler Policy for alokdasofficial.in and its subdomains
-# Last updated: 2025-10-20
+# Last updated: 2026-01-07
 
 User-agent: *
 Allow: /
@@ -15,5 +15,8 @@ Applies-to:
 - tickly.alokdasofficial.in
 - bdg.alokdasofficial.in
 - alomolecule.alokdasofficial.in
+- vayurix.alokdasofficial.in
+- shorturl.alokdasofficial.in
+- resume.alokdasofficial.in
 
 Contact: care@alokdasofficial.in
