@@ -4,10 +4,12 @@
 # Redirect /apps/* to clean URLs
 /apps/classnotes/*   /classnotes/:splat  301
 /apps/me/*       /me/:splat      301
+/apps/mileage/*       /me/:splat      301
 
 # Exact /apps/* paths without trailing slash
 /apps/classnotes     /classnotes         301
 /apps/me         /me             301
+/apps/mileage         /me             301
 
 # Clean URL rewrites (serve actual files)
 /classnotes         /apps/classnotes/index.html  200
@@ -15,3 +17,6 @@
 
 /me             /apps/me/index.html  200
 /me/*           /apps/me/:splat      200
+
+/mileage             /apps/mileage/index.html  200
+/mileage/*           /apps/mileage/:splat      200

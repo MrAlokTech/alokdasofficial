@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting - Mileage Tracker</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="shortcut icon" href="../logo.png" type="image/x-icon" />
+
+    <style>
+      /* Simple spinner animation */
+      .loader {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #000;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        animation: spin 1s linear infinite;
+        display: inline-block;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gray-50 text-black antialiased flex flex-col min-h-screen items-center justify-center p-4"
+  >
+    <div
+      class="max-w-md w-full bg-white p-8 rounded-2xl shadow-sm border border-gray-200 text-center"
+    >
+      <div class="mb-6">
+        <img
+          src="../logo.png"
+          alt="MT"
+          class="h-16 w-auto mx-auto object-contain"
+        />
+      </div>
+
+      <h1 class="text-2xl font-bold mb-2">Mileage Tracker</h1>
+      <p class="text-gray-500 mb-8" id="status-text">Checking for app...</p>
+
+      <div class="space-y-3">
+        <button
+          id="open-btn"
+          onclick="triggerIntent()"
+          class="hidden w-full bg-white border-2 border-black text-black font-bold py-3 rounded-xl hover:bg-gray-100 transition"
+        >
+          Open in App
+        </button>
+
+        <a
+          href="https://play.google.com/store/apps/details?id=in.alokdasofficial.mileage"
+          class="block w-full bg-black text-white font-bold py-3 rounded-xl hover:bg-gray-800 transition shadow-lg"
+        >
+          <i class="fab fa-google-play mr-2"></i> Download on Google Play
+        </a>
+      </div>
+
+      <div class="mt-8 pt-6 border-t border-gray-100">
+        <a
+          href="../index.html"
+          class="text-sm text-gray-400 hover:text-black transition"
+        >
+          Back to Home
+        </a>
+      </div>
+    </div>
+
+    <script>
+      // CONFIGURATION FROM MANIFEST
+      const PACKAGE_NAME = "in.alokdasofficial.mileage";
+      const HOST = "mileage.alokdasofficial.in";
+      const SCHEME = "https"; // As defined in your manifest
+
+      // Construct the Play Store Fallback URL
+      const PLAY_STORE_URL = `https://play.google.com/store/apps/details?id=${PACKAGE_NAME}`;
+
+      function triggerIntent() {
+        const path = window.location.pathname; // e.g., "/app/add-entry"
+        const isAndroid = /Android/i.test(navigator.userAgent);
+
+        if (isAndroid) {
+          // We construct a specific 'intent://' URI.
+          // This tells Chrome/Android: "Open the app that handles this https link,
+          // specifically the package 'in.alokdasofficial.mileage'.
+          // If that fails, go to the S.browser_fallback_url"
+
+          // Note: We strip the leading slash from pathname for the host construction if needed,
+          // but usually intent://host/path works.
+
+          const intentUrl = `intent://${HOST}${path}#Intent;scheme=${SCHEME};package=${PACKAGE_NAME};S.browser_fallback_url=${encodeURIComponent(
+            PLAY_STORE_URL
+          )};end`;
+
+          window.location.href = intentUrl;
+        } else {
+          // If on iOS or Desktop, we can't open the Android app.
+          // Just redirect to Play Store or stay on page.
+          document.getElementById("status-text").textContent =
+            "App available for Android";
+        }
+      }
+
+      // Run on load
+      window.onload = function () {
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const openBtn = document.getElementById("open-btn");
+        const statusText = document.getElementById("status-text");
+
+        if (isAndroid) {
+          // Try to redirect automatically
+          statusText.innerHTML =
+            'Launching App <div class="loader ml-2 align-middle"></div>';
+
+          // Show the manual button after a brief delay in case auto-launch fails
+          setTimeout(() => {
+            openBtn.classList.remove("hidden");
+            statusText.textContent = "Did the app not open?";
+          }, 2000);
+
+          // Attempt the launch
+          triggerIntent();
+        } else {
+          // Desktop or iOS view
+          statusText.textContent = "Download the app to access this feature.";
+        }
+      };
+    </script>
+  </body>
+</html>

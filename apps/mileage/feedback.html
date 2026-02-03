@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feedback & Beta Access - Mileage Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="shortcut icon" href="logo.png" type="image/x-icon" />
+  </head>
+  <body
+    class="bg-gray-50 text-black antialiased selection:bg-black selection:text-white flex flex-col min-h-screen"
+  >
+    <div class="flex-grow pt-12 pb-20">
+      <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+        <a
+          href="index.html"
+          class="mb-8 flex items-center text-gray-600 hover:text-black transition w-fit"
+        >
+          <i class="fas fa-arrow-left mr-2"></i> Back to Home
+        </a>
+
+        <div
+          class="bg-white p-6 md:p-10 rounded-xl shadow-sm border border-gray-200"
+        >
+          <h1 class="text-3xl font-bold mb-2">Get in Touch</h1>
+          <p class="text-gray-500 mb-8">
+            Submit feedback or apply for early access to our Closed Testing
+            phase.
+          </p>
+
+          <form id="feedbackForm" class="space-y-6">
+            <div>
+              <label
+                for="type"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >How can we help?</label
+              >
+              <select
+                id="type"
+                name="type"
+                onchange="toggleFormContext()"
+                class="w-full px-4 py-3 rounded-lg bg-gray-50 border-gray-200 border focus:border-black focus:ring-0 focus:outline-none transition appearance-none cursor-pointer"
+              >
+                <option value="Closed Testing Access">
+                  Join Closed Testing (Android)
+                </option>
+                <option value="Feature Request">Feature Request</option>
+                <option value="Bug Report">Report a Bug</option>
+                <option value="General Feedback">General Feedback</option>
+              </select>
+
+              <div
+                id="beta-helper"
+                class="bg-blue-50 text-blue-800 p-3 rounded-lg mt-3 text-sm flex items-start"
+              >
+                <i class="fas fa-info-circle mr-2 mt-0.5"></i>
+                <span
+                  ><strong>Important:</strong> For Closed Testing, please enter
+                  the exact email address you use on the Google Play Store. We
+                  will add you to the allowed testers list.</span
+                >
+              </div>
+            </div>
+
+            <div>
+              <label
+                for="contact"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Email Address <span class="text-red-500">*</span></label
+              >
+              <input
+                type="email"
+                id="contact"
+                name="contact"
+                required
+                class="w-full px-4 py-3 rounded-lg bg-gray-50 border-gray-200 border focus:border-black focus:ring-0 focus:outline-none transition"
+                placeholder="you@gmail.com"
+              />
+              <p id="email-error" class="hidden text-red-500 text-xs mt-2">
+                <i class="fas fa-exclamation-circle mr-1"></i> For closed
+                testing, please use a valid @gmail.com address.
+              </p>
+            </div>
+
+            <div>
+              <label
+                for="description"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Message / Details
+                <span id="desc-required" class="text-red-500 hidden">*</span>
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                rows="4"
+                class="w-full px-4 py-3 rounded-lg bg-gray-50 border-gray-200 border focus:border-black focus:ring-0 focus:outline-none transition"
+                placeholder="Tell us more..."
+              ></textarea>
+            </div>
+
+            <button
+              type="submit"
+              id="submitBtn"
+              class="w-full bg-black text-white font-bold py-4 rounded-lg hover:bg-gray-800 transition flex items-center justify-center"
+            >
+              <span>Submit</span>
+              <i class="fas fa-paper-plane ml-2"></i>
+            </button>
+          </form>
+
+          <div id="successMessage" class="hidden text-center py-8">
+            <div
+              class="w-16 h-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4"
+            >
+              <i class="fas fa-check text-2xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-2">Thank You!</h3>
+            <p class="text-gray-600 mb-6">Your submission has been received.</p>
+            <a
+              href="index.html"
+              class="text-black font-semibold hover:underline"
+              >Return Home</a
+            >
+            <span class="mx-2 text-gray-300">|</span>
+            <button
+              onclick="resetForm()"
+              class="text-gray-500 hover:text-black"
+            >
+              Send another
+            </button>
+          </div>
+
+          <div id="errorMessage" class="hidden text-center py-4">
+            <p class="text-red-500 mb-2">Something went wrong.</p>
+            <button onclick="location.reload()" class="text-sm underline">
+              Refresh Page
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="bg-white border-t border-gray-200 py-12 mt-auto">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left"
+      >
+        <div class="mb-6 md:mb-0">
+          <span class="font-bold text-xl">Mileage Tracker</span>
+          <p class="text-sm text-gray-500 mt-1">
+            &copy; <span id="current-year"></span> All rights reserved.
+          </p>
+        </div>
+        <div
+          class="flex justify-center md:justify-start space-x-6 text-gray-500"
+        >
+          <a href="https://x.com/alokdasofficial" class="hover:text-black"
+            ><i class="fab fa-twitter text-xl"></i
+          ></a>
+          <a href="mailto:mileage@alokdasofficial.in" class="hover:text-black"
+            ><i class="fas fa-envelope text-xl"></i
+          ></a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById("current-year").textContent =
+        new Date().getFullYear();
+
+      // ---------------------------------------------------------
+      // TODO: PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
+      // ---------------------------------------------------------
+      const SCRIPT_URL =
+        "https://script.google.com/macros/s/AKfycbzNPjMc4l0hJqF2S3mHyr8moDSsXVvH3dAJPM6i93Chul0LO_VC1sM9cCfaV5ZSotfX/exec";
+
+      const typeSelect = document.getElementById("type");
+      const helper = document.getElementById("beta-helper");
+      const descInput = document.getElementById("description");
+      const descRequired = document.getElementById("desc-required");
+      const emailInput = document.getElementById("contact");
+      const emailError = document.getElementById("email-error");
+
+      function toggleFormContext() {
+        const type = typeSelect.value;
+
+        // Clear any previous error states when switching types
+        emailInput.classList.remove("border-red-500");
+        emailError.classList.add("hidden");
+
+        if (type === "Closed Testing Access") {
+          // Settings for Testing
+          helper.classList.remove("hidden");
+          helper.classList.add("flex");
+
+          descInput.placeholder = "Optional: Any specific device details?";
+          descInput.required = false;
+          descRequired.classList.add("hidden");
+
+          emailInput.placeholder = "you@gmail.com";
+        } else {
+          // Settings for General Feedback / Bugs
+          helper.classList.add("hidden");
+          helper.classList.remove("flex");
+
+          descInput.placeholder =
+            "Please describe the issue or feedback in detail...";
+          descInput.required = true;
+          descRequired.classList.remove("hidden");
+
+          emailInput.placeholder = "you@example.com";
+        }
+      }
+
+      // Initialize toggle on load
+      toggleFormContext();
+
+      const form = document.getElementById("feedbackForm");
+      const submitBtn = document.getElementById("submitBtn");
+      const successMsg = document.getElementById("successMessage");
+      const errorMsg = document.getElementById("errorMessage");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const type = typeSelect.value;
+        const email = emailInput.value.trim().toLowerCase();
+
+        // --------------------------------------------------
+        // VALIDATION LOGIC
+        // --------------------------------------------------
+        if (type === "Closed Testing Access") {
+          // Check if email ends with @gmail.com
+          if (!email.endsWith("@gmail.com")) {
+            emailInput.classList.add("border-red-500");
+            emailError.classList.remove("hidden");
+            // Stop submission
+            return;
+          }
+        }
+
+        // If validation passes, reset error visuals
+        emailInput.classList.remove("border-red-500");
+        emailError.classList.add("hidden");
+
+        // 1. Show Loading State
+        submitBtn.disabled = true;
+        submitBtn.innerHTML =
+          '<i class="fas fa-circle-notch fa-spin mr-2"></i> Sending...';
+
+        // 2. Prepare Data
+        const data = {
+          type: type,
+          contact: email,
+          description: descInput.value || "N/A",
+          appVersion: "Web",
+          buildNumber: "0",
+          platform: "Website",
+        };
+
+        // 3. Send to Google Apps Script
+        fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          cache: "no-cache",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then(() => {
+            form.classList.add("hidden");
+            successMsg.classList.remove("hidden");
+          })
+          .catch((err) => {
+            console.error("Error:", err);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML =
+              '<span>Submit</span><i class="fas fa-paper-plane ml-2"></i>';
+            errorMsg.classList.remove("hidden");
+          });
+      });
+
+      function resetForm() {
+        form.reset();
+        toggleFormContext(); // reset UI helper
+        successMsg.classList.add("hidden");
+        form.classList.remove("hidden");
+        submitBtn.disabled = false;
+        submitBtn.innerHTML =
+          '<span>Submit</span><i class="fas fa-paper-plane ml-2"></i>';
+        // Clean up errors
+        emailInput.classList.remove("border-red-500");
+        emailError.classList.add("hidden");
+      }
+    </script>
+  </body>
+</html>
