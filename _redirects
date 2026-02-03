@@ -1,4 +1,7 @@
-# Redirect /apps/* to clean URLs (PUT THIS AT THE TOP)
+# Redirect /app/* to /apps/* (PUT THIS AT THE VERY TOP)
+/app/*           /apps/:splat        301
+
+# Redirect /apps/* to clean URLs
 /apps/classnotes/*   /classnotes/:splat  301
 /apps/me/*       /me/:splat      301
 
