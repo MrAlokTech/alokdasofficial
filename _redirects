@@ -1,0 +1,3 @@
+# Redirect /particual-app to /apps/particual-app (and so on)
+/classnotes/*  /apps/classnotes/:splat  200
+/me/*  /apps/me/:splat  200

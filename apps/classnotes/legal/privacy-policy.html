@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy Policy - ClassNotes</title>
+    <link rel="icon" type="image/svg+xml" href="../icon.svg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="legal.css" />
+  </head>
+  <body>
+    <header
+      class="header"
+      onclick="window.location.href = window.location.origin;"
+      style="cursor: pointer"
+    >
+      <div class="container">
+        <div class="header-content">
+          <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <h1>ClassNotes</h1>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-policy">
+      <div class="container">
+        <h2>Privacy Policy</h2>
+        <p>
+          <strong
+            >Last updated:
+            <span id="lastUpdatedDate">January 1, 2026</span></strong
+          >
+        </p>
+
+        <p>
+          ClassNotes ("I", "us", "we", or "our") operates the ClassNotes website
+          (the "Service"). This page informs you of our policies regarding the
+          collection, use, and disclosure of data when you use our Service.
+        </p>
+
+        <h3>1. Information We Collect</h3>
+        <p>
+          We collect specific information to provide and improve the Service,
+          specifically for our upload features:
+        </p>
+        <ul>
+          <li>
+            <strong>Contributor Accounts:</strong> If you register to upload
+            notes, we collect your <strong>Email Address</strong> to verify your
+            identity and manage your upload privileges. This is stored securely
+            in our database.
+          </li>
+          <li>
+            <strong>Usage Data:</strong> We collect pseudonymous usage data
+            (such as document views, and downloads) linked to a temporary unique
+            identifier to understand content popularity and improve the Service.
+          </li>
+          <li>
+            <strong>Comments:</strong> If you leave a comment, we store the text
+            and the name you provide (if any).
+          </li>
+        </ul>
+
+        <h3>2. How We Store Your Data</h3>
+        <ul>
+          <li>
+            <strong>Local Storage:</strong> We use Local Storage to save your
+            preferences (Theme, Semester, and Favorites) on your device. This
+            data remains on your device and is not sent to our servers.
+          </li>
+          <li>
+            <strong>Database:</strong> User metadata (verification status,
+            email) is stored in our Databases for user registered to upload
+            notes.
+          </li>
+          <!-- <li>
+            <strong>Files:</strong> PDF documents uploaded by users are stored
+            on <strong>Google Drive</strong> via our automated scripts.
+          </li> -->
+        </ul>
+
+        <h3>3. How We Use Your Information</h3>
+        <ul>
+          <li>
+            To verify your eligibility to upload content (preventing spam).
+          </li>
+          <li>
+            To attribute uploaded notes to the correct contributor (internally).
+          </li>
+          <li>To respond to support requests or takedown notices.</li>
+        </ul>
+
+        <h3>4. Data Sharing and Disclosure</h3>
+        <p>
+          We do not sell your personal data. However, we may disclose
+          information if:
+        </p>
+        <ul>
+          <li>
+            <strong>Required by Law:</strong> We are compelled to do so by a
+            subpoena or court order.
+          </li>
+          <li>
+            <strong>Violation of Terms:</strong> A user repeatedly uploads
+            infringing content, we may use their email to block access.
+          </li>
+        </ul>
+
+        <h3>5. Your Rights</h3>
+        <p>
+          You have the right to request deletion of your account and data.
+          Please contact us at
+          <a href="mailto:notes@alokdasofficial.in">notes@alokdasofficial.in</a
+          >.
+        </p>
+
+        <h3>6. Contact Us</h3>
+        <p>
+          If you have any questions about this Privacy Policy, please contact us
+          at
+          <a href="mailto:notes@alokdasofficial.in">notes@alokdasofficial.in</a
+          >.
+        </p>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <p class="thanks-message">
+          ✨ Heartfelt thanks to all the amazing friends who shared their notes
+          🙌
+        </p>
+        <p class="credits">
+          Made with <span class="heart">❤️</span> by
+          <a href="https://alokdasofficial.in" target="_blank">Alok Das</a>
+        </p>
+        <p class="copyright-text" id="copyright-year">
+          © 2026 ClassNotes. All rights reserved.
+        </p>
+        <p class="policy-links">
+          <a href="/">Home</a> | <a href="terms-of-use.html">Terms of Use</a> |
+          <a href="takedown-policy.html">Takedown Policy</a>
+        </p>
+      </div>
+    </footer>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <script src="legal.js"></script>
+  </body>
+</html>

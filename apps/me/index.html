@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Alok Das</title>
+    <link
+      rel="shortcut icon"
+      href="https://play-lh.googleusercontent.com/vzkH7wVzacIAjphQOSSzdSk2GmCUSL1mIE1jxoD808OiLAjtXmfDiAJ3DJuuhbeEI08"
+      type="image/x-icon"
+    />
+
+    <meta
+      name="description"
+      content="Meet Alok Das, a Dreamer x Developer. Explore my official portfolio, discover custom projects and apps, and connect with me across all social platforms."
+    />
+    <meta
+      name="keywords"
+      content="Alok Das, Portfolio, Developer, Dreamer, Projects, Apps, Social, Contact, alokdasofficial, Web Developer"
+    />
+    <meta name="author" content="Alok Das" />
+    <meta
+      name="robots"
+      content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+    />
+
+    <meta property="og:title" content="Alok Das - Dreamer x Developer" />
+    <meta
+      property="og:description"
+      content="Explore my portfolio, discover custom projects and apps, and connect with me."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.alokdasofficial.in/" />
+    <meta
+      property="og:image"
+      content="https://www.alokdasofficial.in/preview.png"
+    />
+    <meta property="og:site_name" content="Alok Das | Portfolio" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Alok Das - Dreamer x Developer" />
+    <meta
+      name="twitter:description"
+      content="Explore my portfolio, discover custom projects and apps, and connect with me."
+    />
+    <meta
+      name="twitter:image"
+      content="https://www.alokdasofficial.in/preview.png"
+    />
+    <meta name="twitter:creator" content="@alokdasofficial" />
+
+    <link rel="canonical" href="https://www.alokdasofficial.in/" />
+
+    <link rel="stylesheet" href="style.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-firestore-compat.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1 id="header-name">Alok Das</h1>
+        <p class="subtitle" id="header-subtitle">Dreamer x Developer.</p>
+      </div>
+
+      <div class="grid" id="tiles-grid">
+        <a href="https://www.alokdasofficial.in" class="tile" target="_blank">
+          <span class="tile-text">Portfolio</span> </a
+        ><a
+          href="https://resume.alokdasofficial.in"
+          class="tile"
+          target="_blank"
+        >
+          <span class="tile-text">Resume</span>
+        </a>
+
+        <div class="tile" onclick="openModal('projects')">
+          <span class="tile-text">Projects</span>
+        </div>
+
+        <div class="tile" onclick="openModal('apps')">
+          <span class="tile-text">Apps</span>
+        </div>
+
+        <div class="tile" onclick="openModal('social')">
+          <span class="tile-text">Social</span>
+        </div>
+
+        <div class="tile" onclick="openModal('contact')">
+          <span class="tile-text">Contact</span>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p class="footer-text" id="footer-made">
+          Made with <span class="footer-heart">♥</span> using Chemistry & Code
+        </p>
+        <p
+          class="footer-text"
+          id="footer-copyright"
+          style="font-size: 0.8rem; margin-top: 4px"
+        >
+          © 2025 Alok Das
+        </p>
+      </div>
+    </div>
+
+    <!-- Projects Modal -->
+    <div id="projects-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Projects</h2>
+          <button class="close-btn" onclick="closeModal('projects')">×</button>
+        </div>
+        <div class="item-list" id="projects-list">
+          <div class="loading">Loading projects...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Apps Modal -->
+    <div id="apps-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Apps</h2>
+          <button class="close-btn" onclick="closeModal('apps')">×</button>
+        </div>
+        <div class="item-list" id="apps-list">
+          <div class="loading">Loading apps...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Social Modal -->
+    <div id="social-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Social</h2>
+          <button class="close-btn" onclick="closeModal('social')">×</button>
+        </div>
+        <div class="item-list" id="social-list">
+          <div class="loading">Loading social links...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div id="contact-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Contact</h2>
+          <button class="close-btn" onclick="closeModal('contact')">×</button>
+        </div>
+        <div class="item-list" id="contact-list">
+          <div class="loading">Loading contact options...</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Firebase Configuration - Replace with your own config
+      const firebaseConfig = {
+        apiKey: "AIzaSyAf9MEc8495GUwWHZsE4HcvJvbtptkBfQc",
+        authDomain: "alokdasofficial-69f96.firebaseapp.com",
+        projectId: "alokdasofficial",
+        storageBucket: "alokdasofficial.firebasestorage.app",
+        messagingSenderId: "315463239297",
+        appId: "1:315463239297:web:c374126286d9b33f3f2f80",
+        measurementId: "G-QPXHCK0R2E",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+    </script>
+    <script src="script.js"></script>
+  </body>
+</html>

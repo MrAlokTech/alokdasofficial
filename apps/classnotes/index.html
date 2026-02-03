@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>
+      ClassNotes ~ MSc Chemistry | Rabindranath Tagore University (RTV)
+    </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://firestore.googleapis.com" />
+    <link rel="preconnect" href="https://www.google-analytics.com" />
+
+    <link rel="icon" type="image/svg+xml" href="icon.svg" />
+    <link rel="apple-touch-icon" href="icon.svg" />
+    <meta name="theme-color" content="#2563eb" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="preload"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      as="style"
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      "
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      />
+    </noscript>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <meta
+      name="description"
+      content="Access all MSc Chemistry ClassNotes for Rabindranath Tagore University (RTV) in one place. Curated and organized by Alok Das."
+    />
+    <meta
+      name="keywords"
+      content="ClassNotes, MSc Chemistry, RTU, RTV, Rabindranath Tagore University, Rabindranath Thakur Viswavidyalaya, Chemistry Notes, Alok Das, alokdasofficial, Assam, Academics"
+    />
+    <meta name="author" content="Alok Das" />
+    <meta
+      name="robots"
+      content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+    />
+    <meta property="og:title" content="ClassNotes ~ MSc Chemistry | RTV" />
+    <meta
+      property="og:description"
+      content="All the MSc Chemistry ClassNotes for Rabindranath Tagore University (RTV) shared here."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://notes.alokdasofficial.in/" />
+    <meta
+      property="og:image"
+      content="https://notes.alokdasofficial.in/preview.jpg"
+    />
+    <meta property="og:site_name" content="ClassNotes" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ClassNotes ~ MSc Chemistry | RTV" />
+    <meta
+      name="twitter:description"
+      content="All the MSc Chemistry ClassNotes for Rabindranath Tagore University (RTV) shared here."
+    />
+    <meta
+      name="twitter:image"
+      content="https://notes.alokdasofficial.in/preview.jpg"
+    />
+    <meta name="twitter:creator" content="@alokdasofficial" />
+    <link rel="canonical" href="https://notes.alokdasofficial.in/" />
+  </head>
+
+  <body>
+    <!-- MARQUEE -->
+    <div id="announcementBar" class="announcement-bar hidden">
+      <div class="container announcement-content">
+        <span id="announcementText">Loading updates...</span>
+        <button id="closeAnnouncement" aria-label="Close">&times;</button>
+      </div>
+    </div>
+    <!-- HOLIDAY -->
+    <div id="holidayOverlay" class="holiday-overlay hidden">
+      <canvas id="holidayConfetti"></canvas>
+      <div id="holidayBgAnim" class="holiday-bg-anim"></div>
+      <div class="glass-card">
+        <div class="holiday-icon-wrapper">
+          <div id="holidayIcon" class="holiday-emoji">✨</div>
+        </div>
+        <h1 id="holidayTitle">Happy Holidays</h1>
+
+        <div id="overlayTimer" class="overlay-timer hidden">
+          <div class="ot-box"><span id="otDays">00</span><small>d</small></div>
+          <div class="ot-sep">:</div>
+          <div class="ot-box"><span id="otHours">00</span><small>h</small></div>
+          <div class="ot-sep">:</div>
+          <div class="ot-box"><span id="otMins">00</span><small>m</small></div>
+          <div class="ot-sep">:</div>
+          <div class="ot-box"><span id="otSecs">00</span><small>s</small></div>
+        </div>
+
+        <div class="holiday-divider"></div>
+        <p id="holidayMessage">Wishing you a wonderful break!</p>
+        <p id="holidaySubMessage" class="chem-note">
+          ( Chemistry Note: Take a break from the Periodic Table )
+        </p>
+      </div>
+    </div>
+
+    <div id="maintenanceScreen" class="maintenance-overlay">
+      <div class="terminal-window">
+        <div class="terminal-top-bar">
+          <div class="traffic-lights">
+            <span class="light red"></span>
+            <span class="light yellow"></span>
+            <span class="light green"></span>
+          </div>
+          <div class="terminal-title">lab_admin@classnotes:~/reactor_core</div>
+        </div>
+
+        <div class="terminal-body">
+          <div class="scan-line"></div>
+
+          <p class="cmd">> sudo check_equilibrium</p>
+          <p class="output">
+            STATUS: <span class="status-blink">UNSTABLE</span><br />
+            ERROR_CODE:
+            <span class="text-yellow">ENTROPY_MAXIMIZED (ΔS > 0)</span>
+          </p>
+
+          <p class="cmd">> analyze_failure_cause</p>
+          <p class="output">
+            Detection: Covalent bonds in the backend have ruptured.<br />
+            Reason: Server exceeded Activation Energy (Ea).
+          </p>
+
+          <div class="mt-4">
+            <p class="cmd">> add_buffer_solution --fix-ph</p>
+            <div class="terminal-progress-bar">
+              <div class="terminal-progress-fill"></div>
+            </div>
+            <p class="output-dim">Re-titrating database... Please wait...</p>
+          </div>
+
+          <div class="terminal-actions-row">
+            <button class="terminal-btn" onclick="window.location.reload()">
+              [ RE-CATALYZE ]
+            </button>
+            <a href="mailto:notes@alokdasofficial.in" class="terminal-link">
+              [ REPORT_LEAK ]
+            </a>
+          </div>
+
+          <div id="adminDiagnostics" class="admin-only hidden">
+            <p class="cmd">> sudo isotope_verify</p>
+            <p class="output text-yellow">
+              User: <a href="http://alokdasofficial.in">Alok Das</a><br />
+              Access: <span id="bypassKey">0x_AVOGADRO_AUTH</span>
+            </p>
+          </div>
+
+          <div class="terminal-footer-info">
+            Timestamp: <span id="errorTime"></span> | Lab Temp: 298 K
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="preloader">
+      <div class="book">
+        <div class="inner">
+          <div class="left"></div>
+          <div class="middle"></div>
+          <div class="right"></div>
+        </div>
+        <ul>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <p class="loader-text">Loading <span>ClassNotes</span></p>
+    </div>
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <h1>ClassNotes</h1>
+          </div>
+          <button
+            id="themeToggleBtn"
+            class="btn-icon theme-toggle"
+            title="Toggle Dark Mode"
+            aria-label="Toggle Dark Mode"
+          >
+            <i class="fas fa-moon"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="semester-tabs">
+      <div class="container">
+        <div class="tabs-wrapper">
+          <button class="tab-btn" data-semester="1">
+            <span class="tab-number">1</span
+            ><span class="tab-label">Semester</span>
+          </button>
+          <button class="tab-btn active" data-semester="2">
+            <span class="tab-number">2</span
+            ><span class="tab-label">Semester</span>
+          </button>
+          <button class="tab-btn" data-semester="3">
+            <span class="tab-number">3</span
+            ><span class="tab-label">Semester</span>
+          </button>
+          <button class="tab-btn" data-semester="4">
+            <span class="tab-number">4</span
+            ><span class="tab-label">Semester</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="ad-slot-top" class="ad-slot-container"></div>
+    </div>
+
+    <main class="main">
+      <div class="container">
+        <div class="controls-section">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Search notes by title, teacher, or subject..."
+            />
+          </div>
+          <div class="filter-section">
+            <button class="filter-btn active" data-category="all">
+              <i class="fas fa-th"></i> All
+            </button>
+            <button
+              class="filter-btn"
+              data-category="favorites"
+              aria-label="Favorites"
+            >
+              <i class="fas fa-heart"></i>
+            </button>
+            <button
+              class="filter-btn"
+              data-category="General"
+              aria-label="General"
+            >
+              <i class="fas fa-gift"></i>
+            </button>
+            <button class="filter-btn" data-category="Organic">
+              <i class="fas fa-flask"></i> Organic
+            </button>
+            <button class="filter-btn" data-category="Inorganic">
+              <i class="fas fa-atom"></i> Inorganic
+            </button>
+            <button class="filter-btn" data-category="Physical">
+              <i class="fas fa-calculator"></i> Physical
+            </button>
+            <button class="filter-btn" data-category="Physics">
+              <i class="fas fa-infinity"></i> Physics
+            </button>
+          </div>
+          <div id="ad-slot-middle" class="ad-slot-container"></div>
+        </div>
+
+        <div class="stats-bar">
+          <span id="pdfCount">0</span> notes available
+        </div>
+
+        <div class="pdf-grid" id="pdfGrid"></div>
+
+        <div class="empty-state" id="emptyState" style="display: none">
+          <i class="fas fa-folder-open"></i>
+          <h3>No notes found</h3>
+          <p>Try adjusting your search or filter</p>
+        </div>
+      </div>
+    </main>
+
+    <div class="modal" id="pdfModal">
+      <div class="modal-content pdf-viewer-layout">
+        <div class="modal-main-content">
+          <button id="openCommentsBtn">
+            <i class="fas fa-comment-dots"></i> Comments
+          </button>
+          <div class="modal-header">
+            <h3 id="modalTitle">PDF Viewer</h3>
+            <div class="modal-actions">
+              <button class="btn-icon" id="modalShareBtn" title="Share PDF">
+                <i class="fas fa-share-alt"></i>
+              </button>
+              <button
+                class="btn-icon"
+                id="reportBtn"
+                title="Report Issue"
+                style="color: var(--error-color)"
+              >
+                <i class="fas fa-flag"></i>
+              </button>
+              <button class="btn-icon" id="downloadBtn" title="Download PDF">
+                <i class="fas fa-download"></i>
+              </button>
+              <button class="btn-icon" id="closeModal" title="Close">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="modal-body">
+            <iframe
+              id="pdfViewer"
+              src=""
+              width="100%"
+              height="100%"
+              loading="lazy"
+            ></iframe>
+          </div>
+        </div>
+        <div class="modal-sidebar" id="commentSidebar">
+          <h4>
+            <span>Comments (<span id="commentCount">0</span>)</span>
+            <button id="closeCommentsBtn" class="drawer-close" type="button">
+              <i class="fas fa-times"></i>
+            </button>
+          </h4>
+          <div class="comments-list" id="commentsList">
+            <div id="ad-slot-modal" class="ad-slot-container mb-4"></div>
+          </div>
+          <form class="comment-form" id="commentForm">
+            <textarea
+              id="commentInput"
+              placeholder="Add a comment... (Max 200 chars)"
+              maxlength="200"
+              required
+            ></textarea>
+            <input
+              type="text"
+              id="commentAuthor"
+              placeholder="Your Name (Optional)"
+              maxlength="50"
+            />
+            <button type="submit" class="btn btn-primary" id="submitCommentBtn">
+              <i class="fas fa-paper-plane"></i> Send
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="shareModal">
+      <div class="modal-content share-modal">
+        <div class="modal-header">
+          <h3>Share this PDF</h3>
+          <button class="btn-icon" id="closeShareModal">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Share this link with your classmates:</p>
+          <div class="share-link-container">
+            <input type="text" id="shareLink" readonly />
+            <button class="btn btn-primary" id="copyLinkBtn">
+              <i class="fas fa-clone"></i> Copy
+            </button>
+          </div>
+          <div class="share-success" id="shareSuccess" style="display: none">
+            <i class="fas fa-check"></i> Link copied to clipboard!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alomole-promo" id="alomolePromo">
+      <button
+        class="promo-close-btn"
+        id="closeAlomolePromo"
+        title="Hide Promotion"
+      >
+        <i class="fas fa-times"></i>
+      </button>
+      <a
+        href="https://play.google.com/store/apps/details?id=com.alokdas.alomole"
+        target="_blank"
+        class="promo-link"
+        title="Download Alomole"
+      >
+        <img
+          src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://play.google.com/store/apps/details?id=com.alokdas.alomole"
+          alt="QR"
+          loading="lazy"
+          width="100"
+          height="100"
+        />
+        <span class="promo-text">Alomole</span>
+        <span class="promo-text-body">Download Now!</span>
+      </a>
+    </div>
+
+    <div class="toast" id="toast">
+      <i class="fas fa-check"></i>
+      <span id="toastMessage">Action completed!</span>
+    </div>
+
+    <button
+      class="btn-icon go-to-top"
+      id="goToTopBtn"
+      title="Go to top"
+      aria-label="Top"
+    >
+      <i class="fas fa-arrow-up"></i>
+    </button>
+    <a
+      href="/upload/"
+      class="btn-icon upload-btn"
+      title="Upload Note's"
+      aria-label="Upload"
+      ><i class="fa-solid fa-cloud-arrow-up"></i
+    ></a>
+
+    <footer>
+      <div class="footer-content">
+        <p class="thanks-message">
+          ✨ Heartfelt thanks to all the amazing friends who shared their notes
+          🙌
+        </p>
+        <p class="contact-info">
+          Found an issue? Email us at
+          <a href="mailto:notes@alokdasofficial.in">notes@alokdasofficial.in</a>
+        </p>
+        <p class="credits">
+          Made with <span class="heart">❤️</span> by
+          <a href="https://alokdasofficial.in" target="_blank">Alok Das</a>
+        </p>
+
+        <a
+          href="https://github.com/MrAlokTech/classnotes"
+          target="_blank"
+          class="github-link"
+          title="View Source Code"
+        >
+          <i class="fab fa-github"></i> Open Sourced on GitHub
+        </a>
+        <p class="copyright-text" id="copyright-year">
+          © 2025 ClassNotes. All rights reserved.
+        </p>
+        <p class="policy-links">
+          <a href="/classnotes/upload/">Upload Note</a> |
+          <a href="/classnotes/legal/privacy-policy.html">Privacy Policy</a> |
+          <a href="/classnotes/legal/terms-of-use.html">Terms of Use</a> |
+          <a href="/classnotes/legal/takedown-policy.html">Takedown Policy</a>
+        </p>
+      </div>
+    </footer>
+
+    <!-- FUN PRANK -->
+    <div id="prankOverlay" class="prank-overlay hidden">
+      <div class="prank-terminal">
+        <div id="prankText" class="prank-text">> INITIALIZING...</div>
+        <div class="prank-progress-bar">
+          <div id="prankProgress" class="prank-progress-fill"></div>
+        </div>
+        <button id="closePrankBtn" class="prank-close-btn hidden">
+          Okay, I'm Done 😭
+        </button>
+      </div>
+    </div>
+
+    <!-- MARKETING -->
+    <div id="emailModal" class="modal-overlay hidden">
+      <div class="modal-content email-modal">
+        <button class="modal-close" id="closeEmailModal" aria-label="Close">
+          ✕
+        </button>
+
+        <div class="modal-icon">🔔</div>
+
+        <h3 class="modal-title">Never Miss a Note</h3>
+        <p class="modal-subtitle">
+          Get instant email alerts whenever new semester notes are uploaded.
+        </p>
+
+        <form id="emailCaptureForm" class="email-form">
+          <input
+            type="email"
+            id="captureEmailInput"
+            placeholder="notes@alokdasofficial.in"
+            required
+          />
+          <button type="submit">Notify Me</button>
+        </form>
+
+        <p class="modal-footer">No spam. Unsubscribe anytime.</p>
+      </div>
+    </div>
+
+    <script
+      src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"
+      defer
+    ></script>
+    <script
+      src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"
+      defer
+    ></script>
+    <script
+      src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"
+      defer
+    ></script>
+
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyAf9MEc8495GUwWHZsE4HcvJvbtptkBfQc",
+        authDomain: "alokdasofficial-69f96.firebaseapp.com",
+        projectId: "alokdasofficial",
+        storageBucket: "alokdasofficial.firebasestorage.app",
+        messagingSenderId: "315463239297",
+        appId: "1:315463239297:web:c374126286d9b33f3f2f80",
+        measurementId: "G-QPXHCK0R2E",
+      };
+    </script>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>

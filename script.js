@@ -296,3 +296,9 @@ function select(playerSelect) {
 }
 
 // Gaming Console End
+
+// FUN START
+// ===== Console Message =====
+console.log('%c👋 Hello There!', 'font-size: 20px; color: #6366f1; font-weight: bold;');
+console.log('%cLooking at the code? Feel free to reach out!', 'font-size: 14px; color: #8b5cf6;');
+console.log('%c🌐 https://www.alokdasofficial.in', 'font-size: 12px; color: #a8a8b3;');

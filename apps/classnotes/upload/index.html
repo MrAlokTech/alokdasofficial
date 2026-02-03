@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Upload Panel - ClassNotes</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../icon.svg" />
+    <link rel="apple-touch-icon" href="../icon.svg" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="toastContainer"></div>
+
+    <header class="header">
+      <div
+        class="container header-content"
+        style="justify-content: space-between"
+      >
+        <div class="logo">
+          <i class="fas fa-graduation-cap"></i>
+          <h1>ClassNotes</h1>
+        </div>
+
+        <button
+          id="themeToggleBtn"
+          class="btn btn-secondary"
+          style="width: auto; padding: 0.5rem"
+          title="Toggle Theme"
+        >
+          <i class="fas fa-moon"></i>
+        </button>
+      </div>
+    </header>
+
+    <main class="main container">
+      <div id="appLoader" class="app-loader">
+        <div class="spinner"></div>
+        <p>Verifying account...</p>
+      </div>
+
+      <section id="loginSection" class="hidden">
+        <div class="pdf-card auth-card">
+          <h2 class="text-center mb-4">Welcome Back</h2>
+          <form id="loginForm">
+            <div class="form-group">
+              <label for="loginEmail">Email Address</label>
+              <input
+                type="email"
+                id="loginEmail"
+                placeholder="your.email@example.com"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="loginPassword">Password</label>
+              <input
+                type="password"
+                id="loginPassword"
+                placeholder="Enter your password"
+                required
+              />
+              <i
+                class="fas fa-eye password-toggle"
+                id="loginPasswordToggle"
+                title="Show password"
+              ></i>
+            </div>
+
+            <div
+              class="form-group"
+              style="
+                display: flex;
+                gap: 10px;
+                align-items: flex-start;
+                margin-bottom: 1.5rem;
+              "
+            >
+              <input
+                type="checkbox"
+                id="loginTerms"
+                required
+                style="
+                  width: 20px;
+                  height: 20px;
+                  margin-top: 3px;
+                  cursor: pointer;
+                "
+              />
+              <label
+                for="loginTerms"
+                style="
+                  font-weight: 400;
+                  font-size: 0.9rem;
+                  line-height: 1.4;
+                  cursor: pointer;
+                "
+              >
+                I agree to the
+                <a
+                  href="/legal/terms-of-use.html"
+                  target="_blank"
+                  class="text-primary"
+                  >Terms of Use</a
+                >.
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="loginBtn">
+              <i class="fas fa-sign-in-alt"></i>
+              <span>Log In</span>
+            </button>
+            <p class="form-toggle-link">
+              New here? <a id="showSignUp">Create an account</a>
+            </p>
+          </form>
+        </div>
+      </section>
+
+      <section id="signUpSection" class="hidden">
+        <div class="pdf-card auth-card">
+          <h2 class="text-center mb-4">Create Account</h2>
+          <form id="signUpForm">
+            <div class="alert-box warning">
+              <i class="fas fa-info-circle"></i>
+              <div>
+                <strong>Verification Required</strong>
+                <p>
+                  Your account must be approved by an admin before you can
+                  upload notes.
+                </p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="signUpName">Full Name</label>
+              <input
+                type="text"
+                id="signUpName"
+                placeholder="e.g. Alok Das"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="signUpEmail">Email Address</label>
+              <input
+                type="email"
+                id="signUpEmail"
+                placeholder="e.g. notes@alokdasofficial.in"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="signUpPassword">Password</label>
+              <input
+                type="password"
+                id="signUpPassword"
+                placeholder="Minimum 6 characters"
+                required
+              />
+              <i
+                class="fas fa-eye password-toggle"
+                id="signUpPasswordToggle"
+              ></i>
+            </div>
+
+            <div class="form-group">
+              <label for="signUpConfirmPassword">Confirm Password</label>
+              <input
+                type="password"
+                id="signUpConfirmPassword"
+                placeholder="Re-enter your password"
+                required
+              />
+              <i
+                class="fas fa-eye password-toggle"
+                id="signUpConfirmPasswordToggle"
+              ></i>
+            </div>
+
+            <div
+              class="form-group"
+              style="
+                display: flex;
+                gap: 10px;
+                align-items: flex-start;
+                margin-bottom: 1.5rem;
+              "
+            >
+              <input
+                type="checkbox"
+                id="signUpTerms"
+                required
+                style="
+                  width: 20px;
+                  height: 20px;
+                  margin-top: 3px;
+                  cursor: pointer;
+                "
+              />
+              <label
+                for="signUpTerms"
+                style="
+                  font-weight: 400;
+                  font-size: 0.9rem;
+                  line-height: 1.4;
+                  cursor: pointer;
+                "
+              >
+                I agree to the
+                <a
+                  href="/legal/terms-of-use.html"
+                  target="_blank"
+                  class="text-primary"
+                  >Terms of Use</a
+                >
+                &
+                <a
+                  href="/legal/privacy-policy.html"
+                  target="_blank"
+                  class="text-primary"
+                  >Privacy Policy</a
+                >.
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="signUpBtn">
+              <i class="fas fa-user-plus"></i>
+              <span>Create Account</span>
+            </button>
+
+            <p class="form-toggle-link">
+              Already have an account? <a id="showLogin">Log in</a>
+            </p>
+          </form>
+        </div>
+      </section>
+
+      <section id="pendingVerificationSection" class="hidden">
+        <div class="pdf-card auth-card wide">
+          <div class="admin-header">
+            <h2>
+              Welcome,<br />
+              <span id="pendingUserEmail" class="text-primary"></span>
+            </h2>
+            <button class="btn logoutBtn btn-secondary" id="logoutBtnPending">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Log Out</span>
+            </button>
+          </div>
+          <div class="text-center py-4">
+            <i class="fas fa-hourglass-half icon-large accent-color"></i>
+            <h3>Account Under Review</h3>
+            <p class="text-muted max-w-400">
+              Thanks for signing up! Your account is currently awaiting
+              verification. You'll be able to upload notes once approved.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="uploadSection" class="hidden">
+        <div class="pdf-card upload-card">
+          <div class="admin-header">
+            <h2>
+              Welcome back,<br />
+              <span id="userName" class="text-primary"></span>
+            </h2>
+            <button class="btn btn-secondary" id="logoutBtn">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Log Out</span>
+            </button>
+          </div>
+
+          <form id="uploadForm">
+            <h3 class="section-title">
+              <i class="fas fa-cloud-upload-alt"></i>
+              Upload New Notes
+            </h3>
+
+            <div class="form-group">
+              <label>
+                <i class="fas fa-file-pdf"></i>
+                Upload PDF
+              </label>
+              <div id="dropZone" class="upload-area">
+                <input
+                  type="file"
+                  id="fileInput"
+                  accept="application/pdf"
+                  class="hidden-input"
+                />
+                <div class="upload-content">
+                  <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                  <p>Drag & drop your PDF here</p>
+                  <span
+                    >or
+                    <strong class="text-primary cursor-pointer"
+                      >Browse files</strong
+                    ></span
+                  >
+                  <p class="file-info" id="fileNameDisplay"></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="pdfTitle">
+                <i class="fas fa-heading"></i>
+                Note Title
+              </label>
+              <input
+                type="text"
+                id="pdfTitle"
+                placeholder="e.g., Spectroscopy Fundamentals"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="pdfDescription">
+                <i class="fas fa-align-left"></i>
+                Description
+              </label>
+              <textarea
+                id="pdfDescription"
+                placeholder="Brief overview of what these notes cover..."
+                required
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="pdfAuthor">
+                <i class="fas fa-chalkboard-teacher"></i>
+                Author / Professor
+              </label>
+              <input
+                type="text"
+                id="pdfAuthor"
+                placeholder="e.g., Prof. J.K. Sharma"
+                required
+              />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="pdfSemester">
+                  <i class="fas fa-calendar-alt"></i>
+                  Semester
+                </label>
+                <select id="pdfSemester" required>
+                  <option value="1">Semester 1</option>
+                  <option value="2">Semester 2</option>
+                  <option value="3">Semester 3</option>
+                  <option value="4">Semester 4</option>
+                </select>
+              </div>
+
+              <div class="form-group flex-1">
+                <label for="pdfCategory">
+                  <i class="fas fa-tag"></i>
+                  Category
+                </label>
+                <select id="pdfCategory" required>
+                  <option value="Organic">Organic Chemistry</option>
+                  <option value="Inorganic">Inorganic Chemistry</option>
+                  <option value="Physical">Physical Chemistry</option>
+                  <option value="Physics">Physics</option>
+                  <option value="General">General</option>
+                </select>
+              </div>
+            </div>
+            <div
+              class="form-group"
+              style="
+                display: flex;
+                gap: 10px;
+                align-items: flex-start;
+                margin-bottom: 1.5rem;
+              "
+            >
+              <input
+                type="checkbox"
+                id="termsCheckbox"
+                required
+                style="
+                  width: 20px;
+                  height: 20px;
+                  margin-top: 3px;
+                  cursor: pointer;
+                "
+              />
+              <label
+                for="termsCheckbox"
+                style="
+                  font-weight: 400;
+                  font-size: 0.9rem;
+                  line-height: 1.4;
+                  cursor: pointer;
+                "
+              >
+                I agree to the
+                <a
+                  href="/legal/terms-of-use.html"
+                  target="_blank"
+                  class="text-primary"
+                  >Terms of Use</a
+                >
+                and confirm that I have the right to share this content.
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary" id="uploadBtn">
+              <i class="fas fa-upload"></i>
+              <span>Add Note</span>
+            </button>
+
+            <div class="alert-box info mt-4">
+              <i class="fas fa-user-shield"></i>
+              <p>
+                <strong>Privacy Note:</strong> Your identity remains anonymous
+                to other users. Only note content is shared.
+              </p>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <p class="thanks-message">✨ Thanks for visiting! 🙌</p>
+        <p>
+          Found an issue?
+          <a href="mailto:notes@alokdasofficial.in">Get in touch</a>
+        </p>
+        <p class="credits">
+          Crafted with <span class="heart">❤️</span> by
+          <a href="https://alokdasofficial.in" target="_blank">Alok Das</a>
+        </p>
+        <p class="copyright-text" id="copyright-year">
+          © 2025 ClassNotes. All rights reserved.
+        </p>
+        <div class="policy-links">
+          <a href="/">Home</a> |
+          <a href="/legal/privacy-policy.html">Privacy</a> |
+          <a href="/legal/terms.html">Terms</a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyAf9MEc8495GUwWHZsE4HcvJvbtptkBfQc",
+        authDomain: "alokdasofficial-69f96.firebaseapp.com",
+        projectId: "alokdasofficial",
+        storageBucket: "alokdasofficial.firebasestorage.app",
+        messagingSenderId: "315463239297",
+        appId: "1:315463239297:web:c374126286d9b33f3f2f80",
+        measurementId: "G-QPXHCK0R2E",
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const auth = firebase.auth();
+    </script>
+    <script src="upload.js"></script>
+  </body>
+</html>
