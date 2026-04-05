@@ -5,7 +5,7 @@
  */
 
 var REDIRECT_URL = 'https://me.alokdasofficial.in';
-var TOTAL_SECONDS = 150;
+var TOTAL_SECONDS = 10;
 var PRELOADER_DURATION = 2200;
 var TYPEWRITER_LINES = [
   "Hi! I'm Alok 👋",
