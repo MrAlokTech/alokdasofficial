@@ -1,0 +1,30 @@
+/* ============================================================
+   footer.css — Comic Strip Footer
+   ============================================================ */
+
+.comic-footer {
+  position: relative;
+  z-index: 10;
+  background: var(--ink);
+}
+
+.footer-strip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1.2rem 1.5rem;
+}
+
+.footer-cell {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--cream);
+}
+
+.footer-divider {
+  color: var(--yellow);
+  font-size: 1.1rem;
+}

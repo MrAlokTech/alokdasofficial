@@ -1,0 +1,53 @@
+/* ============================================================
+   base.css — Reset, Body, Global Utilities & Shared Keyframes
+   ============================================================ */
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── Body ── */
+body {
+  font-family: var(--font-body);
+  background-color: var(--yellow);
+  color: var(--ink);
+  overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Mask content until preloader exits */
+body.preloading > *:not(.preloader) {
+  visibility: hidden;
+}
+
+/* ── Halftone Background ── */
+.halftone-bg {
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--ink) 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Shared Keyframes (used across multiple components) ── */
+@keyframes bounceIn {
+  0%   { opacity: 0; transform: scale(0.3) rotate(-10deg); }
+  60%  { opacity: 1; transform: scale(1.08) rotate(2deg); }
+  80%  {             transform: scale(0.96) rotate(-1deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes slideUp {
+  0%   { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}

@@ -1,6 +1,6 @@
 # llm.txt
 # AI Crawler Policy for alokdasofficial.in and its subdomains
-# Last updated: 2026-01-07
+# Last updated: 2026-04-05
 
 User-agent: *
 Allow: /

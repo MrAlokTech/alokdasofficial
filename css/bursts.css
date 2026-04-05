@@ -1,0 +1,77 @@
+/* ============================================================
+   bursts.css — Floating Comic Burst Shapes (POW, ZAP, etc.)
+   To add a new burst: add .burst-N to index.html and define
+   its position + color here.
+   ============================================================ */
+
+/* ── Base burst ── */
+.burst {
+  position: fixed;
+  font-family: var(--font-comic);
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  color: var(--ink);
+  border: var(--border-thin);
+  box-shadow: var(--shadow-pop);
+  padding: 0.5rem 0.9rem;
+  border-radius: 4px;
+  z-index: 1;
+  pointer-events: none;
+  animation: floatSpin 6s ease-in-out infinite;
+  clip-path: polygon(
+    50% 0%,  61% 35%, 98% 35%,
+    68% 57%, 79% 91%, 50% 70%,
+    21% 91%, 32% 57%, 2%  35%,
+    39% 35%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Individual Bursts ── */
+.burst-1 {
+  background: var(--pink);
+  top: 8%; left: 4%;
+  font-size: 0.8rem;
+  padding: 1.6rem 1rem;
+  animation-delay: 0s;
+  animation-duration: 7s;
+}
+
+.burst-2 {
+  background: var(--blue);
+  top: 15%; right: 5%;
+  font-size: 0.8rem;
+  padding: 1.6rem 1rem;
+  animation-delay: 1.5s;
+  animation-duration: 8s;
+}
+
+.burst-3 {
+  background: var(--yellow);
+  bottom: 30%; left: 3%;
+  font-size: 0.75rem;
+  padding: 1.5rem 0.9rem;
+  animation-delay: 3s;
+  animation-duration: 9s;
+}
+
+.burst-4 {
+  background: var(--purple);
+  color: var(--cream);
+  bottom: 25%; right: 4%;
+  font-size: 0.75rem;
+  padding: 1.5rem 0.9rem;
+  animation-delay: 2s;
+  animation-duration: 6.5s;
+}
+
+/* ── Animation ── */
+@keyframes floatSpin {
+  0%   { transform: rotate(-8deg) translateY(0px); }
+  25%  { transform: rotate(4deg)  translateY(-8px); }
+  50%  { transform: rotate(-4deg) translateY(-14px); }
+  75%  { transform: rotate(6deg)  translateY(-6px); }
+  100% { transform: rotate(-8deg) translateY(0px); }
+}

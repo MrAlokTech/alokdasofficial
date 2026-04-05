@@ -1,0 +1,52 @@
+<!-- ============================================================
+     html/teaser.html — Teaser Panels Section
+     Loaded dynamically by js/loader.js into #section-teaser.
+
+     To add a new panel: duplicate an <article> block and adjust
+     the class name, icon, title, and description. Then add a
+     matching .panel-X::before colour rule in css/teaser.css
+     and update the SECTIONS map in js/loader.js if needed.
+     ============================================================ -->
+<section class="teaser-section" id="teaser" aria-label="Portfolio preview panels">
+
+  <h2 class="teaser-heading">WHAT AWAITS YOU...</h2>
+
+  <div class="panels-grid">
+
+    <article class="comic-panel panel-apps" tabindex="0" aria-label="Apps section preview">
+      <div class="panel-icon" aria-hidden="true">📱</div>
+      <h3 class="panel-title">APPS</h3>
+      <p class="panel-desc">Slick mobile apps built with Flutter &amp; Kotlin — from mileage trackers to chemistry tools!</p>
+      <div class="panel-label" aria-hidden="true">Chapter 1</div>
+    </article>
+
+    <article class="comic-panel panel-projects" tabindex="0" aria-label="Projects section preview">
+      <div class="panel-icon" aria-hidden="true">💡</div>
+      <h3 class="panel-title">PROJECTS</h3>
+      <p class="panel-desc">Open-source code, clever hacks, and side projects that solve real problems.</p>
+      <div class="panel-label" aria-hidden="true">Chapter 2</div>
+    </article>
+
+    <article class="comic-panel panel-more" tabindex="0" aria-label="More section preview">
+      <div class="panel-icon" aria-hidden="true">🎨</div>
+      <h3 class="panel-title">&amp; MORE</h3>
+      <p class="panel-desc">UI designs, experiments, and a whole lot of passion poured into every pixel.</p>
+      <div class="panel-label" aria-hidden="true">Chapter 3</div>
+    </article>
+
+  </div>
+
+  <!-- Secondary CTA -->
+  <div class="secondary-cta-wrap">
+    <a href="https://me.alokdasofficial.in"
+       class="secondary-cta"
+       id="secondary-cta-btn"
+       aria-label="Visit the full portfolio">
+      Visit Full Portfolio →
+    </a>
+    <p class="secondary-note">
+      Redirecting automatically in <strong id="countdown-secondary">10</strong>s
+    </p>
+  </div>
+
+</section>

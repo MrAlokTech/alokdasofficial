@@ -1,71 +1,306 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>404 - Page Not Found</title>
+    <title>404 — Page Not Found | Alok Das</title>
+    <meta name="description" content="Oops! This page seems to have vanished. Head back to Alok Das's home or check out the resume." />
+    <meta name="robots" content="noindex, follow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet" />
     <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
+      /* ── Design Tokens ── */
+      :root {
+        --yellow:  #FFE600;
+        --pink:    #FF2D6B;
+        --blue:    #00C2FF;
+        --purple:  #6A0DAD;
+        --ink:     #0D0D0D;
+        --cream:   #FFFEF0;
+        --white:   #FFFFFF;
+        --font-h:  'Bangers', cursive;
+        --font-b:  'Comic Neue', cursive;
+        --border:  4px solid var(--ink);
+        --shadow:  6px 6px 0 var(--ink);
       }
+
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { height: 100%; }
+
       body {
-        height: 100vh;
+        font-family: var(--font-b);
+        background: var(--yellow);
+        color: var(--ink);
+        min-height: 100vh;
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
-        background: radial-gradient(circle at 30% 30%, #1f1f1f, #000);
-        color: #fff;
-        font-family: "Poppins", sans-serif;
+        justify-content: center;
+        padding: 2rem 1.2rem;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Halftone dots */
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image: radial-gradient(circle, var(--ink) 1.5px, transparent 1.5px);
+        background-size: 22px 22px;
+        opacity: 0.055;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* Background accent circles */
+      body::after {
+        content: '';
+        position: fixed;
+        bottom: -100px; right: -100px;
+        width: 400px; height: 400px;
+        background: var(--pink);
+        border-radius: 50%;
+        opacity: 0.18;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ── Floating bursts ── */
+      .burst {
+        position: fixed;
+        font-family: var(--font-h);
+        font-size: 0.85rem;
+        letter-spacing: 2px;
+        padding: 1.5rem 1rem;
+        clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+        animation: floatSpin 7s ease-in-out infinite;
+        pointer-events: none;
+        z-index: 1;
+        border: 3px solid var(--ink);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .b1 { background: var(--pink);   color: var(--ink);   top: 7%;  left: 4%;  animation-duration: 7s; animation-delay: 0s; }
+      .b2 { background: var(--blue);   color: var(--ink);   top: 12%; right: 5%; animation-duration: 8s; animation-delay: 1.5s; }
+      .b3 { background: var(--purple); color: var(--cream); bottom: 20%; left: 4%;  animation-duration: 9s; animation-delay: 3s; }
+
+      @keyframes floatSpin {
+        0%   { transform: rotate(-8deg) translateY(0); }
+        25%  { transform: rotate(4deg)  translateY(-8px); }
+        50%  { transform: rotate(-4deg) translateY(-14px); }
+        75%  { transform: rotate(6deg)  translateY(-6px); }
+        100% { transform: rotate(-8deg) translateY(0); }
+      }
+
+      /* ── Main card ── */
+      .card {
+        position: relative;
+        z-index: 10;
+        background: var(--ink);
+        border: var(--border);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 2.5rem 2rem 2rem;
+        max-width: 560px;
+        width: 100%;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.2rem;
+        animation: popIn 0.6s cubic-bezier(0.36,0.07,0.19,0.97) both;
+      }
+
+      @keyframes popIn {
+        0%   { opacity: 0; transform: scale(0.5) rotate(-6deg); }
+        70%  { opacity: 1; transform: scale(1.05) rotate(1deg); }
+        100% { opacity: 1; transform: scale(1) rotate(0deg); }
+      }
+
+      .issue-tag {
+        background: var(--pink);
+        color: var(--ink);
+        font-family: var(--font-h);
+        font-size: 0.9rem;
+        letter-spacing: 3px;
+        padding: 0.25rem 1rem;
+        border-radius: 4px;
+        border: 2px solid var(--ink);
+      }
+
+      /* Big 404 */
+      .four-oh-four {
+        font-family: var(--font-h);
+        font-size: clamp(5rem, 22vw, 9rem);
+        line-height: 0.85;
+        color: var(--yellow);
+        -webkit-text-stroke: 3px var(--ink);
+        text-shadow:
+          6px 6px 0 var(--pink),
+          12px 12px 0 rgba(0,0,0,0.35);
+        animation: shake 3s ease-in-out infinite;
+      }
+
+      @keyframes shake {
+        0%,100% { transform: rotate(-2deg); }
+        25%     { transform: rotate(2deg); }
+        50%     { transform: rotate(-1deg) translateY(-4px); }
+        75%     { transform: rotate(1deg); }
+      }
+
+      /* Speech bubble */
+      .bubble {
+        position: relative;
+        background: var(--white);
+        border: var(--border);
+        border-radius: 12px;
+        padding: 1rem 1.4rem;
+        box-shadow: 5px 5px 0 var(--yellow);
+        max-width: 420px;
+        text-align: left;
+      }
+
+      .bubble::after {
+        content: '';
+        position: absolute;
+        top: -22px; left: 30px;
+        border-width: 0 14px 22px;
+        border-style: solid;
+        border-color: transparent transparent var(--ink);
+      }
+      .bubble::before {
+        content: '';
+        position: absolute;
+        top: -14px; left: 33px;
+        border-width: 0 11px 16px;
+        border-style: solid;
+        border-color: transparent transparent var(--white);
+        z-index: 1;
+      }
+
+      .bubble-title {
+        font-family: var(--font-h);
+        font-size: 1.3rem;
+        letter-spacing: 1px;
+        color: var(--pink);
+        margin-bottom: 0.3rem;
+      }
+
+      .bubble-text {
+        font-family: var(--font-b);
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--ink);
+        line-height: 1.5;
+      }
+
+      /* Buttons */
+      .btn-row {
+        display: flex;
+        gap: 0.9rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .btn {
+        font-family: var(--font-h);
+        font-size: 1.15rem;
+        letter-spacing: 2px;
+        padding: 0.7rem 1.6rem;
+        border-radius: 10px;
+        border: var(--border);
+        text-decoration: none;
+        transition: transform 0.15s, box-shadow 0.15s;
+        cursor: pointer;
+        flex: 1;
+        min-width: 130px;
         text-align: center;
       }
-      h1 {
-        font-size: 3rem;
-        margin-top: 1rem;
-        letter-spacing: 2px;
+
+      .btn-home {
+        background: var(--yellow);
+        color: var(--ink);
+        box-shadow: var(--shadow);
       }
-      p {
-        font-size: 1.2rem;
-        opacity: 0.8;
-        margin-top: 0.5rem;
-        margin-bottom: 1.5rem;
+
+      .btn-resume {
+        background: var(--purple);
+        color: var(--cream);
+        box-shadow: 6px 6px 0 rgba(255,255,255,0.2);
+        border-color: rgba(255,255,255,0.3);
       }
-      button {
-        padding: 0.7rem 1.5rem;
-        border: none;
-        border-radius: 8px;
-        background: #ff6b6b;
-        color: #fff;
-        font-weight: 600;
-        cursor: pointer;
-        transition: 0.3s ease;
+
+      .btn:hover { transform: translate(-3px,-3px); box-shadow: 10px 10px 0 rgba(255,255,255,0.25); }
+      .btn-home:hover { box-shadow: 10px 10px 0 var(--ink); }
+      .btn:active { transform: translate(2px,2px); box-shadow: 3px 3px 0 var(--ink); }
+
+      /* Back link */
+      .back-link {
+        font-family: var(--font-b);
+        font-size: 0.82rem;
+        color: rgba(255,255,240,0.5);
+        text-decoration: none;
+        border-bottom: 1px dotted rgba(255,255,240,0.3);
+        transition: color 0.15s;
       }
-      button:hover {
-        background: #ff3b3b;
-        transform: scale(1.05);
+      .back-link:hover { color: var(--yellow); }
+
+      /* ── Responsive ── */
+      @media (max-width: 480px) {
+        .burst { display: none; }
+        .card  { padding: 2rem 1.2rem 1.5rem; }
+        .btn-row { flex-direction: column; }
+        .btn { min-width: unset; }
       }
-      lottie-player {
-        width: 300px;
-        height: 300px;
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
       }
     </style>
   </head>
   <body>
-    <lottie-player
-      src="https://assets3.lottiefiles.com/packages/lf20_qp1q7mct.json"
-      background="transparent"
-      speed="1"
-      loop
-      autoplay
-    >
-    </lottie-player>
 
-    <h1>Oops! Page Not Found</h1>
-    <p>Looks like you took a wrong turn... Let’s get you back home.</p>
-    <button onclick="window.location.href='/'">Go Home</button>
+    <!-- Decorative bursts -->
+    <div class="burst b1" aria-hidden="true">OOPS!</div>
+    <div class="burst b2" aria-hidden="true">HUH?</div>
+    <div class="burst b3" aria-hidden="true">WHA?</div>
 
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <!-- Main 404 card -->
+    <main class="card" role="main">
+
+      <div class="issue-tag">Error #404 — Page Not Found</div>
+
+      <div class="four-oh-four" aria-label="404 Error">404</div>
+
+      <!-- Speech bubble pointing UP at the 404 -->
+      <div class="bubble" role="status" aria-live="polite">
+        <p class="bubble-title">Hmm... this is awkward 🤔</p>
+        <p class="bubble-text">
+          The page you're looking for seems to have gone on an unscheduled adventure. 
+          It might have moved, been renamed, or never existed in the first place.<br /><br />
+          But don't worry — here's where you <em>can</em> go:
+        </p>
+      </div>
+
+      <!-- CTA Buttons -->
+      <div class="btn-row">
+        <a href="/" class="btn btn-home" id="btn-home">🏠 Go Home</a>
+        <a href="/resume" class="btn btn-resume" id="btn-resume">📄 View Resume</a>
+      </div>
+
+      <!-- Subtle back link -->
+      <a href="javascript:history.back()" class="back-link" aria-label="Go back to previous page">
+        ← Or go back to where you came from
+      </a>
+
+    </main>
+
   </body>
 </html>

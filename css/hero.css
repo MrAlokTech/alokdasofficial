@@ -1,0 +1,262 @@
+/* ============================================================
+   hero.css — Hero Panel, Title, Speech Bubble, Redirect Box,
+              Countdown, CTA Buttons, Resume Button
+   ============================================================ */
+
+/* ── Hero Panel ── */
+.hero-panel {
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  background: var(--yellow);
+  border-bottom: var(--border-thick);
+  overflow: hidden;
+}
+
+/* Decorative circles */
+.hero-panel::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -80px;
+  width: 340px; height: 340px;
+  background: var(--pink);
+  border-radius: 50%;
+  border: var(--border-thick);
+  opacity: 0.4;
+  z-index: 0;
+}
+.hero-panel::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: -60px;
+  width: 280px; height: 280px;
+  background: var(--blue);
+  border-radius: 50%;
+  border: var(--border-thick);
+  opacity: 0.3;
+  z-index: 0;
+}
+
+/* ── Hero Inner ── */
+.hero-inner {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 720px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+/* ── Issue Tag ── */
+.issue-tag {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: var(--font-comic);
+  font-size: 1rem;
+  letter-spacing: 3px;
+  padding: 0.3rem 1.2rem;
+  border-radius: 4px;
+  animation: bounceIn 0.6s ease both;
+  animation-delay: 0.1s;
+}
+
+/* ── Hero Title ── */
+.hero-title {
+  font-family: var(--font-comic);
+  line-height: 0.9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title-line-1 {
+  font-size: clamp(5rem, 20vw, 10rem);
+  color: var(--ink);
+  -webkit-text-stroke: 3px var(--ink);
+  text-shadow: 6px 6px 0 var(--pink), 12px 12px 0 var(--purple);
+  display: block;
+  animation: bounceIn 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  animation-delay: 0.2s;
+}
+
+.title-line-2 {
+  font-size: clamp(5rem, 20vw, 10rem);
+  color: var(--cream);
+  -webkit-text-stroke: 4px var(--ink);
+  text-shadow: 6px 6px 0 var(--blue), 12px 12px 0 var(--ink);
+  display: block;
+  animation: bounceIn 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  animation-delay: 0.35s;
+}
+
+/* ── Speech Bubble ── */
+.speech-bubble {
+  position: relative;
+  background: var(--white);
+  border: var(--border-thick);
+  border-radius: var(--radius);
+  padding: 1rem 1.6rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(1rem, 3vw, 1.3rem);
+  box-shadow: var(--shadow-pop);
+  max-width: 420px;
+  text-align: left;
+  animation: bounceIn 0.6s ease both;
+  animation-delay: 0.5s;
+}
+
+/* Bubble tail (pointing down-left) */
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -22px; left: 30px;
+  border-width: 22px 14px 0 0;
+  border-style: solid;
+  border-color: var(--ink) transparent transparent transparent;
+}
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -16px; left: 33px;
+  border-width: 18px 11px 0 0;
+  border-style: solid;
+  border-color: var(--white) transparent transparent transparent;
+  z-index: 1;
+}
+
+/* Blinking cursor */
+.cursor {
+  animation: blink 0.8s step-end infinite;
+  font-weight: 400;
+  color: var(--pink);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ── Hero Sub-headline ── */
+.hero-sub {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  color: var(--ink);
+  background: var(--blue);
+  border: var(--border-thin);
+  padding: 0.4rem 1.2rem;
+  border-radius: 50px;
+  box-shadow: var(--shadow-hover);
+  animation: bounceIn 0.6s ease both;
+  animation-delay: 0.65s;
+}
+
+/* ── Redirect / Countdown Box ── */
+.redirect-box {
+  background: var(--ink);
+  border: var(--border-thick);
+  border-radius: var(--radius);
+  padding: 1.5rem 2rem;
+  width: 100%;
+  max-width: 440px;
+  text-align: center;
+  box-shadow: var(--shadow-big);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  animation: bounceIn 0.7s ease both;
+  animation-delay: 0.8s;
+}
+
+.redirect-label {
+  font-family: var(--font-comic);
+  font-size: 1.2rem;
+  color: var(--yellow);
+  letter-spacing: 2px;
+}
+
+.countdown-display {
+  font-family: var(--font-comic);
+  font-size: clamp(3rem, 12vw, 5.5rem);
+  color: var(--pink);
+  line-height: 1;
+  text-shadow: 4px 4px 0 var(--yellow);
+  transition: transform 0.15s ease, color 0.3s ease;
+}
+
+.countdown-display.tick {
+  animation: countTick 0.2s ease;
+}
+
+@keyframes countTick {
+  0%   { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+/* ── Progress Bar ── */
+.progress-track {
+  width: 100%;
+  height: 18px;
+  background: var(--dark);
+  border-radius: 50px;
+  border: 2px solid var(--cream);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--pink), var(--blue));
+  border-radius: 50px;
+  transition: width 1s linear;
+}
+
+/* ── CTA Button (instant redirect) ── */
+.cta-btn {
+  display: inline-block;
+  background: var(--yellow);
+  color: var(--ink);
+  font-family: var(--font-comic);
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+  padding: 0.8rem 2rem;
+  border-radius: var(--radius);
+  border: var(--border-thick);
+  box-shadow: var(--shadow-pop);
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  margin-top: 0.3rem;
+}
+
+.cta-btn:hover  { transform: translate(-3px, -3px); box-shadow: 9px 9px 0px var(--cream); }
+.cta-btn:active { transform: translate(3px, 3px);   box-shadow: 2px 2px 0 var(--cream); }
+
+/* ── Resume Button ── */
+.resume-btn {
+  display: inline-block;
+  background: var(--purple);
+  color: var(--cream);
+  font-family: var(--font-comic);
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  padding: 0.65rem 1.8rem;
+  border-radius: var(--radius);
+  border: var(--border-thick);
+  box-shadow: var(--shadow-pop);
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  animation: bounceIn 0.6s ease both;
+  animation-delay: 1s;
+}
+
+.resume-btn:hover  { background: var(--pink); transform: translate(-3px, -3px); box-shadow: 9px 9px 0px var(--ink); }
+.resume-btn:active { transform: translate(2px, 2px); box-shadow: 3px 3px 0px var(--ink); }
