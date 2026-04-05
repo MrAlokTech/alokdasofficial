@@ -1,0 +1,377 @@
+/* --- CSS RESET & BASE STYLES --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: #525659; /* Document Viewer Grey */
+  color: #333;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px; /* Base size */
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Merriweather", serif;
+}
+.contact-item {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.2s;
+}
+.contact-item a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.2s;
+}
+
+.contact-item i {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.2s;
+}
+
+/* Hover effect for BOTH text and icon */
+.contact-item:hover,
+.contact-item:hover a,
+.contact-item:hover i {
+  color: orange;
+}
+
+/* a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #000;
+} */
+
+ul {
+  list-style-position: outside;
+  padding-left: 1.2rem;
+}
+
+/* --- LAYOUT CONTAINER (A4) --- */
+.page-container {
+  background-color: white;
+  width: 210mm;
+  min-height: 297mm;
+  margin: 40px auto;
+  padding: 20mm;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+/* --- DOWNLOAD BUTTON --- */
+.download-btn {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  background: none;
+  border: none;
+  color: #cbd5e1; /* Slate-300 */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  transition: all 0.3s;
+  z-index: 10;
+  padding: 5px;
+}
+
+.download-btn:hover {
+  color: #475569; /* Slate-600 */
+}
+
+.download-btn i {
+  font-size: 12px;
+}
+
+.download-btn span {
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  transition: all 0.5s ease-in-out;
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+}
+
+.download-btn:hover span {
+  max-width: 100px;
+  opacity: 1;
+  margin-left: 8px;
+}
+
+/* --- HEADER SECTION --- */
+header {
+  border-bottom: 2px solid #1e293b; /* Slate-800 */
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+h1 {
+  font-size: 2.25rem; /* 36px */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #0f172a; /* Slate-900 */
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  line-height: 1;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #475569; /* Slate-600 */
+  font-weight: 500;
+  font-style: italic;
+  font-family: "Roboto", sans-serif;
+}
+
+/* Horizontal Contact Info */
+.contact-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  font-size: 0.85rem;
+  color: #475569;
+  margin-top: 0.75rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.contact-item i {
+  color: #94a3b8; /* Slate-400 */
+  font-size: 11px;
+}
+
+/* --- SECTIONS GENERAL --- */
+section {
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid #e2e8f0; /* Slate-200 */
+  padding-bottom: 4px;
+  margin-bottom: 0.75rem;
+  font-family: "Roboto", sans-serif;
+}
+
+p {
+  color: #334155; /* Slate-700 */
+  text-align: justify;
+}
+
+/* --- LISTS & ITEMS --- */
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 2px;
+}
+
+.item-title {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 1rem;
+}
+
+.item-date {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.item-subtitle {
+  font-style: italic;
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+.item-meta {
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Badges */
+.badge {
+  font-size: 10px;
+  background-color: #f1f5f9;
+  color: #475569;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #cbd5e1;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* --- SKILLS GRID --- */
+.skills-grid {
+  display: grid;
+  grid-template-columns: 100%;
+  gap: 0.5rem;
+}
+
+.skill-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 1rem;
+  color: #334155;
+}
+
+.skill-label {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* --- TWO COLUMN LAYOUT --- */
+.grid-2-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.language-item {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 2px;
+}
+
+.lang-label {
+  font-weight: 700;
+  color: #0f172a;
+  width: 80px;
+  flex-shrink: 0;
+}
+
+/* --- KEY STRENGTHS --- */
+.strengths-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem 1.5rem;
+}
+
+.strength-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+.strength-item i {
+  color: #64748b; /* Slate-500 */
+  font-size: 12px;
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* --- PRINT STYLES --- */
+@media print {
+  body {
+    background: white;
+  }
+  .page-container {
+    width: 100%;
+    margin: 0;
+    box-shadow: none;
+    padding: 20mm; /* Keep margins */
+    height: auto;
+  }
+  .no-print {
+    display: none !important;
+  }
+  header {
+    /* Ensure header stays together */
+    page-break-inside: avoid;
+  }
+  /* Force desktop layout for contact info when printing */
+  .contact-info {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 1.5rem !important;
+    font-size: 0.85rem !important;
+    grid-template-columns: unset !important;
+  }
+  .contact-item {
+    gap: 6px !important;
+  }
+  .contact-item i {
+    font-size: 11px !important;
+  }
+}
+
+/* --- RESPONSIVE MOBILE --- */
+@media (max-width: 210mm) {
+  .page-container {
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+  }
+  .header-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  /* 2x2 Grid for contact info on mobile */
+  .contact-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem 1rem;
+    font-size: 0.75rem;
+  }
+  .contact-item {
+    gap: 5px;
+  }
+  .contact-item i {
+    font-size: 10px;
+  }
+  .skill-row {
+    grid-template-columns: 1fr; /* Stack skill labels on mobile */
+    gap: 0;
+    margin-bottom: 10px;
+  }
+  .grid-2-col {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .strengths-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Extra small screens - single column for contact */
+@media (max-width: 480px) {
+  .contact-info {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
