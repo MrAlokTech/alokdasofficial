@@ -1,0 +1,277 @@
+/* ================================================================
+   projects.css — Blog-Style Work Cards
+   Each card: media (image / carousel) → badge → title →
+             chips → description → action buttons
+   ================================================================ */
+
+.projects-section {
+  position: relative;
+  z-index: 10;
+  background: var(--ink);
+  border-bottom: var(--border-thick);
+  padding: 5rem 2rem;
+}
+
+.projects-section .section-heading {
+  color: var(--yellow);
+  text-shadow: 4px 4px 0 var(--pink);
+}
+
+/* ── Grid ── */
+.works-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ── Card ── */
+.work-card {
+  background: var(--cream);
+  border: var(--border-thick);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-big);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.work-card:hover {
+  transform: translate(-5px, -5px);
+  box-shadow: 15px 15px 0 rgba(255, 230, 0, 0.18);
+}
+
+/* ── Media slot ── */
+.work-media {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background: var(--dark);
+  flex-shrink: 0;
+}
+
+/* Real image */
+.work-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Gradient placeholder (used when no screenshot) */
+.work-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.ph-icon {
+  font-size: 4.5rem;
+  filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.35));
+  display: block;
+}
+
+.ph-label {
+  font-family: var(--font-comic);
+  font-size: 0.82rem;
+  letter-spacing: 3px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── Carousel ── */
+.work-carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.carousel-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-slide .work-placeholder,
+.carousel-slide .work-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Prev / Next arrows */
+.carousel-prev,
+.carousel-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 34px;
+  height: 34px;
+  background: rgba(13, 13, 13, 0.8);
+  color: var(--yellow);
+  border: 2px solid var(--yellow);
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s, opacity 0.15s;
+  opacity: 0.75;
+}
+
+.carousel-prev { left: 0.5rem; }
+.carousel-next { right: 0.5rem; }
+
+.work-carousel:hover .carousel-prev,
+.work-carousel:hover .carousel-next { opacity: 1; }
+
+.carousel-prev:hover,
+.carousel-next:hover {
+  background: var(--yellow);
+  color: var(--ink);
+}
+
+/* Dot indicators */
+.carousel-dots {
+  position: absolute;
+  bottom: 0.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.4rem;
+  z-index: 5;
+}
+
+.c-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  border: 2px solid rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.c-dot.active {
+  background: var(--yellow);
+  border-color: var(--ink);
+  transform: scale(1.3);
+}
+
+/* ── Content ── */
+.work-content {
+  padding: 1.4rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  flex: 1;
+}
+
+.work-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.work-badge {
+  font-family: var(--font-comic);
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+  padding: 0.18rem 0.65rem;
+  border-radius: 4px;
+  border: 2px solid var(--ink);
+  background: var(--yellow);
+  color: var(--ink);
+}
+
+.work-badge.badge-live    { background: #00C2FF; }
+.work-badge.badge-android { background: var(--pink); color: var(--white); border-color: var(--pink); }
+.work-badge.badge-meta    { background: var(--purple); color: var(--cream); border-color: var(--purple); }
+
+.work-title {
+  font-family: var(--font-comic);
+  font-size: 1.7rem;
+  color: var(--ink);
+  letter-spacing: 2px;
+  line-height: 1.1;
+}
+
+.work-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.work-chip {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+  padding: 0.15rem 0.65rem;
+  border-radius: 50px;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  color: var(--yellow);
+}
+
+.work-desc {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  color: #333;
+  line-height: 1.7;
+  flex: 1;
+}
+
+/* ── Action buttons ── */
+.work-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 2px solid rgba(0, 0, 0, 0.08);
+}
+
+.work-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-comic);
+  font-size: 0.88rem;
+  letter-spacing: 1px;
+  padding: 0.45rem 1.1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  border: var(--border-thin);
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform 0.13s, box-shadow 0.13s, background 0.13s, color 0.13s;
+  cursor: pointer;
+}
+
+.work-btn:hover  { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 var(--ink); }
+.work-btn:active { transform: translate(1px,1px);   box-shadow: 1px 1px 0 var(--ink); }
+
+.work-btn-primary   { background: var(--ink);   color: var(--yellow); }
+.work-btn-secondary { background: var(--cream);  color: var(--ink);    }
+.work-btn-purple    { background: var(--purple); color: var(--cream);  border-color: var(--purple); }
+
+.work-btn-primary:hover   { background: var(--pink); color: var(--white); }
+.work-btn-secondary:hover { background: var(--yellow); }
+.work-btn-purple:hover    { background: var(--pink); border-color: var(--pink); }

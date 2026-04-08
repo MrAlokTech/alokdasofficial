@@ -1,29 +1,29 @@
 /**
  * script.js — Main Entry Point
  *
- * Classic (non-module) script. All dependencies are loaded as
- * separate <script> tags in index.html before this file.
- *
- * Load order in index.html:
- *   config.js → typewriter.js → countdown.js → preloader.js
- *   → interactions.js → script.js (this file)
+ * Classic IIFE. All dependencies loaded via <script> tags in index.html.
+ * Load order: config → typewriter → preloader → interactions → nav → script
  *
  * This file only calls — no logic lives here.
  */
 
 (function () {
-  // 1. Mask content while preloader is visible
   document.body.classList.add('preloading');
 
-  // 2. Wire all interactions (DOM is inline — available immediately)
-  setupCTA();
+  setupNav();
+  setupCarousels();
   setupPanelAnimations();
+  setupSkillBars();
   setupBursts();
   setupPanelKeys();
+  setupContactForm();
+  renderProjectsGrid();
 
-  // 3. Preloader → slide away → start page animations
+  /* Dynamic year in footer */
+  var yearEl = document.getElementById('footer-year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
   initPreloader(function () {
     startTypewriter();
-    setTimeout(startCountdown, 300);
   });
 })();

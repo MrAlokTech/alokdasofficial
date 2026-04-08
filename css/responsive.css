@@ -1,122 +1,88 @@
-/* ============================================================
+/* ================================================================
    responsive.css — All Media Queries
-   Breakpoints:
-     768px  — tablet
-     600px  — mobile
-     400px  — small mobile
-   Always add new responsive overrides here, not in components.
-   ============================================================ */
+   Breakpoints: 900px · 768px · 600px · 400px
+   ONLY add @media rules here — never in component files.
+   ================================================================ */
+
+/* ── Tablet (≤900px) ── */
+@media (max-width: 900px) {
+  .about-grid { grid-template-columns: 1fr; }
+  .contact-layout { grid-template-columns: 1fr; }
+
+  .contact-speech::after,
+  .contact-speech::before { display: none; }
+}
 
 /* ── Tablet (≤768px) ── */
 @media (max-width: 768px) {
-  .hero-panel {
-    padding: 5rem 1.2rem 2rem;
-    align-items: flex-start;
+  /* Nav: hide links, show hamburger */
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex; }
+
+  .hero-section {
+    padding: calc(var(--nav-height) + 1.5rem) 1.2rem 3rem;
   }
 
-  .hero-inner { gap: 1rem; }
+  .about-section,
+  .projects-section,
+  .games-hub-section,
+  .contact-section { padding: 4rem 1.2rem; }
 
-  .redirect-box { padding: 1.2rem 1.2rem; }
-
-  .panels-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.2rem;
-  }
-
-  .teaser-section { padding: 3rem 1.2rem; }
+  .projects-grid { grid-template-columns: repeat(2, 1fr); }
+  .works-grid     { grid-template-columns: 1fr; }
 }
 
 /* ── Mobile (≤600px) ── */
 @media (max-width: 600px) {
   .burst { display: none; }
 
-  .hero-panel {
+  .comic-nav { padding: 0 1rem; }
+  .nav-logo { font-size: 1.6rem; }
+
+  .hero-section {
     min-height: 100svh;
-    padding: 4.5rem 1rem 2rem;
+    padding: calc(var(--nav-height) + 1rem) 1rem 5rem;
     align-items: center;
   }
 
-  .hero-inner {
-    gap: 0.9rem;
-    align-items: center;
-  }
+  .hero-inner { gap: 0.9rem; }
 
-  .issue-tag {
-    font-size: 0.8rem;
-    letter-spacing: 1.5px;
-    padding: 0.25rem 0.9rem;
-  }
+  .issue-tag { font-size: 0.8rem; letter-spacing: 1.5px; }
 
   .speech-bubble {
     font-size: 0.9rem;
     padding: 0.75rem 1.1rem;
     max-width: 100%;
-    width: 100%;
   }
 
-  .hero-sub {
-    font-size: 0.82rem;
-    padding: 0.35rem 0.9rem;
-    text-align: center;
-  }
+  .hero-sub { font-size: 0.82rem; padding: 0.35rem 0.9rem; }
 
-  .redirect-box {
-    padding: 1rem 1rem;
-    max-width: 100%;
-  }
+  .hero-cta-group { flex-direction: column; width: 100%; }
+  .hero-primary-btn,
+  .resume-btn { text-align: center; width: 100%; }
 
-  .redirect-label { font-size: 1rem; }
+  .projects-grid { grid-template-columns: 1fr; }
 
-  .cta-btn {
-    font-size: 1.1rem;
-    padding: 0.7rem 1.4rem;
-    width: 100%;
-    text-align: center;
-  }
+  .games-grid { grid-template-columns: 1fr; }
 
-  .resume-btn {
-    font-size: 0.95rem;
-    padding: 0.6rem 1.4rem;
-    width: 100%;
-    text-align: center;
-  }
+  .secondary-cta { font-size: 1.1rem; width: 100%; text-align: center; }
 
-  .panels-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .secondary-cta {
-    font-size: 1.1rem;
-    padding: 0.75rem 1.5rem;
-    width: 100%;
-    text-align: center;
-  }
-
-  .footer-strip {
-    flex-direction: column;
-    gap: 0.3rem;
-    text-align: center;
-  }
-
+  .footer-strip { flex-direction: column; gap: 0.3rem; text-align: center; }
   .footer-divider { display: none; }
 }
 
 /* ── Small mobile (≤400px) ── */
 @media (max-width: 400px) {
   .title-line-1,
-  .title-line-2 {
-    font-size: clamp(4rem, 22vw, 6rem);
-  }
-
-  .countdown-display { font-size: clamp(2.5rem, 12vw, 4rem); }
+  .title-line-2 { font-size: clamp(4rem, 22vw, 6rem); }
 
   .pl-letter { font-size: clamp(1.8rem, 7vw, 3rem); }
-
   .preloader-icon { font-size: 2.5rem; }
+
+  .section-heading { font-size: clamp(1.8rem, 9vw, 2.5rem); }
 }
 
-/* ── Reduced motion accessibility ── */
+/* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Element Match — Alok Das Game Zone</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@700&display=swap");
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: #0d0d0d;
+        font-family: "Comic Neue", cursive;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem 1rem 2rem;
+        color: #fffef0;
+      }
+      .back {
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        background: #ffe600;
+        color: #0d0d0d;
+        font-weight: 700;
+        padding: 0.4rem 1rem;
+        border-radius: 8px;
+        border: 3px solid #0d0d0d;
+        text-decoration: none;
+        font-size: 0.9rem;
+        box-shadow: 3px 3px 0 #0d0d0d;
+        z-index: 10;
+      }
+      h1 {
+        font-family: "Bangers", cursive;
+        font-size: 3rem;
+        color: #ffe600;
+        letter-spacing: 4px;
+        text-shadow: 3px 3px 0 #ff2d6b;
+        margin: 0.5rem 0;
+        text-align: center;
+      }
+      .meta {
+        font-size: 0.85rem;
+        color: #aaa;
+        margin-bottom: 0.8rem;
+        text-align: center;
+      }
+      .hud {
+        display: flex;
+        gap: 2rem;
+        justify-content: center;
+        margin-bottom: 1rem;
+      }
+      .hud-item {
+        text-align: center;
+      }
+      .hud-label {
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+        color: #aaa;
+        text-transform: uppercase;
+      }
+      .hud-val {
+        font-family: "Bangers", cursive;
+        font-size: 2rem;
+        color: #ffe600;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.6rem;
+        max-width: 460px;
+        width: 100%;
+        margin: 0 auto;
+      }
+      .card {
+        aspect-ratio: 1;
+        background: #1a0030;
+        border: 3px solid #6a0dad;
+        border-radius: 10px;
+        cursor: pointer;
+        position: relative;
+        perspective: 600px;
+        transition: transform 0.35s;
+      }
+      .card.flipped .inner,
+      .card.matched .inner {
+        transform: rotateY(180deg);
+      }
+      .card.matched {
+        border-color: #00c2ff;
+        cursor: default;
+      }
+      .inner {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.35s;
+      }
+      .front,
+      .back {
+        position: absolute;
+        inset: 0;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        backface-visibility: hidden;
+      }
+      .front {
+        background: #1a0030;
+        font-size: 1.8rem;
+        color: #6a0dad;
+        font-family: "Bangers", cursive;
+        letter-spacing: 2px;
+      }
+      .front span.q {
+        font-size: 2rem;
+      }
+      .back {
+        background: #fffef0;
+        transform: rotateY(180deg);
+        gap: 0.15rem;
+      }
+      .back .sym {
+        font-family: "Bangers", cursive;
+        font-size: 2rem;
+        color: #0d0d0d;
+        line-height: 1;
+      }
+      .back .num {
+        font-size: 0.6rem;
+        font-weight: 700;
+        color: #6a0dad;
+      }
+      .back .name {
+        font-size: 0.55rem;
+        font-weight: 700;
+        color: #333;
+        text-align: center;
+        padding: 0 4px;
+      }
+      .card.matched .back {
+        background: #00c2ff;
+      }
+      #msg {
+        font-family: "Bangers", cursive;
+        font-size: 1.4rem;
+        color: #ff2d6b;
+        text-align: center;
+        min-height: 1.8rem;
+        margin: 0.6rem 0;
+        letter-spacing: 2px;
+      }
+      button.restart {
+        background: #ffe600;
+        color: #0d0d0d;
+        font-family: "Bangers", cursive;
+        font-size: 1.3rem;
+        letter-spacing: 2px;
+        border: 3px solid #0d0d0d;
+        border-radius: 10px;
+        padding: 0.5rem 1.8rem;
+        cursor: pointer;
+        box-shadow: 4px 4px 0 #0d0d0d;
+        margin-top: 0.5rem;
+        transition: transform 0.1s;
+      }
+      button.restart:hover {
+        transform: translate(-2px, -2px);
+      }
+    </style>
+  </head>
+  <body>
+    <a href="../index.html#games" class="back">← BACK</a>
+    <h1>🧪 ELEMENT MATCH</h1>
+    <p class="meta">
+      Match the chemical element pairs! Flip two cards at a time.
+    </p>
+
+    <div class="hud">
+      <div class="hud-item">
+        <div class="hud-label">Moves</div>
+        <div class="hud-val" id="moves">0</div>
+      </div>
+      <div class="hud-item">
+        <div class="hud-label">Pairs</div>
+        <div class="hud-val" id="pairs">0 / 8</div>
+      </div>
+      <div class="hud-item">
+        <div class="hud-label">Time</div>
+        <div class="hud-val" id="timer">0s</div>
+      </div>
+    </div>
+
+    <div id="msg">Flip a card to begin!</div>
+    <div class="grid" id="grid"></div>
+    <button class="restart" id="restart">↺ NEW GAME</button>
+
+    <script>
+      var ELEMENTS = [
+        { sym: "H", num: 1, name: "Hydrogen" },
+        { sym: "He", num: 2, name: "Helium" },
+        { sym: "Li", num: 3, name: "Lithium" },
+        { sym: "C", num: 6, name: "Carbon" },
+        { sym: "N", num: 7, name: "Nitrogen" },
+        { sym: "O", num: 8, name: "Oxygen" },
+        { sym: "Na", num: 11, name: "Sodium" },
+        { sym: "K", num: 19, name: "Potassium" },
+      ];
+
+      var movesEl = document.getElementById("moves"),
+        pairsEl = document.getElementById("pairs"),
+        timerEl = document.getElementById("timer"),
+        msgEl = document.getElementById("msg"),
+        grid = document.getElementById("grid");
+      var first = null,
+        busy = false,
+        matched = 0,
+        moves = 0,
+        seconds = 0,
+        tick = null,
+        started = false;
+
+      function shuffle(a) {
+        for (var i = a.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var t = a[i];
+          a[i] = a[j];
+          a[j] = t;
+        }
+        return a;
+      }
+
+      function build() {
+        clearInterval(tick);
+        first = null;
+        busy = false;
+        matched = 0;
+        moves = 0;
+        seconds = 0;
+        started = false;
+        movesEl.textContent = 0;
+        pairsEl.textContent = "0 / 8";
+        timerEl.textContent = "0s";
+        msgEl.textContent = "Flip a card to begin!";
+        grid.innerHTML = "";
+        var cards = shuffle(ELEMENTS.concat(ELEMENTS));
+        cards.forEach(function (el, idx) {
+          var card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML =
+            '<div class="inner"><div class="front"><span class="q">?</span></div><div class="back"><div class="sym">' +
+            el.sym +
+            '</div><div class="num">' +
+            el.num +
+            '</div><div class="name">' +
+            el.name +
+            "</div></div></div>";
+          card.dataset.sym = el.sym;
+          card.addEventListener("click", function () {
+            flip(card);
+          });
+          grid.appendChild(card);
+        });
+      }
+
+      function flip(card) {
+        if (
+          busy ||
+          card.classList.contains("flipped") ||
+          card.classList.contains("matched")
+        )
+          return;
+        if (!started) {
+          started = true;
+          tick = setInterval(function () {
+            seconds++;
+            timerEl.textContent = seconds + "s";
+          }, 1000);
+        }
+        card.classList.add("flipped");
+        if (!first) {
+          first = card;
+          return;
+        }
+        moves++;
+        movesEl.textContent = moves;
+        if (first.dataset.sym === card.dataset.sym) {
+          first.classList.add("matched");
+          card.classList.add("matched");
+          matched++;
+          pairsEl.textContent = matched + " / 8";
+          first = null;
+          if (matched === 8) {
+            clearInterval(tick);
+            msgEl.textContent =
+              "🎉 YOU WIN! " + moves + " moves in " + seconds + "s!";
+          }
+        } else {
+          busy = true;
+          var f = first;
+          first = null;
+          setTimeout(function () {
+            f.classList.remove("flipped");
+            card.classList.remove("flipped");
+            busy = false;
+          }, 900);
+        }
+      }
+
+      document.getElementById("restart").addEventListener("click", build);
+      build();
+
+      /* ── Tracking patches ── */
+      var _memoryStarted = false;
+      /* Wrap flip() to detect game start */
+      var _origFlip = flip;
+      flip = function (card) {
+        if (!_memoryStarted) {
+          _memoryStarted = true;
+          if (typeof window.trackEvent === 'function') {
+            window.trackEvent('game_start', 'Element Match', null);
+          }
+        }
+        _origFlip(card);
+        /* Detect win: matched === 8 after this flip */
+        if (matched === 8) {
+          if (typeof window.trackEvent === 'function') {
+            window.trackEvent('game_win', 'Element Match', { moves: moves, seconds: seconds });
+          }
+        }
+      };
+    </script>
+
+    <!-- Firebase analytics tracker -->
+    <script src="/js/firebase-tracker.js"></script>
+  </body>
+</html>

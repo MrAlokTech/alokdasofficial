@@ -302,5 +302,55 @@
 
     </main>
 
+    <!-- Firebase tracker — inlined to keep 404.html fully self-contained -->
+    <script>
+    (function(){
+      var FIREBASE_CONFIG={apiKey:'AIzaSyAaotynXqso2-gviIfaDfnYpWpZ_D4KPVc',authDomain:'alokdasofficial-69f96.firebaseapp.com',projectId:'alokdasofficial',storageBucket:'alokdasofficial.firebasestorage.app',messagingSenderId:'315463239297',appId:'1:315463239297:web:930a164891d386583f2f80'};
+      var SDK_BASE='https://www.gstatic.com/firebasejs/10.12.2/';
+      var loaded=0,scripts=[SDK_BASE+'firebase-app-compat.js',SDK_BASE+'firebase-auth-compat.js',SDK_BASE+'firebase-firestore-compat.js'];
+      var SESSION_ID_KEY='_pt_sid',SESSION_TS_KEY='_pt_sts',SESSION_TTL=30*60*1000;
+      function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,9);}
+      function detectBot(){var s=0;try{if(navigator.webdriver)s++;if(!navigator.languages||!navigator.languages.length)s++;if(/bot|crawl|spider|headless|phantom|selenium/.test((navigator.userAgent||'').toLowerCase()))s++;if(window.screen.width<10)s++;}catch(e){}return s>=2;}
+      function getSaved(){try{var sid=localStorage.getItem(SESSION_ID_KEY),ts=parseInt(localStorage.getItem(SESSION_TS_KEY)||'0',10);if(sid&&(Date.now()-ts)<SESSION_TTL)return sid;}catch(e){}return null;}
+      function saveSession(sid){try{localStorage.setItem(SESSION_ID_KEY,sid);localStorage.setItem(SESSION_TS_KEY,String(Date.now()));}catch(e){}}
+      function touch(){try{localStorage.setItem(SESSION_TS_KEY,String(Date.now()));}catch(e){}}
+      function wireButtons(ref){
+        ['btn-home','btn-resume'].forEach(function(id){
+          var el=document.getElementById(id);
+          if(el)el.addEventListener('click',function(){
+            ref.update({events:firebase.firestore.FieldValue.arrayUnion({ts:new Date().toISOString(),type:'404_btn_click',target:id,detail:{href:el.getAttribute('href')}}),lastSeen:firebase.firestore.FieldValue.serverTimestamp()});
+          });
+        });
+      }
+      function init(){
+        try{
+          if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
+          var db=firebase.firestore();
+          firebase.auth().signInAnonymously().then(function(r){
+            var savedSid=getSaved();
+            if(savedSid){
+              var ref=db.collection('Portfolio').doc(savedSid);
+              touch();
+              ref.update({events:firebase.firestore.FieldValue.arrayUnion({ts:new Date().toISOString(),type:'page_view_404',target:location.pathname,detail:{url:location.href,domain:location.hostname}}),lastSeen:firebase.firestore.FieldValue.serverTimestamp()});
+              wireButtons(ref);
+            } else {
+              var sid=genId();
+              var ref=db.collection('Portfolio').doc(sid);
+              ref.set({uid:r.user.uid,sessionId:sid,startedAt:firebase.firestore.FieldValue.serverTimestamp(),domain:location.hostname,entryUrl:location.href,entryPath:location.pathname,pageTitle:document.title,referrer:document.referrer||null,ua:navigator.userAgent,suspectedBot:detectBot(),screen:{w:screen.width,h:screen.height},events:[]}).then(function(){
+                saveSession(sid);
+                ref.update({events:firebase.firestore.FieldValue.arrayUnion({ts:new Date().toISOString(),type:'page_view_404',target:location.pathname,detail:{url:location.href,domain:location.hostname}}),lastSeen:firebase.firestore.FieldValue.serverTimestamp()});
+                wireButtons(ref);
+              });
+            }
+          }).catch(function(){});
+        }catch(e){}
+      }
+      scripts.forEach(function(url){
+        var s=document.createElement('script');s.src=url;s.async=false;
+        s.onload=function(){loaded++;if(loaded===scripts.length&&typeof firebase!=='undefined')init();};
+        document.head.appendChild(s);
+      });
+    })();
+    </script>
   </body>
 </html>

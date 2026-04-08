@@ -1,14 +1,19 @@
 /* ================================================================
    style.css — Main Stylesheet Entry Point
-   All component styles live in css/.
-   Import order matters: tokens → base → components → responsive.
+   Import order: tokens → base → nav → bursts → preloader
+                 → hero → about → projects → games-section
+                 → contact → footer → responsive
    ================================================================ */
 
 @import url('css/tokens.css');
 @import url('css/base.css');
+@import url('css/nav.css');
 @import url('css/bursts.css');
 @import url('css/preloader.css');
 @import url('css/hero.css');
-@import url('css/teaser.css');
+@import url('css/about.css');
+@import url('css/projects.css');
+@import url('css/games-section.css');
+@import url('css/contact.css');
 @import url('css/footer.css');
 @import url('css/responsive.css');

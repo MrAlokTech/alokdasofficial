@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Tic-Tac-Toe — Alok Das Game Zone</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0D0D0D;font-family:'Comic Neue',cursive;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;color:#FFFEF0}
+.back{position:fixed;top:1rem;left:1rem;background:#FFE600;color:#0D0D0D;font-weight:700;padding:.4rem 1rem;border-radius:8px;border:3px solid #0D0D0D;text-decoration:none;font-size:.9rem;box-shadow:3px 3px 0 #0D0D0D}
+h1{font-family:'Bangers',cursive;font-size:3rem;color:#FFE600;letter-spacing:4px;text-shadow:3px 3px 0 #FF2D6B;margin-bottom:.4rem;text-align:center}
+.meta{font-size:.85rem;color:#aaa;margin-bottom:.8rem;text-align:center}
+.scoreboard{display:flex;gap:1.5rem;justify-content:center;margin-bottom:.8rem}
+.sc{text-align:center;background:#1A0030;border:3px solid #6A0DAD;border-radius:10px;padding:.5rem 1.2rem}
+.sc-label{font-size:.68rem;letter-spacing:2px;color:#aaa;text-transform:uppercase;display:block}
+.sc-val{font-family:'Bangers',cursive;font-size:1.8rem}
+.sc-val.x{color:#FF2D6B}.sc-val.d{color:#FFE600}.sc-val.o{color:#00C2FF}
+#msg{font-family:'Bangers',cursive;font-size:1.5rem;text-align:center;min-height:2rem;margin:.4rem 0;letter-spacing:2px;color:#FFE600}
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:300px;height:300px;margin:0 auto}
+.cell{background:#1A0030;border:3px solid #6A0DAD;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:3rem;cursor:pointer;transition:background .15s,border-color .15s;user-select:none}
+.cell:hover:not(.taken){background:#2a0050;border-color:#FFE600}
+.cell.x{color:#FF2D6B;cursor:default}.cell.o{color:#00C2FF;cursor:default}
+.cell.win-cell{background:#1A0030;border-color:#FFE600;box-shadow:0 0 12px #FFE600}
+button.restart{background:#FFE600;color:#0D0D0D;font-family:'Bangers',cursive;font-size:1.3rem;letter-spacing:2px;border:3px solid #0D0D0D;border-radius:10px;padding:.5rem 1.8rem;cursor:pointer;box-shadow:4px 4px 0 #0D0D0D;margin-top:.8rem;transition:transform .1s}
+button.restart:hover{transform:translate(-2px,-2px)}
+.mode-row{display:flex;gap:.6rem;margin-bottom:.5rem}
+.mode-btn{font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;padding:.35rem 1rem;border-radius:8px;border:3px solid #6A0DAD;background:#1A0030;color:#FFFEF0;cursor:pointer;transition:background .15s}
+.mode-btn.active,.mode-btn:hover{background:#6A0DAD;border-color:#FFE600;color:#FFE600}
+</style>
+</head>
+<body>
+<a href="../index.html#games" class="back">← BACK</a>
+<h1>⭕ TIC-TAC-TOE</h1>
+<p class="meta">You are <strong style="color:#FF2D6B">X</strong> — Computer is <strong style="color:#00C2FF">O</strong></p>
+
+<div class="scoreboard">
+  <div class="sc"><span class="sc-label">You (X)</span><span class="sc-val x" id="sx">0</span></div>
+  <div class="sc"><span class="sc-label">Draw</span><span class="sc-val d" id="sd">0</span></div>
+  <div class="sc"><span class="sc-label">CPU (O)</span><span class="sc-val o" id="so">0</span></div>
+</div>
+
+<div class="mode-row">
+  <button class="mode-btn active" id="m-easy">Easy</button>
+  <button class="mode-btn" id="m-hard">Smart</button>
+</div>
+
+<div id="msg">Your turn! ✏️</div>
+<div class="board" id="board"></div>
+<button class="restart" id="restart">↺ NEW GAME</button>
+
+<script>
+var WINS=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+var board=Array(9).fill(''),gameOver=false,mode='easy',scores={x:0,d:0,o:0};
+var sxEl=document.getElementById('sx'),sdEl=document.getElementById('sd'),soEl=document.getElementById('so'),msgEl=document.getElementById('msg');
+var cells=[];
+
+document.getElementById('m-easy').addEventListener('click',function(){mode='easy';setMode(this);});
+document.getElementById('m-hard').addEventListener('click',function(){mode='hard';setMode(this);});
+function setMode(btn){
+  document.querySelectorAll('.mode-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  reset();
+}
+
+function buildBoard(){
+  var el=document.getElementById('board');el.innerHTML='';cells=[];
+  for(var i=0;i<9;i++){
+    (function(idx){
+      var c=document.createElement('div');c.className='cell';
+      c.addEventListener('click',function(){playerMove(idx);});
+      el.appendChild(c);cells.push(c);
+    })(i);
+  }
+}
+
+function render(){
+  cells.forEach(function(c,i){
+    c.textContent=board[i];
+    c.className='cell'+(board[i]?' taken '+board[i]:'');
+  });
+}
+
+function checkWin(b,p){
+  return WINS.find(function(line){return line.every(function(i){return b[i]===p;});});
+}
+
+function playerMove(idx){
+  if(gameOver||board[idx])return;
+  board[idx]='X';render();
+  var w=checkWin(board,'X');
+  if(w){finish('X',w);return;}
+  if(board.every(function(v){return v;})){finish(null);return;}
+  msgEl.textContent='CPU thinking…';
+  setTimeout(cpuMove,350);
+}
+
+function cpuMove(){
+  var idx=mode==='hard'?bestMove():randomOrBlock();
+  if(idx===-1)return;
+  board[idx]='O';render();
+  var w=checkWin(board,'O');
+  if(w){finish('O',w);return;}
+  if(board.every(function(v){return v;})){finish(null);return;}
+  msgEl.textContent='Your turn! ✏️';
+}
+
+function randomOrBlock(){
+  // try to block player win
+  for(var i=0;i<9;i++){
+    if(!board[i]){var t=board.slice();t[i]='X';if(checkWin(t,'X'))return i;}
+  }
+  var empty=board.reduce(function(a,v,i){if(!v)a.push(i);return a;},[]);
+  return empty[Math.floor(Math.random()*empty.length)]||-1;
+}
+
+function bestMove(){
+  // try win first
+  for(var i=0;i<9;i++){if(!board[i]){var t=board.slice();t[i]='O';if(checkWin(t,'O'))return i;}}
+  // block
+  for(var i=0;i<9;i++){if(!board[i]){var t=board.slice();t[i]='X';if(checkWin(t,'X'))return i;}}
+  if(!board[4])return 4;
+  var corners=[0,2,6,8].filter(function(i){return !board[i];});
+  if(corners.length)return corners[Math.floor(Math.random()*corners.length)];
+  return randomOrBlock();
+}
+
+function finish(winner,line){
+  gameOver=true;
+  if(winner){
+    scores[winner.toLowerCase()]++;
+    line.forEach(function(i){cells[i].classList.add('win-cell');});
+    msgEl.textContent=winner==='X'?'🎉 YOU WIN!':'💻 CPU WINS!';
+  } else {
+    scores.d++;
+    msgEl.textContent="🤝 IT'S A DRAW!";
+  }
+  sxEl.textContent=scores.x;sdEl.textContent=scores.d;soEl.textContent=scores.o;
+}
+
+function reset(){board=Array(9).fill('');gameOver=false;msgEl.textContent='Your turn! ✏️';buildBoard();render();}
+document.getElementById('restart').addEventListener('click',reset);
+buildBoard();
+
+/* ── Tracking patches ── */
+var _tttStarted = false;
+var _origPlayerMove = playerMove;
+playerMove = function(idx){
+  if(!_tttStarted && !gameOver && !board[idx]){
+    _tttStarted = true;
+    if(typeof window.trackEvent === 'function'){
+      window.trackEvent('game_start', 'Tic-Tac-Toe', { mode: mode });
+    }
+  }
+  _origPlayerMove(idx);
+};
+var _origFinish = finish;
+finish = function(winner, line){
+  _origFinish(winner, line);
+  _tttStarted = false; /* reset for next game */
+  if(typeof window.trackEvent === 'function'){
+    var result = winner ? (winner === 'X' ? 'player_win' : 'cpu_win') : 'draw';
+    window.trackEvent('game_over', 'Tic-Tac-Toe', { result: result, mode: mode });
+  }
+};
+</script>
+<!-- Firebase analytics tracker -->
+<script src="/js/firebase-tracker.js"></script>
+</body>
+</html>

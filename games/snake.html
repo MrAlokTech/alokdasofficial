@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Snake — Alok Das Game Zone</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0D0D0D;font-family:'Segoe UI',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:1rem;color:#FFFEF0}
+  .back{position:fixed;top:1rem;left:1rem;background:#FFE600;color:#0D0D0D;font-weight:700;padding:.4rem 1rem;border-radius:8px;border:3px solid #0D0D0D;text-decoration:none;font-size:.9rem;box-shadow:3px 3px 0 #0D0D0D}
+  h1{font-family:'Bangers',cursive;font-size:3rem;color:#FFE600;letter-spacing:4px;text-shadow:3px 3px 0 #FF2D6B;margin-bottom:.5rem;text-align:center}
+  .meta{font-size:.85rem;color:#aaa;margin-bottom:1rem;text-align:center}
+  .score-bar{display:flex;gap:2rem;justify-content:center;margin-bottom:.8rem}
+  .score-item{text-align:center}
+  .score-label{font-size:.7rem;letter-spacing:2px;color:#aaa;text-transform:uppercase}
+  .score-val{font-family:'Bangers',cursive;font-size:2rem;color:#FFE600}
+  canvas{border:5px solid #FFE600;border-radius:4px;box-shadow:6px 6px 0 #FF2D6B;display:block;background:#1A0030}
+  .controls{margin-top:1rem;display:flex;gap:.5rem;flex-direction:column;align-items:center}
+  .btn-row{display:flex;gap:.5rem}
+  .ctrl-btn{background:#FFE600;color:#0D0D0D;font-weight:700;border:3px solid #0D0D0D;border-radius:8px;padding:.5rem .9rem;font-size:1rem;cursor:pointer;box-shadow:3px 3px 0 #0D0D0D;transition:transform .1s}
+  .ctrl-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #0D0D0D}
+  #msg{font-family:'Bangers',cursive;font-size:1.5rem;color:#FF2D6B;text-align:center;min-height:2rem;letter-spacing:2px}
+  @import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap');
+</style>
+</head>
+<body>
+<a href="../index.html#games" class="back">← BACK</a>
+<h1>🐍 SNAKE</h1>
+<p class="meta">Arrow Keys / WASD · Mobile: D-pad below</p>
+
+<div class="score-bar">
+  <div class="score-item"><div class="score-label">Score</div><div class="score-val" id="score">0</div></div>
+  <div class="score-item"><div class="score-label">Best</div><div class="score-val" id="best">0</div></div>
+</div>
+
+<div id="msg">Press any arrow key to start!</div>
+<canvas id="c" width="400" height="400"></canvas>
+
+<div class="controls">
+  <div class="btn-row"><button class="ctrl-btn" data-dir="UP">▲</button></div>
+  <div class="btn-row">
+    <button class="ctrl-btn" data-dir="LEFT">◀</button>
+    <button class="ctrl-btn" data-dir="DOWN">▼</button>
+    <button class="ctrl-btn" data-dir="RIGHT">▶</button>
+  </div>
+  <div class="btn-row"><button class="ctrl-btn" id="restart-btn">↺ RESTART</button></div>
+</div>
+
+<script>
+var CELL=20,COLS=20,ROWS=20;
+var canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+var scoreEl=document.getElementById('score'),bestEl=document.getElementById('best'),msgEl=document.getElementById('msg');
+var snake,dir,nextDir,food,score,running,timer;
+var best=parseInt(localStorage.getItem('snake_best')||'0');
+bestEl.textContent=best;
+
+function init(){
+  snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];
+  dir={x:1,y:0};nextDir={x:1,y:0};
+  score=0;scoreEl.textContent=0;
+  running=false;
+  placeFood();draw();
+}
+
+function placeFood(){
+  var ok=false;
+  while(!ok){
+    food={x:Math.floor(Math.random()*COLS),y:Math.floor(Math.random()*ROWS)};
+    ok=!snake.some(function(s){return s.x===food.x&&s.y===food.y;});
+  }
+}
+
+function draw(){
+  ctx.fillStyle='#1A0030';ctx.fillRect(0,0,400,400);
+  // grid dots
+  ctx.fillStyle='rgba(255,255,255,0.04)';
+  for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++){ctx.beginPath();ctx.arc(c*CELL+CELL/2,r*CELL+CELL/2,1.5,0,Math.PI*2);ctx.fill();}
+  // food
+  ctx.fillStyle='#FF2D6B';ctx.beginPath();ctx.arc(food.x*CELL+CELL/2,food.y*CELL+CELL/2,CELL/2-2,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='#FFE600';ctx.lineWidth=2;ctx.stroke();
+  // snake
+  snake.forEach(function(seg,i){
+    ctx.fillStyle=i===0?'#FFE600':'#00C2FF';
+    ctx.strokeStyle='#0D0D0D';ctx.lineWidth=2;
+    ctx.beginPath();ctx.roundRect(seg.x*CELL+1,seg.y*CELL+1,CELL-2,CELL-2,3);
+    ctx.fill();ctx.stroke();
+  });
+}
+
+function step(){
+  dir=nextDir;
+  var head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
+  // wall wrap
+  head.x=(head.x+COLS)%COLS;head.y=(head.y+ROWS)%ROWS;
+  // self collision
+  if(snake.some(function(s){return s.x===head.x&&s.y===head.y;})){gameOver();return;}
+  snake.unshift(head);
+  if(head.x===food.x&&head.y===food.y){
+    score++;scoreEl.textContent=score;
+    if(score>best){best=score;bestEl.textContent=best;localStorage.setItem('snake_best',best);}
+    placeFood();
+  } else {snake.pop();}
+  draw();
+}
+
+function gameOver(){
+  running=false;clearInterval(timer);
+  msgEl.textContent='GAME OVER! Score: '+score+' — Press ↺ to retry';
+}
+
+function start(){
+  if(running)return;
+  running=true;msgEl.textContent='';
+  var speed=Math.max(80,150-score*5);
+  clearInterval(timer);
+  timer=setInterval(step,speed);
+}
+
+// Keyboard
+document.addEventListener('keydown',function(e){
+  var map={'ArrowUp':{x:0,y:-1},'ArrowDown':{x:0,y:1},'ArrowLeft':{x:-1,y:0},'ArrowRight':{x:1,y:0},'w':{x:0,y:-1},'s':{x:0,y:1},'a':{x:-1,y:0},'d':{x:1,y:0}};
+  var nd=map[e.key];
+  if(!nd)return;
+  e.preventDefault();
+  if(nd.x===-dir.x&&nd.y===-dir.y)return;
+  nextDir=nd;
+  if(!running)start();
+});
+
+// D-pad buttons
+document.querySelectorAll('[data-dir]').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var map={UP:{x:0,y:-1},DOWN:{x:0,y:1},LEFT:{x:-1,y:0},RIGHT:{x:1,y:0}};
+    var nd=map[btn.getAttribute('data-dir')];
+    if(nd.x===-dir.x&&nd.y===-dir.y)return;
+    nextDir=nd;
+    if(!running)start();
+  });
+});
+
+document.getElementById('restart-btn').addEventListener('click',function(){
+  clearInterval(timer);init();
+});
+
+// Touch swipe
+var tx,ty;
+canvas.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
+canvas.addEventListener('touchend',function(e){
+  var dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;
+  var nd;
+  if(Math.abs(dx)>Math.abs(dy))nd=dx>0?{x:1,y:0}:{x:-1,y:0};
+  else nd=dy>0?{x:0,y:1}:{x:0,y:-1};
+  if(nd.x===-dir.x&&nd.y===-dir.y)return;
+  nextDir=nd;if(!running)start();
+},{passive:true});
+
+init();
+</script>
+<script src="/js/firebase-tracker.js"></script>
+<script>
+  /* Patch snake game functions to emit tracking events */
+  var _snakeGameStarted = false;
+
+  /* Patch start() to emit game_start once */
+  var _origStart = window.start;
+  if (typeof start === 'function') {
+    var _snakeOrigStart = start;
+    start = function () {
+      if (!_snakeGameStarted) {
+        _snakeGameStarted = true;
+        if (typeof window.trackEvent === 'function') {
+          window.trackEvent('game_start', 'Snake', null);
+        }
+      }
+      _snakeOrigStart();
+    };
+  }
+
+  /* Patch gameOver() to emit game_over with score */
+  if (typeof gameOver === 'function') {
+    var _snakeOrigGameOver = gameOver;
+    gameOver = function () {
+      _snakeOrigGameOver();
+      if (typeof window.trackEvent === 'function') {
+        var s = parseInt((document.getElementById('score') || {}).textContent || '0', 10);
+        window.trackEvent('game_over', 'Snake', { score: s });
+      }
+    };
+  }
+</script>
+</body>
+</html>

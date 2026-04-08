@@ -1,24 +1,22 @@
 /* ============================================================
-   hero.css — Hero Panel, Title, Speech Bubble, Redirect Box,
-              Countdown, CTA Buttons, Resume Button
+   hero.css — Hero Panel (Home Section)
+   No longer contains redirect/countdown — just the hero.
    ============================================================ */
 
-/* ── Hero Panel ── */
-.hero-panel {
+.hero-section {
   position: relative;
   z-index: 10;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1.5rem;
+  padding: calc(var(--nav-height) + 2rem) 1.5rem 4rem;
   background: var(--yellow);
   border-bottom: var(--border-thick);
   overflow: hidden;
 }
 
-/* Decorative circles */
-.hero-panel::before {
+.hero-section::before {
   content: '';
   position: absolute;
   top: -60px; right: -80px;
@@ -26,22 +24,22 @@
   background: var(--pink);
   border-radius: 50%;
   border: var(--border-thick);
-  opacity: 0.4;
-  z-index: 0;
-}
-.hero-panel::after {
-  content: '';
-  position: absolute;
-  bottom: -80px; left: -60px;
-  width: 280px; height: 280px;
-  background: var(--blue);
-  border-radius: 50%;
-  border: var(--border-thick);
-  opacity: 0.3;
+  opacity: 0.35;
   z-index: 0;
 }
 
-/* ── Hero Inner ── */
+.hero-section::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: -60px;
+  width: 260px; height: 260px;
+  background: var(--blue);
+  border-radius: 50%;
+  border: var(--border-thick);
+  opacity: 0.28;
+  z-index: 0;
+}
+
 .hero-inner {
   position: relative;
   z-index: 2;
@@ -54,7 +52,7 @@
   gap: 1.2rem;
 }
 
-/* ── Issue Tag ── */
+/* Issue Tag */
 .issue-tag {
   background: var(--ink);
   color: var(--yellow);
@@ -64,10 +62,9 @@
   padding: 0.3rem 1.2rem;
   border-radius: 4px;
   animation: bounceIn 0.6s ease both;
-  animation-delay: 0.1s;
 }
 
-/* ── Hero Title ── */
+/* Hero Title */
 .hero-title {
   font-family: var(--font-comic);
   line-height: 0.9;
@@ -83,7 +80,7 @@
   text-shadow: 6px 6px 0 var(--pink), 12px 12px 0 var(--purple);
   display: block;
   animation: bounceIn 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-  animation-delay: 0.2s;
+  animation-delay: 0.15s;
 }
 
 .title-line-2 {
@@ -93,10 +90,10 @@
   text-shadow: 6px 6px 0 var(--blue), 12px 12px 0 var(--ink);
   display: block;
   animation: bounceIn 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-  animation-delay: 0.35s;
+  animation-delay: 0.3s;
 }
 
-/* ── Speech Bubble ── */
+/* Speech Bubble */
 .speech-bubble {
   position: relative;
   background: var(--white);
@@ -110,10 +107,9 @@
   max-width: 420px;
   text-align: left;
   animation: bounceIn 0.6s ease both;
-  animation-delay: 0.5s;
+  animation-delay: 0.45s;
 }
 
-/* Bubble tail (pointing down-left) */
 .speech-bubble::after {
   content: '';
   position: absolute;
@@ -122,6 +118,7 @@
   border-style: solid;
   border-color: var(--ink) transparent transparent transparent;
 }
+
 .speech-bubble::before {
   content: '';
   position: absolute;
@@ -132,10 +129,8 @@
   z-index: 1;
 }
 
-/* Blinking cursor */
 .cursor {
   animation: blink 0.8s step-end infinite;
-  font-weight: 400;
   color: var(--pink);
 }
 
@@ -144,7 +139,7 @@
   50%       { opacity: 0; }
 }
 
-/* ── Hero Sub-headline ── */
+/* Sub-headline */
 .hero-sub {
   font-family: var(--font-body);
   font-weight: 700;
@@ -156,91 +151,38 @@
   border-radius: 50px;
   box-shadow: var(--shadow-hover);
   animation: bounceIn 0.6s ease both;
-  animation-delay: 0.65s;
+  animation-delay: 0.6s;
 }
 
-/* ── Redirect / Countdown Box ── */
-.redirect-box {
-  background: var(--ink);
-  border: var(--border-thick);
-  border-radius: var(--radius);
-  padding: 1.5rem 2rem;
-  width: 100%;
-  max-width: 440px;
-  text-align: center;
-  box-shadow: var(--shadow-big);
+/* CTA Button Group */
+.hero-cta-group {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.8rem;
-  animation: bounceIn 0.7s ease both;
-  animation-delay: 0.8s;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: bounceIn 0.6s ease both;
+  animation-delay: 0.75s;
 }
 
-.redirect-label {
-  font-family: var(--font-comic);
-  font-size: 1.2rem;
-  color: var(--yellow);
-  letter-spacing: 2px;
-}
-
-.countdown-display {
-  font-family: var(--font-comic);
-  font-size: clamp(3rem, 12vw, 5.5rem);
-  color: var(--pink);
-  line-height: 1;
-  text-shadow: 4px 4px 0 var(--yellow);
-  transition: transform 0.15s ease, color 0.3s ease;
-}
-
-.countdown-display.tick {
-  animation: countTick 0.2s ease;
-}
-
-@keyframes countTick {
-  0%   { transform: scale(1.4); }
-  100% { transform: scale(1); }
-}
-
-/* ── Progress Bar ── */
-.progress-track {
-  width: 100%;
-  height: 18px;
-  background: var(--dark);
-  border-radius: 50px;
-  border: 2px solid var(--cream);
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, var(--pink), var(--blue));
-  border-radius: 50px;
-  transition: width 1s linear;
-}
-
-/* ── CTA Button (instant redirect) ── */
-.cta-btn {
+.hero-primary-btn {
   display: inline-block;
-  background: var(--yellow);
-  color: var(--ink);
+  background: var(--ink);
+  color: var(--yellow);
   font-family: var(--font-comic);
   font-size: 1.3rem;
   letter-spacing: 2px;
-  padding: 0.8rem 2rem;
+  padding: 0.85rem 2.2rem;
   border-radius: var(--radius);
   border: var(--border-thick);
   box-shadow: var(--shadow-pop);
   text-decoration: none;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-  margin-top: 0.3rem;
 }
 
-.cta-btn:hover  { transform: translate(-3px, -3px); box-shadow: 9px 9px 0px var(--cream); }
-.cta-btn:active { transform: translate(3px, 3px);   box-shadow: 2px 2px 0 var(--cream); }
+.hero-primary-btn:hover  { transform: translate(-3px,-3px); box-shadow: 9px 9px 0 var(--pink); }
+.hero-primary-btn:active { transform: translate(2px,2px);   box-shadow: 3px 3px 0 var(--pink); }
 
-/* ── Resume Button ── */
+/* Resume Button */
 .resume-btn {
   display: inline-block;
   background: var(--purple);
@@ -255,8 +197,35 @@
   text-decoration: none;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
   animation: bounceIn 0.6s ease both;
-  animation-delay: 1s;
+  animation-delay: 0.85s;
 }
 
-.resume-btn:hover  { background: var(--pink); transform: translate(-3px, -3px); box-shadow: 9px 9px 0px var(--ink); }
-.resume-btn:active { transform: translate(2px, 2px); box-shadow: 3px 3px 0px var(--ink); }
+.resume-btn:hover  { background: var(--pink); transform: translate(-3px,-3px); box-shadow: 9px 9px 0 var(--ink); }
+.resume-btn:active { transform: translate(2px,2px); box-shadow: 3px 3px 0 var(--ink); }
+
+/* Scroll indicator */
+.hero-scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-comic);
+  font-size: 0.8rem;
+  color: var(--ink);
+  letter-spacing: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  cursor: pointer;
+  animation: scrollBounce 1.6s ease-in-out infinite;
+  text-decoration: none;
+  opacity: 0.8;
+}
+
+.scroll-arrow { font-size: 1.4rem; display: block; }
+
+@keyframes scrollBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(8px); }
+}

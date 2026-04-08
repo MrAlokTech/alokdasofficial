@@ -11,10 +11,12 @@
     "cleanUrls": true,
     "trailingSlash": false,
     "rewrites": [
-      {
-        "source": "/resume",
-        "destination": "/resume/index.html"
-      }
+      { "source": "/resume",                    "destination": "/resume/index.html" },
+      { "source": "/projects/phytochemical",    "destination": "/projects/phytochemical/index.html" },
+      { "source": "/projects/alomole",          "destination": "/projects/alomole/index.html" },
+      { "source": "/projects/mileage-tracker",  "destination": "/projects/mileage-tracker/index.html" },
+      { "source": "/projects/portfolio",        "destination": "/projects/portfolio/index.html" },
+      { "source": "/projects",                  "destination": "/index.html" }
     ],
     "headers": [
       {

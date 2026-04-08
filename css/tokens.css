@@ -30,4 +30,7 @@
 
   /* ── Shape ── */
   --radius: 12px;
+
+  /* ── Layout ── */
+  --nav-height: 62px;
 }

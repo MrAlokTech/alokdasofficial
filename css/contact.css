@@ -1,0 +1,164 @@
+/* contact.css — Contact Section */
+
+.contact-section {
+  position: relative;
+  z-index: 10;
+  background: var(--purple);
+  border-bottom: var(--border-thick);
+  padding: 5rem 2rem;
+}
+
+.contact-section .section-heading {
+  color: var(--yellow);
+  text-shadow: 4px 4px 0 var(--ink);
+  text-align: center;
+}
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+/* Info panel */
+.contact-info-panel { display: flex; flex-direction: column; gap: 1.2rem; }
+
+.contact-speech {
+  background: var(--white);
+  border: var(--border-thick);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.5rem;
+  box-shadow: var(--shadow-pop);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.65;
+  position: relative;
+}
+
+.contact-speech::after {
+  content: '';
+  position: absolute;
+  bottom: -22px; left: 30px;
+  border-width: 22px 14px 0 0;
+  border-style: solid;
+  border-color: var(--ink) transparent transparent transparent;
+}
+
+.contact-speech::before {
+  content: '';
+  position: absolute;
+  bottom: -16px; left: 33px;
+  border-width: 17px 11px 0 0;
+  border-style: solid;
+  border-color: var(--white) transparent transparent transparent;
+  z-index: 1;
+}
+
+.contact-chips { display: flex; flex-direction: column; gap: 0.7rem; }
+
+.contact-chip-link {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.25);
+  border-radius: var(--radius);
+  padding: 0.7rem 1.2rem;
+  color: var(--cream);
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  word-break: break-all;
+}
+
+.contact-chip-link:hover {
+  background: rgba(255,255,255,0.2);
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+.contact-chip-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+/* Form panel */
+.contact-form-panel {
+  background: var(--ink);
+  border: var(--border-thick);
+  border-radius: var(--radius);
+  padding: 1.8rem;
+  box-shadow: var(--shadow-big);
+}
+
+.contact-form-title {
+  font-family: var(--font-comic);
+  font-size: 1.5rem;
+  color: var(--yellow);
+  letter-spacing: 2px;
+  margin-bottom: 1.2rem;
+}
+
+.contact-form { display: flex; flex-direction: column; gap: 0.9rem; }
+
+.form-field { display: flex; flex-direction: column; gap: 0.3rem; }
+
+.form-label {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: var(--cream);
+  letter-spacing: 1px;
+}
+
+.form-input, .form-textarea {
+  background: rgba(255,255,255,0.07);
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  padding: 0.65rem 0.9rem;
+  color: var(--cream);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.form-input:focus, .form-textarea:focus {
+  border-color: var(--yellow);
+  background: rgba(255,230,0,0.06);
+}
+
+.form-textarea { resize: vertical; min-height: 100px; }
+
+.form-submit {
+  background: var(--yellow);
+  color: var(--ink);
+  font-family: var(--font-comic);
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 0.75rem;
+  border: var(--border-thick);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+  cursor: pointer;
+  width: 100%;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.form-submit:hover  { transform: translate(-2px,-2px); box-shadow: 8px 8px 0 var(--pink); }
+.form-submit:active { transform: translate(2px,2px);   box-shadow: 2px 2px 0 var(--pink); }
+
+.form-success {
+  display: none;
+  text-align: center;
+  padding: 1rem;
+  font-family: var(--font-comic);
+  font-size: 1.2rem;
+  color: var(--yellow);
+  border: 2px solid var(--yellow);
+  border-radius: var(--radius);
+  background: rgba(255,230,0,0.08);
+}

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Game Zone — Alok Das</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#1A0030;font-family:'Comic Neue',cursive;min-height:100vh;padding:2rem 1rem;color:#FFFEF0;text-align:center}
+.back{display:inline-block;background:#FFE600;color:#0D0D0D;font-weight:700;padding:.4rem 1rem;border-radius:8px;border:3px solid #0D0D0D;text-decoration:none;font-size:.9rem;box-shadow:3px 3px 0 #0D0D0D;margin-bottom:1.5rem}
+h1{font-family:'Bangers',cursive;font-size:clamp(2.5rem,10vw,4rem);color:#FFE600;letter-spacing:4px;text-shadow:4px 4px 0 #FF2D6B,0 0 30px rgba(255,230,0,.3);margin-bottom:.5rem}
+.sub{color:#aaa;font-size:.95rem;margin-bottom:2.5rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;max-width:820px;margin:0 auto 2rem}
+.card{background:rgba(255,255,255,.05);border:4px solid #0D0D0D;border-radius:12px;padding:2rem 1.5rem;transition:transform .2s,border-color .2s,box-shadow .2s}
+.card:hover{transform:translate(-4px,-4px);border-color:#FFE600;box-shadow:8px 8px 0 #FFE600}
+.icon{font-size:3.5rem;display:block;margin-bottom:.8rem;filter:drop-shadow(0 0 8px rgba(255,230,0,.3))}
+.title{font-family:'Bangers',cursive;font-size:2rem;color:#FFE600;letter-spacing:3px;margin-bottom:.4rem}
+.desc{font-size:.88rem;color:#FFFEF0;opacity:.7;line-height:1.5;margin-bottom:1.2rem}
+.play{display:inline-block;font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;background:#FFE600;color:#0D0D0D;padding:.6rem 1.6rem;border-radius:10px;border:3px solid #0D0D0D;text-decoration:none;box-shadow:4px 4px 0 #0D0D0D;transition:transform .15s,box-shadow .15s}
+.play:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #FF2D6B}
+.footer{margin-top:2rem;font-size:.8rem;color:#aaa}
+.footer a{color:#FFE600;text-decoration:none}
+</style>
+</head>
+<body>
+<a href="../index.html#games" class="back">← BACK TO PORTFOLIO</a>
+<h1>🕹️ GAME ZONE</h1>
+<p class="sub">All games run offline — no internet needed. Built with pure HTML + JS.</p>
+
+<div class="grid">
+  <div class="card">
+    <span class="icon">🐍</span>
+    <div class="title">SNAKE</div>
+    <p class="desc">Classic snake game. Eat food, grow longer, don't crash into yourself. Keyboard + touch controls. Saves your high score!</p>
+    <a href="snake.html" class="play">PLAY NOW →</a>
+  </div>
+  <div class="card">
+    <span class="icon">🧪</span>
+    <div class="title">ELEMENT MATCH</div>
+    <p class="desc">Chemistry memory match! Flip cards to find pairs of chemical elements. How fast can you match all 8 pairs?</p>
+    <a href="memory.html" class="play">PLAY NOW →</a>
+  </div>
+  <div class="card">
+    <span class="icon">⭕</span>
+    <div class="title">TIC-TAC-TOE</div>
+    <p class="desc">Play XO against a computer opponent. Choose Easy or Smart mode. First to 3 in a row wins. Score tracked per session!</p>
+    <a href="tictactoe.html" class="play">PLAY NOW →</a>
+  </div>
+</div>
+
+<p class="footer">More games coming soon! <a href="../index.html#contact">Suggest a game →</a></p>
+
+<!-- Firebase analytics tracker -->
+<script src="/js/firebase-tracker.js"></script>
+<script>
+  window.addEventListener('load', function () {
+    /* Track each PLAY NOW button click */
+    var games = [
+      { href: 'snake.html',     name: 'Snake' },
+      { href: 'memory.html',    name: 'Element Match' },
+      { href: 'tictactoe.html', name: 'Tic-Tac-Toe' }
+    ];
+    document.querySelectorAll('a.play').forEach(function (btn, i) {
+      var gameName = (games[i] && games[i].name) || btn.textContent.trim();
+      btn.addEventListener('click', function () {
+        if (typeof window.trackEvent === 'function') {
+          window.trackEvent('game_play_click', gameName, { href: btn.getAttribute('href') });
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>
