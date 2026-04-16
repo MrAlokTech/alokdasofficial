@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Account Action | Alok Das</title>
 
+    <script>
+      if (window.top !== window.self) {
+        window.top.location = window.self.location;
+      }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -126,7 +132,7 @@
     </div>
 
     <script>
-      // 1. Initialize Firebase (REPLACE WITH YOUR APP'S CONFIG)
+      // 1. Initialize Firebase
       const firebaseConfig = {
         apiKey: "AIzaSyAaotynXqso2-gviIfaDfnYpWpZ_D4KPVc",
         authDomain: "alokdasofficial-69f96.firebaseapp.com",
@@ -141,6 +147,11 @@
         firebase.initializeApp(firebaseConfig);
       }
       const auth = firebase.auth();
+
+      // Helper function to clear URL parameters for security
+      function clearUrlParameters() {
+        window.history.replaceState(null, null, window.location.pathname);
+      }
 
       // 2. Grab UI Elements
       const titleEl = document.getElementById("auth-title");
@@ -171,6 +182,7 @@
                 statusEl.textContent =
                   "Success! Your email address has been verified. You can now return to the app and sign in.";
                 statusEl.className = "auth-msg success-text";
+                clearUrlParameters(); // SECURITY FIX: Scrub URL
               })
               .catch((error) => {
                 titleEl.textContent = "ERROR ⚠️";
@@ -184,15 +196,12 @@
 
           // --- PASSWORD RESET ---
           case "resetPassword":
-            // Show a loading state first
             titleEl.textContent = "VERIFYING... ⏳";
             statusEl.textContent = "Checking your secure link...";
 
-            // 1. Verify the code BEFORE showing the form
             auth
               .verifyPasswordResetCode(oobCode)
               .then((email) => {
-                // The code is valid! Now show the form.
                 titleEl.textContent = "NEW PASSWORD 🔐";
                 statusEl.textContent = "Updating password for " + email;
 
@@ -205,7 +214,6 @@
                   </form>
                 `;
 
-                // 2. Handle form submission
                 document
                   .getElementById("reset-form")
                   .addEventListener("submit", (e) => {
@@ -226,12 +234,7 @@
                           "Awesome! Your password has been reset successfully. You can now close this window and sign in.";
                         statusEl.className = "auth-msg success-text";
 
-                        // 3. MAGIC TRICK: Remove the code from the URL so reloading does nothing!
-                        window.history.replaceState(
-                          null,
-                          null,
-                          window.location.pathname,
-                        );
+                        clearUrlParameters(); // SECURITY FIX: Scrub URL
                       })
                       .catch((error) => {
                         btn.textContent = "TRY AGAIN";
@@ -245,7 +248,6 @@
                   });
               })
               .catch((error) => {
-                // If they reload the page, the code is already used, so it hits this block!
                 titleEl.textContent = "EXPIRED ⏳";
                 statusEl.textContent =
                   "This password reset link has already been used or has expired. Please request a new one from the app.";
@@ -254,7 +256,7 @@
               });
             break;
 
-          // --- RECOVER EMAIL (Revert an unauthorized email change) ---
+          // --- RECOVER EMAIL ---
           case "recoverEmail":
             titleEl.textContent = "RECOVER ACCOUNT 🛡️";
             statusEl.textContent = "Restoring your previous email address...";
@@ -270,7 +272,8 @@
                 statusEl.textContent = `Success! Your email has been restored to ${restoredEmail}. If you didn't authorize this change, please reset your password immediately.`;
                 statusEl.className = "auth-msg success-text";
 
-                // Optionally add a button to trigger a password reset email
+                clearUrlParameters(); // SECURITY FIX: Scrub URL
+
                 formsContainer.innerHTML = `
               <button class="auth-btn" id="send-reset-btn" style="width: 100%;">SEND PASSWORD RESET</button>
             `;
