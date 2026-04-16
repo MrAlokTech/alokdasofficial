@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Authenticating... | Alok Das</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/tokens.css" />
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+    <style>
+      body {
+        font-family: var(--font-body);
+        background: var(--purple);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 1rem;
+      }
+      .auth-card {
+        background: var(--cream);
+        border: var(--border-thick);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-big);
+        padding: 2.5rem 2rem;
+        text-align: center;
+        max-width: 450px;
+        width: 100%;
+      }
+      .auth-title {
+        font-family: var(--font-comic);
+        font-size: 2.5rem;
+        color: var(--yellow);
+        -webkit-text-stroke: 1px var(--ink);
+        text-shadow: 3px 3px 0 var(--pink);
+        letter-spacing: 2px;
+        margin-bottom: 1rem;
+      }
+      .auth-msg {
+        font-size: 1.1rem;
+        color: var(--ink);
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-card">
+      <h1 class="auth-title">ZAP! ⚡</h1>
+      <p class="auth-msg" id="status-message">Processing your request...</p>
+
+      <div id="auth-forms"></div>
+    </div>
+
+    <script>
+      // 1. Initialize Firebase with the credentials of the APP you are authenticating for
+      const firebaseConfig = {
+        apiKey: "YOUR_APP_API_KEY", // Replace with the config from your OTHER app
+        authDomain: "alokdasofficial.in",
+        // ... other config
+      };
+
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      const auth = firebase.auth();
+
+      // 2. Parse the URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const mode = urlParams.get("mode");
+      const oobCode = urlParams.get("oobCode");
+      const statusEl = document.getElementById("status-message");
+
+      // 3. Handle the action
+      if (!mode || !oobCode) {
+        statusEl.textContent = "Invalid link. Please request a new one.";
+        statusEl.style.color = "var(--pink)";
+      } else {
+        switch (mode) {
+          case "resetPassword":
+            // Handle Password Reset UI and Logic here
+            statusEl.textContent = "Ready to reset your password.";
+            // auth.confirmPasswordReset(oobCode, newPassword)...
+            break;
+          case "verifyEmail":
+            // Handle Email Verification
+            auth
+              .applyActionCode(oobCode)
+              .then(() => {
+                statusEl.textContent =
+                  "Email verified successfully! You can now log into the app.";
+              })
+              .catch((error) => {
+                statusEl.textContent =
+                  "Error verifying email: " + error.message;
+              });
+            break;
+          case "recoverEmail":
+            // Handle Email Recovery
+            statusEl.textContent = "Email recovery initiated.";
+            break;
+          default:
+            statusEl.textContent = "Unknown action requested.";
+        }
+      }
+    </script>
+  </body>
+</html>
