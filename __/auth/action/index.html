@@ -184,54 +184,76 @@
 
           // --- PASSWORD RESET ---
           case "resetPassword":
-            titleEl.textContent = "NEW PASSWORD 🔐";
-            statusEl.textContent = "Please enter your new password below.";
+            // Show a loading state first
+            titleEl.textContent = "VERIFYING... ⏳";
+            statusEl.textContent = "Checking your secure link...";
 
-            // 1. Draw the form immediately (no waiting!)
-            formsContainer.innerHTML = `
-            <form id="reset-form" class="auth-form">
-              <label class="form-label" for="new-password">NEW PASSWORD</label>
-              <input class="form-input" type="password" id="new-password" required minlength="6" placeholder="At least 6 characters">
-              
-              <button type="submit" class="auth-btn" id="submit-btn">RESET PASSWORD</button>
-            </form>
-          `;
+            // 1. Verify the code BEFORE showing the form
+            auth
+              .verifyPasswordResetCode(oobCode)
+              .then((email) => {
+                // The code is valid! Now show the form.
+                titleEl.textContent = "NEW PASSWORD 🔐";
+                statusEl.textContent = "Updating password for " + email;
 
-            // 2. Verify and Reset when they click the button
-            document
-              .getElementById("reset-form")
-              .addEventListener("submit", (e) => {
-                e.preventDefault();
-                const newPassword =
-                  document.getElementById("new-password").value;
-                const btn = document.getElementById("submit-btn");
+                formsContainer.innerHTML = `
+                  <form id="reset-form" class="auth-form">
+                    <label class="form-label" for="new-password">NEW PASSWORD</label>
+                    <input class="form-input" type="password" id="new-password" required minlength="6" placeholder="At least 6 characters">
+                    
+                    <button type="submit" class="auth-btn" id="submit-btn">RESET PASSWORD</button>
+                  </form>
+                `;
 
-                btn.textContent = "UPDATING...";
-                btn.disabled = true;
+                // 2. Handle form submission
+                document
+                  .getElementById("reset-form")
+                  .addEventListener("submit", (e) => {
+                    e.preventDefault();
+                    const newPassword =
+                      document.getElementById("new-password").value;
+                    const btn = document.getElementById("submit-btn");
 
-                // This single call checks if the link is valid AND updates the password
-                auth
-                  .confirmPasswordReset(oobCode, newPassword)
-                  .then(() => {
-                    formsContainer.innerHTML = "";
-                    titleEl.textContent = "SUCCESS! 🎉";
-                    statusEl.textContent =
-                      "Awesome! Your password has been reset successfully. You can now close this window and sign in.";
-                    statusEl.className = "auth-msg success-text";
-                  })
-                  .catch((error) => {
-                    btn.textContent = "TRY AGAIN";
-                    btn.disabled = false;
+                    btn.textContent = "UPDATING...";
+                    btn.disabled = true;
 
-                    titleEl.textContent = "ERROR ⚠️";
-                    statusEl.textContent =
-                      "Failed to reset password: The link may be expired, already used, or invalid. (" +
-                      error.message +
-                      ")";
-                    statusEl.className = "auth-msg error-text";
+                    auth
+                      .confirmPasswordReset(oobCode, newPassword)
+                      .then(() => {
+                        formsContainer.innerHTML = "";
+                        titleEl.textContent = "SUCCESS! 🎉";
+                        statusEl.textContent =
+                          "Awesome! Your password has been reset successfully. You can now close this window and sign in.";
+                        statusEl.className = "auth-msg success-text";
+
+                        // 3. MAGIC TRICK: Remove the code from the URL so reloading does nothing!
+                        window.history.replaceState(
+                          null,
+                          null,
+                          window.location.pathname,
+                        );
+                      })
+                      .catch((error) => {
+                        btn.textContent = "TRY AGAIN";
+                        btn.disabled = false;
+
+                        titleEl.textContent = "ERROR ⚠️";
+                        statusEl.textContent =
+                          "Failed to reset password: " + error.message;
+                        statusEl.className = "auth-msg error-text";
+                      });
                   });
+              })
+              .catch((error) => {
+                // If they reload the page, the code is already used, so it hits this block!
+                titleEl.textContent = "EXPIRED ⏳";
+                statusEl.textContent =
+                  "This password reset link has already been used or has expired. Please request a new one from the app.";
+                statusEl.className = "auth-msg error-text";
+                formsContainer.innerHTML = "";
               });
             break;
+
           // --- RECOVER EMAIL (Revert an unauthorized email change) ---
           case "recoverEmail":
             titleEl.textContent = "RECOVER ACCOUNT 🛡️";
