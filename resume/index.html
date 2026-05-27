@@ -78,10 +78,25 @@
               <i class="fa-solid fa-envelope" aria-hidden="true"></i>
               alok@alokdasofficial.in
             </a>
-            <a href="tel:+919101090890" class="r-contact-chip" role="listitem">
-              <i class="fa-solid fa-phone" aria-hidden="true"></i> +91
-              9101090890
-            </a>
+            <div
+              class="safe-phone-container"
+              id="phone-container"
+              role="listitem"
+            >
+              <button
+                type="button"
+                class="r-contact-chip phone-reveal-btn no-print"
+                id="phone-reveal-btn"
+                aria-label="Reveal phone number"
+              >
+                <i class="fa-solid fa-phone" aria-hidden="true"></i>
+                <span class="phone-masked-text">+91 91••• •••••</span>
+              </button>
+              <span class="print-only-phone">
+                <i class="fa-solid fa-phone" aria-hidden="true"></i> +91 91010
+                90890
+              </span>
+            </div>
             <a
               href="https://alokdasofficial.in"
               class="r-contact-chip"
@@ -467,45 +482,119 @@
         </section>
       </main>
 
-      <!-- Footer (screen only) -->
-      <footer class="r-footer no-print" role="contentinfo">
-        <div class="r-footer-strip">
-          <span>© 2026 Alok Das</span>
-          <span aria-hidden="true">⚗️</span>
-          <span>B.Sc. Chemistry — QC Analyst</span>
-          <span aria-hidden="true">⚗️</span>
-          <span>alokdasofficial.in/resume</span>
+      <!-- Unified Footer (screen only) -->
+      <footer class="comic-footer no-print" role="contentinfo">
+        <div class="footer-inner">
+          <!-- Left: Brand -->
+          <div class="footer-brand">
+            <span class="footer-logo">ALOK DAS</span>
+            <span class="footer-tagline"
+              >Chemistry &amp; Code · Hojai, Assam 🇮🇳</span
+            >
+          </div>
+
+          <!-- Center: Nav -->
+          <nav class="footer-nav" aria-label="Footer navigation">
+            <a href="/" class="footer-nav-link">Home</a>
+            <span class="footer-nav-sep" aria-hidden="true">·</span>
+            <a href="/#about" class="footer-nav-link">About</a>
+            <span class="footer-nav-sep" aria-hidden="true">·</span>
+            <a href="/#projects" class="footer-nav-link">Projects</a>
+            <span class="footer-nav-sep" aria-hidden="true">·</span>
+            <a href="/#games" class="footer-nav-link">Games</a>
+            <span class="footer-nav-sep" aria-hidden="true">·</span>
+            <a href="/#contact" class="footer-nav-link">Contact</a>
+            <span class="footer-nav-sep" aria-hidden="true">·</span>
+            <a href="/resume" class="footer-nav-link">Resume</a>
+          </nav>
+
+          <!-- Right: Socials + Back to top -->
+          <div class="footer-right">
+            <div class="footer-socials">
+              <a
+                href="mailto:alok@alokdasofficial.in"
+                class="footer-social-link"
+                aria-label="Email Alok"
+                title="Email"
+                >✉</a
+              >
+              <a
+                href="https://github.com/MrAlokTech/"
+                target="_blank"
+                rel="noopener"
+                class="footer-social-link"
+                aria-label="GitHub"
+                title="GitHub"
+                >⌥</a
+              >
+              <a
+                href="https://wa.me/message/PLW3AG4MQZNUI1"
+                target="_blank"
+                rel="noopener"
+                class="footer-social-link"
+                aria-label="WhatsApp"
+                title="WhatsApp"
+                >📞</a
+              >
+            </div>
+            <a
+              href="#resume-page"
+              class="footer-back-top"
+              aria-label="Back to top"
+              >↑ Back to top</a
+            >
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p class="footer-copy">
+            © <span id="footer-year"></span> Alok Das · Built with 💝
+          </p>
         </div>
       </footer>
     </div>
     <!-- /.resume-page -->
-<<<<<<< HEAD
+    <!-- Shared Site Config (loaded absolute — multi-domain safe) -->
+    <script src="/js/config.js"></script>
+    <!-- Shared Site Interactions (contains phone reveal logic) -->
+    <script src="/js/interactions.js"></script>
 
     <!-- Firebase analytics tracker (absolute path — multi-domain safe) -->
     <script src="/js/firebase-tracker.js"></script>
     <script>
       /* Wire resume-specific events after tracker loads */
-      window.addEventListener('load', function () {
+      window.addEventListener("load", function () {
+        /* Initialize secure phone reveal */
+        if (typeof setupPhoneReveal === "function") {
+          setupPhoneReveal();
+        }
+
         /* resume_print — fires when user clicks Save/Print */
-        var printBtn = document.querySelector('.print-btn');
+        var printBtn = document.querySelector(".print-btn");
         if (printBtn) {
-          printBtn.addEventListener('click', function () {
-            if (typeof window.trackEvent === 'function') {
-              window.trackEvent('resume_print', 'print_btn', null);
+          printBtn.addEventListener("click", function () {
+            if (typeof window.trackEvent === "function") {
+              window.trackEvent("resume_print", "print_btn", null);
             }
           });
         }
         /* Track all external links on the resume */
         document.querySelectorAll('a[target="_blank"]').forEach(function (a) {
-          a.addEventListener('click', function () {
-            if (typeof window.trackEvent === 'function') {
-              window.trackEvent('external_link', a.textContent.trim().slice(0, 60), { href: a.href });
+          a.addEventListener("click", function () {
+            if (typeof window.trackEvent === "function") {
+              window.trackEvent(
+                "external_link",
+                a.textContent.trim().slice(0, 60),
+                { href: a.href },
+              );
             }
           });
         });
+
+        /* Dynamic year in footer */
+        var yearEl = document.getElementById("footer-year");
+        if (yearEl) yearEl.textContent = new Date().getFullYear();
       });
     </script>
-=======
->>>>>>> 53ce4d4b1ada95e8bbe84ac6f2c0ed1508954e7d
   </body>
 </html>

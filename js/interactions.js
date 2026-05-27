@@ -7,7 +7,7 @@
 /* ── Blog carousel (in .works-grid) ── */
 function setupCarousels() {
   document.querySelectorAll('.work-carousel').forEach(function (carousel) {
-    var track  = carousel.querySelector('.carousel-track');
+    var track = carousel.querySelector('.carousel-track');
     var slides = carousel.querySelectorAll('.carousel-slide');
     var prevBtn = carousel.querySelector('.carousel-prev');
     var nextBtn = carousel.querySelector('.carousel-next');
@@ -21,8 +21,8 @@ function setupCarousels() {
     }
 
     var current = 0;
-    var total   = slides.length;
-    var dots    = [];
+    var total = slides.length;
+    var dots = [];
 
     /* Build dots */
     if (dotsWrap) {
@@ -95,7 +95,7 @@ function setupPanelAnimations() {
 
 /* ── Animate skill bars when about section enters view ── */
 function setupSkillBars() {
-  var bars  = document.querySelectorAll('.skill-bar-fill');
+  var bars = document.querySelectorAll('.skill-bar-fill');
   if (!bars.length) return;
 
   if (!('IntersectionObserver' in window)) {
@@ -148,24 +148,24 @@ function setupPanelKeys() {
 
 /* ── Contact form AJAX (Formspree) ── */
 function setupContactForm() {
-  var form    = document.getElementById('contact-form');
+  var form = document.getElementById('contact-form');
   var success = document.getElementById('form-success');
   if (!form) return;
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var data = new FormData(form);
-    var btn  = form.querySelector('.form-submit');
+    var btn = form.querySelector('.form-submit');
     btn.textContent = 'SENDING...';
-    btn.disabled    = true;
+    btn.disabled = true;
 
     if (typeof window.trackEvent === 'function') {
       window.trackEvent('form_submit', 'contact-form', { status: 'attempted' });
     }
 
     fetch(form.action, {
-      method:  'POST',
-      body:    data,
+      method: 'POST',
+      body: data,
       headers: { 'Accept': 'application/json' },
     })
       .then(function (res) {
@@ -192,3 +192,131 @@ function setupContactForm() {
       });
   });
 }
+
+/* ── Secure phone unmasking logic ── */
+function setupPhoneReveal() {
+  var container = document.getElementById('phone-container');
+  var btn = document.getElementById('phone-reveal-btn');
+  if (!container || !btn) return;
+
+  var PHONE_STORAGE_KEY = '_ap_verified';
+
+  // Get full number from split config parts
+  var cc = (window.PHONE_PARTS && window.PHONE_PARTS.cc) || '+91';
+  var pa = (window.PHONE_PARTS && window.PHONE_PARTS.a) || '91010';
+  var pb = (window.PHONE_PARTS && window.PHONE_PARTS.b) || '90890';
+  var fullNumber = cc + pa + pb;
+  var spacedNumber = cc + ' ' + pa + ' ' + pb;
+
+  function renderUnlockedLink() {
+    var link = document.createElement('a');
+    link.href = 'tel:' + fullNumber;
+
+    // Dynamically apply classes matching the page context!
+    var pageClass = btn.classList.contains('r-contact-chip') ? 'r-contact-chip' : 'contact-chip-link';
+    link.className = pageClass;
+
+    // Use matching icon structure for resume vs landing page
+    if (pageClass === 'r-contact-chip') {
+      link.innerHTML = '<i class="fa-solid fa-phone" aria-hidden="true"></i> ' + spacedNumber;
+    } else {
+      link.innerHTML = '<span class="contact-chip-icon">📱</span>' + spacedNumber;
+    }
+
+    container.innerHTML = '';
+    container.appendChild(link);
+  }
+
+  // If already unlocked this session
+  if (sessionStorage.getItem(PHONE_STORAGE_KEY) === 'true') {
+    renderUnlockedLink();
+    return;
+  }
+
+  var popover = null;
+  var valA = 0;
+  var valB = 0;
+  var answer = 0;
+
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (popover) {
+      closePopover();
+      return;
+    }
+
+    // Generate random values for the math check
+    valA = Math.floor(Math.random() * 99) + 2; // 2 to 10
+    valB = Math.floor(Math.random() * 9) + 1; // 1 to 9
+    answer = valA + valB;
+
+    popover = document.createElement('div');
+    popover.className = 'phone-challenge-popover';
+    popover.innerHTML =
+
+      '<div class="challenge-row">' +
+      '<span class="challenge-question">What\'s: ' + valA + ' + ' + valB + ' = </span>' +
+      '<input type="text" class="challenge-input" pattern="[0-9]*" inputmode="numeric" maxlength="3" aria-label="Your answer" />' +
+      '<button type="button" class="challenge-btn">UNLOCK</button>' +
+      '</div>' +
+      '<div class="challenge-error">NOPE! TRY AGAIN.</div>';
+
+    container.appendChild(popover);
+
+    var input = popover.querySelector('.challenge-input');
+    var verifyBtn = popover.querySelector('.challenge-btn');
+    var errorMsg = popover.querySelector('.challenge-error');
+
+    input.focus();
+
+    // Prevent propagation so click outside can dismiss the popover
+    popover.addEventListener('click', function (e) {
+      e.stopPropagation();
+    });
+
+    function doVerify() {
+      var userAns = parseInt(input.value.trim(), 10);
+      if (userAns === answer) {
+        sessionStorage.setItem(PHONE_STORAGE_KEY, 'true');
+        if (typeof window.trackEvent === 'function') {
+          window.trackEvent('phone_reveal_success', 'landing_contact', { challenge: valA + '+' + valB });
+        }
+        closePopover();
+        renderUnlockedLink();
+      } else {
+        // Log event
+        if (typeof window.trackEvent === 'function') {
+          window.trackEvent('phone_reveal_failed', 'landing_contact', { challenge: valA + '+' + valB, input: input.value });
+        }
+        // Shake shake shake
+        popover.classList.remove('shake-it');
+        void popover.offsetWidth; // Trigger reflow to restart animation
+        popover.classList.add('shake-it');
+        errorMsg.style.display = 'block';
+        input.value = '';
+        input.focus();
+      }
+    }
+
+    verifyBtn.addEventListener('click', doVerify);
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        doVerify();
+      }
+    });
+  });
+
+  function closePopover() {
+    if (popover && popover.parentNode) {
+      popover.parentNode.removeChild(popover);
+    }
+    popover = null;
+  }
+
+  // Dismiss on clicking elsewhere
+  document.addEventListener('click', function () {
+    closePopover();
+  });
+}
+

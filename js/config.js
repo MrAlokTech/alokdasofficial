@@ -11,3 +11,11 @@ var TYPEWRITER_LINES = [
   "QC Analyst + App Dev 💻",
   "Welcome to my world!",
 ];
+
+/* ── Obfuscated Contact Credentials (bots/regex protection) ── */
+var PHONE_PARTS = {
+  cc: '+91',
+  a: '91010',
+  b: '90890'
+};
+

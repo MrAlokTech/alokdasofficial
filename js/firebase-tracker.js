@@ -2,11 +2,17 @@
  * js/firebase-tracker.js — Portfolio Analytics via Firebase
  *
  * Strategy:
- *  1. Dynamically load Firebase Compat SDK (no ES modules — file:// safe)
- *  2. Sign in anonymously
- *  3. Create session doc in Firestore: Portfolio/sessions/{sessionId}
- *  4. Expose window.trackEvent(type, target, detail) for other modules
- *  5. Auto-track: page_view, scroll_depth, external_link clicks
+ *  1. Set up all browser event listeners immediately on load (pure JS, no deps).
+ *  2. Queue all actions (page_view, scroll, click, copy, inspect) in an in-memory buffer.
+ *  3. Monitor human interaction signals (mousemove, keydown, scroll, touch).
+ *  4. **Lazy Auth**: Load Firebase SDK and sign in anonymous user ONLY when human verified.
+ *     - Keeps Firebase Auth 100% clean of crawlers, scraper bots, and spiders.
+ *     - Delivers faster page loads and SEO benefits to bots.
+ *  5. **Event Batching**: Buffers events and writes in bulk to Firestore:
+ *     - Every 10 seconds (if queue has items).
+ *     - Instantly when tab is hidden or minimized.
+ *     - Instantly on page navigation or browser exit.
+ *     - Reduces database writes by up to 90%.
  *
  * Classic <script> tag — NO type="module".
  * Depends on nothing. Load before script.js.
@@ -26,7 +32,7 @@
     measurementId: 'G-XMBQM46W16'
   };
 
-  /* ── Compat SDK CDN URLs (v10 compat — global firebase.*) ── */
+  /* ── Compat SDK CDN URLs ── */
   var SDK_BASE = 'https://www.gstatic.com/firebasejs/10.12.2/';
   var SDK_SCRIPTS = [
     SDK_BASE + 'firebase-app-compat.js',
@@ -34,36 +40,33 @@
     SDK_BASE + 'firebase-firestore-compat.js'
   ];
 
+  /* ── Session persistence keys ── */
+  var SESSION_ID_KEY = '_pt_sid';
+  var SESSION_TS_KEY = '_pt_sts';
+  var SESSION_TTL = 30 * 60 * 1000; /* 30 minutes inactivity = new session */
+
   /* ── Internal state ── */
   var _db = null;
   var _uid = null;
   var _sessionId = null;
   var _sessionRef = null;
-  var _ready = false;
-  var _queue = [];   // Events queued before init completes
+  var _firebaseLoading = false;
+  var _firebaseReady = false;
+  var _bufferedEvents = [];
+  var _flushInterval = null;
+
+  /* ── Human signals tracking ── */
+  var _signals = {
+    mouse: 0,
+    keys: 0,
+    scrolls: 0,
+    touches: 0,
+    isHuman: false
+  };
 
   /* ── Utility: generate session ID ── */
   function genId() {
     return Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
-  }
-
-  /* ── Utility: bot detection heuristics ── */
-  function detectBot() {
-    var signals = 0;
-    try {
-      if (navigator.webdriver === true) signals++;
-      if (!navigator.languages || navigator.languages.length === 0) signals++;
-      var ua = (navigator.userAgent || '').toLowerCase();
-      if (/bot|crawl|spider|headless|phantom|selenium|puppeteer|playwright/.test(ua)) signals++;
-      if (window.screen.width < 10 || window.screen.height < 10) signals++;
-      /* Navigation Timing: very fast load = likely bot */
-      if (window.performance && window.performance.timing) {
-        var t = window.performance.timing;
-        var loadTime = t.responseEnd - t.navigationStart;
-        if (loadTime > 0 && loadTime < 100) signals++;
-      }
-    } catch (e) { /* ignore */ }
-    return signals >= 2;
   }
 
   /* ── Utility: get page context ── */
@@ -77,50 +80,153 @@
     };
   }
 
-  /* ── Write an event to Firestore (append to events array) ── */
-  function writeEvent(type, target, detail) {
-    if (!_sessionRef || !_db) return;
+  /* ── Event Queue & Batch-Write Telemetry ── */
+  window.trackEvent = function (type, target, detail) {
     var event = {
-      ts: new Date().toISOString(),   /* serverTimestamp() forbidden inside arrayUnion */
+      ts: new Date().toISOString(),
       type: type,
       target: target || null,
       detail: detail || null
     };
+    _bufferedEvents.push(event);
+
+    // If human is verified but firebase is loading/ready, flush triggers will run in due time
+  };
+
+  /* ── Dynamic Flush Queue ── */
+  function flushEvents() {
+    if (!_sessionRef || !_db || !_firebaseReady || _bufferedEvents.length === 0) return;
+
+    var eventsToWrite = _bufferedEvents.slice();
+    _bufferedEvents = []; /* Clear local buffer immediately to prevent duplicate writes during async delay */
+
     _sessionRef.update({
-      events: firebase.firestore.FieldValue.arrayUnion(event),
+      events: firebase.firestore.FieldValue.arrayUnion.apply(null, eventsToWrite),
       lastSeen: firebase.firestore.FieldValue.serverTimestamp()
     }).catch(function (err) {
-      /* Stale/cross-domain session — clear and start fresh */
+      /* Restore items on failure and reset stale/expired sessions */
+      _bufferedEvents = eventsToWrite.concat(_bufferedEvents);
       if (err.code === 'permission-denied' || err.code === 'not-found') {
-        // console.warn('[Tracker] Stale session, resetting:', err.code);
-        try { localStorage.removeItem('_pt_sid'); localStorage.removeItem('_pt_sts'); } catch (e) { }
-        /* Re-create session and replay this event */
-        _ready = false;
+        try { localStorage.removeItem(SESSION_ID_KEY); localStorage.removeItem(SESSION_TS_KEY); } catch (e) { }
+        _firebaseReady = false;
         _sessionRef = null;
-        _queue.push({ type: type, target: target, detail: detail });
-        _freshSession();
-      } else {
-        // console.warn('[Tracker] Event write failed:', err.message);
+        initTracker();
       }
     });
   }
 
-  /* ── Flush queued events once SDK is ready ── */
-  function flushQueue() {
-    _queue.forEach(function (item) {
-      writeEvent(item.type, item.target, item.detail);
-    });
-    _queue = [];
+  /* ── Periodic & Exit Flush Triggers ── */
+  function setupPeriodicFlush() {
+    if (_flushInterval) clearInterval(_flushInterval);
+    _flushInterval = setInterval(function () {
+      flushEvents();
+    }, 10000); /* Batch write every 10 seconds */
   }
 
-  /* ── Public API ── */
-  window.trackEvent = function (type, target, detail) {
-    if (_ready) {
-      writeEvent(type, target, detail);
-    } else {
-      _queue.push({ type: type, target: target, detail: detail });
-    }
-  };
+  function setupExitFlush() {
+    /* Flush when tab is hidden or minimized */
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') {
+        flushEvents();
+      }
+    });
+
+    /* Flush when user is exiting/closing the tab */
+    window.addEventListener('pagehide', function () {
+      flushEvents();
+    });
+    window.addEventListener('beforeunload', function () {
+      flushEvents();
+    });
+  }
+
+  /* ── Dynamic Behavioral Human Verification (Lazy Auth) ── */
+  function confirmHuman() {
+    if (_signals.isHuman || _firebaseLoading) return;
+    _signals.isHuman = true;
+    _firebaseLoading = true;
+
+    /* Load Firebase SDK and sign in ONLY for real human visitors */
+    loadScripts(SDK_SCRIPTS, function () {
+      if (typeof firebase === 'undefined') {
+        _firebaseLoading = false;
+        return;
+      }
+      initTracker();
+    });
+  }
+
+  function setupBehavioralTracking() {
+    window.addEventListener('mousemove', function () {
+      _signals.mouse++;
+      if (_signals.mouse > 5) confirmHuman();
+    }, { passive: true });
+
+    window.addEventListener('keydown', function () {
+      _signals.keys++;
+      if (_signals.keys > 1) confirmHuman();
+    }, { passive: true });
+
+    window.addEventListener('touchstart', function () {
+      _signals.touches++;
+      if (_signals.touches > 0) confirmHuman();
+    }, { passive: true });
+
+    window.addEventListener('scroll', function () {
+      _signals.scrolls++;
+      if (_signals.scrolls > 2) confirmHuman();
+    }, { passive: true });
+  }
+
+  /* ── DevTools & Code Inspection Telemetry ── */
+  function setupDevToolsTracking() {
+    document.addEventListener('contextmenu', function (e) {
+      window.trackEvent('inspect_attempt', 'context_menu', {
+        x: e.clientX,
+        y: e.clientY,
+        targetTag: e.target.tagName.toLowerCase(),
+        targetId: e.target.id || null,
+        targetClass: e.target.className || null
+      });
+    });
+
+    window.addEventListener('keydown', function (e) {
+      var key = e.key;
+      var ctrl = e.ctrlKey || e.metaKey;
+      var shift = e.shiftKey;
+
+      if (
+        key === 'F12' ||
+        (ctrl && shift && (key === 'I' || key === 'i' || key === 'J' || key === 'j' || key === 'C' || key === 'c')) ||
+        (ctrl && (key === 'U' || key === 'u' || key === 'S' || key === 's'))
+      ) {
+        window.trackEvent('inspect_attempt', 'developer_tools_hotkey', {
+          key: key,
+          ctrl: ctrl,
+          shift: shift
+        });
+      }
+    });
+  }
+
+  /* ── Plagiarism & Copying Telemetry ── */
+  function setupCopyTracking() {
+    document.addEventListener('copy', function () {
+      var selectedText = '';
+      if (window.getSelection) {
+        selectedText = window.getSelection().toString();
+      } else if (document.selection && document.selection.type !== 'Control') {
+        selectedText = document.selection.createRange().text;
+      }
+      
+      if (selectedText.length > 0) {
+        window.trackEvent('text_copy', 'document', {
+          textLength: selectedText.length,
+          snippet: selectedText.slice(0, 150).trim()
+        });
+      }
+    });
+  }
 
   /* ── Auto: scroll depth tracking ── */
   function setupScrollTracking() {
@@ -138,52 +244,82 @@
     }, { passive: true });
   }
 
-  /* ── Auto: external link click tracking ── */
-  function setupExternalLinkTracking() {
+  /* ── Omnipresent Click Engagements Tracking ── */
+  function setupClickTracking() {
     document.addEventListener('click', function (e) {
-      var anchor = e.target.closest('a');
+      var anchor = e.target.closest('a, button, input[type="submit"], input[type="button"]');
       if (!anchor) return;
-      var href = anchor.getAttribute('href') || '';
-      if (
-        anchor.target === '_blank' ||
-        (href.startsWith('http') && !href.includes(window.location.hostname))
-      ) {
-        window.trackEvent('external_link', anchor.textContent.trim().slice(0, 60), { href: href });
-      }
-    });
-  }
 
-  /* ── Auto: CTA / resume / hero button tracking ── */
-  function setupCTATracking() {
-    var ctaIds = ['cta-btn', 'secondary-cta-btn', 'resume-btn'];
-    ctaIds.forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) {
-        el.addEventListener('click', function () {
-          window.trackEvent('cta_click', id, { label: el.textContent.trim().slice(0, 60) });
-        });
-      }
-    });
-    /* Hero explore button */
-    document.querySelectorAll('.hero-primary-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        window.trackEvent('cta_click', 'hero_explore', { label: btn.textContent.trim().slice(0, 60) });
+      var tag = anchor.tagName.toLowerCase();
+      var id = anchor.id || '';
+      var className = anchor.className || '';
+      var href = anchor.getAttribute('href') || '';
+      var text = anchor.textContent ? anchor.textContent.trim().slice(0, 60) : '';
+
+      /* Skip validation UI elements to avoid dynamic popover noise */
+      if (className.indexOf('challenge-') !== -1 || id === 'phone-reveal-btn') return;
+
+      window.trackEvent('click_engagement', tag + (id ? '#' + id : ''), {
+        text: text,
+        id: id,
+        class: className,
+        href: href
       });
     });
   }
 
-  /* ── Session persistence keys ── */
-  var SESSION_ID_KEY = '_pt_sid';
-  var SESSION_TS_KEY = '_pt_sts';
-  var SESSION_TTL = 30 * 60 * 1000; /* 30 minutes inactivity = new session */
+  /* ── Interactive Input Fields Telemetry ── */
+  function setupFormFieldsTracking() {
+    document.addEventListener('focusin', function (e) {
+      var input = e.target.closest('input, textarea, select');
+      if (!input) return;
 
-  /* ── Read / write session from localStorage ── */
+      var id = input.id || '';
+      var name = input.name || '';
+      var type = input.type || '';
+
+      window.trackEvent('form_focus', input.tagName.toLowerCase() + (id ? '#' + id : ''), {
+        id: id,
+        name: name,
+        type: type
+      });
+    });
+
+    document.addEventListener('change', function (e) {
+      var input = e.target.closest('input, textarea, select');
+      if (!input || input.type === 'password') return;
+
+      var id = input.id || '';
+      var name = input.name || '';
+      var type = input.type || '';
+      var valueLength = input.value ? input.value.length : 0;
+
+      window.trackEvent('form_change', input.tagName.toLowerCase() + (id ? '#' + id : ''), {
+        id: id,
+        name: name,
+        type: type,
+        valueLength: valueLength
+      });
+    });
+  }
+
+  /* ── Browser Tab Visibility Telemetry ── */
+  function setupVisibilityTracking() {
+    document.addEventListener('visibilitychange', function () {
+      var state = document.visibilityState;
+      window.trackEvent('visibility_change', 'document', {
+        state: state
+      });
+    });
+  }
+
+  /* ── Session recovery storage helpers ── */
   function getSavedSession() {
     try {
       var sid = localStorage.getItem(SESSION_ID_KEY);
       var ts = parseInt(localStorage.getItem(SESSION_TS_KEY) || '0', 10);
       if (sid && (Date.now() - ts) < SESSION_TTL) return sid;
-    } catch (e) { /* private browsing may block localStorage */ }
+    } catch (e) { }
     return null;
   }
 
@@ -191,58 +327,16 @@
     try {
       localStorage.setItem(SESSION_ID_KEY, sid);
       localStorage.setItem(SESSION_TS_KEY, String(Date.now()));
-    } catch (e) { /* ignore */ }
+    } catch (e) { }
   }
 
   function touchSession() {
-    try { localStorage.setItem(SESSION_TS_KEY, String(Date.now())); } catch (e) { /* ignore */ }
+    try { localStorage.setItem(SESSION_TS_KEY, String(Date.now())); } catch (e) { }
   }
 
-  /* ── Create a brand-new session doc (used on first visit and after stale reset) ── */
-  function _freshSession(uid, ctx, isBot) {
-    var sid = genId();
-    _sessionRef = _db.collection('Portfolio').doc(sid);
-    _sessionRef.set({
-      uid: uid,
-      sessionId: sid,
-      startedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      domain: ctx.domain,
-      entryUrl: ctx.url,
-      entryPath: ctx.path,
-      pageTitle: ctx.title,
-      referrer: ctx.referrer,
-      ua: navigator.userAgent,
-      suspectedBot: isBot || false,
-      language: navigator.language || null,
-      screen: {
-        w: window.screen.width,
-        h: window.screen.height,
-        dpr: window.devicePixelRatio || 1
-      },
-      events: []
-    }).then(function () {
-      saveSession(sid);
-      _ready = true;
-      // console.log('[Tracker] New session created:', sid);
-      writeEvent('page_view', ctx.path, {
-        url: ctx.url,
-        domain: ctx.domain,
-        referrer: ctx.referrer,
-        title: ctx.title
-      });
-      flushQueue();
-      setupScrollTracking();
-      setupExternalLinkTracking();
-      setupCTATracking();
-    }).catch(function (err) {
-      // console.warn('[Tracker] Session create failed:', err.message);
-    });
-  }
-
-  /* ── Initialise Firebase + create/resume session ── */
+  /* ── Initialise Firebase + Session bindings ── */
   function initTracker() {
     try {
-      /* Prevent double-init */
       if (!firebase.apps.length) {
         firebase.initializeApp(FIREBASE_CONFIG);
       }
@@ -252,60 +346,83 @@
 
       auth.signInAnonymously().then(function (result) {
         _uid = result.user.uid;
+        _firebaseReady = true;
 
         var ctx = getPageContext();
-        var isBot = detectBot();
         var savedSid = getSavedSession();
 
         if (savedSid) {
-          /* ── RESUME existing session ── */
+          /* RESUME Session */
           _sessionId = savedSid;
           _sessionRef = _db.collection('Portfolio').doc(_sessionId);
-          _ready = true;
+          
+          _sessionRef.update({
+            isHumanConfirmed: true,
+            suspectedBot: false,
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+          }).catch(function () {});
+
           touchSession();
-
-          // console.log('[Tracker] Session resumed:', _sessionId, '| Page:', ctx.path);
-
-          /* Just log the new page view — no new doc created */
-          writeEvent('page_view', ctx.path, {
-            url: ctx.url,
-            domain: ctx.domain,
-            referrer: ctx.referrer,
-            title: ctx.title
-          });
-
-          flushQueue();
-          setupScrollTracking();
-          setupExternalLinkTracking();
-          setupCTATracking();
-
+          flushEvents();
+          setupPeriodicFlush();
         } else {
-          /* ── CREATE new session ── */
-          _freshSession(_uid, ctx, isBot);
+          /* CREATE Session */
+          var sid = genId();
+          _sessionId = sid;
+          _sessionRef = _db.collection('Portfolio').doc(_sessionId);
+
+          _sessionRef.set({
+            uid: _uid,
+            sessionId: _sessionId,
+            startedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            domain: ctx.domain,
+            entryUrl: ctx.url,
+            entryPath: ctx.path,
+            pageTitle: ctx.title,
+            referrer: ctx.referrer,
+            ua: navigator.userAgent,
+            suspectedBot: false,
+            isHumanConfirmed: true,
+            language: navigator.language || null,
+            screen: {
+              w: window.screen.width,
+              h: window.screen.height,
+              dpr: window.devicePixelRatio || 1,
+              viewportW: window.innerWidth,
+              viewportH: window.innerHeight
+            },
+            timezone: Intl && Intl.DateTimeFormat ? Intl.DateTimeFormat().resolvedOptions().timeZone : null,
+            events: []
+          }).then(function () {
+            saveSession(_sessionId);
+            flushEvents();
+            setupPeriodicFlush();
+          }).catch(function () {});
         }
 
       }).catch(function (err) {
-        // console.warn('[Tracker] Anonymous auth failed:', err.message);
+        _signals.isHuman = false;
+        _firebaseLoading = false;
       });
 
     } catch (err) {
-      // console.warn('[Tracker] Init error:', err.message);
+      _signals.isHuman = false;
+      _firebaseLoading = false;
     }
   }
 
-  /* ── Dynamically load Firebase Compat SDK scripts ── */
+  /* ── Dynamic Loader ── */
   function loadScripts(urls, callback) {
     var loaded = 0;
     urls.forEach(function (url) {
       var s = document.createElement('script');
       s.src = url;
-      s.async = false; /* Keep load order */
+      s.async = false;
       s.onload = function () {
         loaded++;
         if (loaded === urls.length) callback();
       };
       s.onerror = function () {
-        // console.warn('[Tracker] Failed to load SDK:', url);
         loaded++;
         if (loaded === urls.length) callback();
       };
@@ -313,15 +430,26 @@
     });
   }
 
-  /* ── Bootstrap ── */
-  loadScripts(SDK_SCRIPTS, function () {
-    if (typeof firebase === 'undefined') {
-      // console.warn('[Tracker] Firebase SDK unavailable — tracking disabled.');
-      /* Provide no-op so other modules don't error */
-      window.trackEvent = function () { };
-      return;
-    }
-    initTracker();
-  });
+  /* ── Start telemetries on page load ── */
+  (function bootstrap() {
+    // 1. Log initial page view to buffer
+    var ctx = getPageContext();
+    window.trackEvent('page_view', ctx.path, {
+      url: ctx.url,
+      domain: ctx.domain,
+      referrer: ctx.referrer,
+      title: ctx.title
+    });
+
+    // 2. Wire core listeners
+    setupScrollTracking();
+    setupClickTracking();
+    setupFormFieldsTracking();
+    setupVisibilityTracking();
+    setupBehavioralTracking();
+    setupDevToolsTracking();
+    setupCopyTracking();
+    setupExitFlush();
+  })();
 
 })();

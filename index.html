@@ -386,9 +386,17 @@
             <a href="mailto:alok@alokdasofficial.in" class="contact-chip-link">
               <span class="contact-chip-icon">📧</span>alok@alokdasofficial.in
             </a>
-            <a href="tel:+919101090890" class="contact-chip-link">
-              <span class="contact-chip-icon">📱</span>+91 9101090890
-            </a>
+            <div class="safe-phone-container" id="phone-container">
+              <button
+                type="button"
+                class="contact-chip-link phone-reveal-btn"
+                id="phone-reveal-btn"
+                aria-label="Reveal phone number"
+              >
+                <span class="contact-chip-icon">📱</span
+                ><span class="phone-masked-text">+91 91••• •••••</span>
+              </button>
+            </div>
             <a
               href="https://www.google.com/maps/search/?api=1&query=Hojai+Assam+India"
               target="_blank"
@@ -398,13 +406,12 @@
               <span class="contact-chip-icon">📍</span>Hojai, Assam, India
             </a>
             <a
-              href="https://github.com/alokdasofficial"
+              href="https://github.com/MrAlokTech"
               target="_blank"
               rel="noopener"
               class="contact-chip-link"
             >
-              <span class="contact-chip-icon">💻</span
-              >github.com/alokdasofficial
+              <span class="contact-chip-icon">💻</span>github.com/MrAlokTech
             </a>
           </div>
         </div>
@@ -441,7 +448,7 @@
                 type="email"
                 id="c-email"
                 name="email"
-                placeholder="hero@example.com"
+                placeholder="bruce@example.com"
                 required
               />
             </div>

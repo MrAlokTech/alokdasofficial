@@ -1,3 +1,5 @@
+@import url('/css/footer.css');
+
 /* ================================================================
    ALOK DAS — QC Chemistry Resume CSS
    Screen: vibrant comic style │ Print: clean professional A4
@@ -586,6 +588,137 @@ li { line-height: 1.55; margin-bottom: 3px; }
   .r-footer-strip { flex-direction: column; gap: 0.2rem; text-align: center; }
 }
 
+/* ── Safe Phone & Verification Popover on Resume ── */
+.print-only-phone {
+  display: none !important;
+}
+
+.safe-phone-container {
+  position: relative;
+  display: inline-block;
+}
+
+.phone-reveal-btn {
+  cursor: pointer;
+  outline: none;
+  font: inherit;
+  color: inherit;
+  box-shadow: none;
+}
+
+.phone-challenge-popover {
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 250px;
+  background: var(--yellow);
+  border: var(--border-thin);
+  border-radius: var(--radius);
+  padding: 0.8rem;
+  box-shadow: var(--shadow-sm);
+  z-index: 100;
+  font-family: var(--font-body);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  animation: bounceIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  text-align: left;
+}
+
+/* Speech bubble tip centered */
+.phone-challenge-popover::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 12px 9px 0;
+  border-style: solid;
+  border-color: var(--ink) transparent transparent;
+}
+
+.phone-challenge-popover::before {
+  content: '';
+  position: absolute;
+  bottom: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 9px 7px 0;
+  border-style: solid;
+  border-color: var(--yellow) transparent transparent;
+  z-index: 1;
+}
+
+.challenge-title {
+  font-family: var(--font-comic);
+  font-size: 1rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+}
+
+.challenge-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.challenge-question {
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.challenge-input {
+  width: 45px;
+  background: var(--white);
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+  font-family: var(--font-comic);
+  font-size: 0.9rem;
+  text-align: center;
+  color: var(--ink);
+  outline: none;
+}
+
+.challenge-input:focus {
+  border-color: var(--pink);
+}
+
+.challenge-btn {
+  background: var(--pink);
+  color: var(--white);
+  font-family: var(--font-comic);
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  padding: 0.25rem 0.6rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+  cursor: pointer;
+}
+
+.challenge-error {
+  color: var(--pink);
+  font-weight: 700;
+  font-size: 0.75rem;
+  margin-top: 1px;
+  display: none;
+}
+
+/* Shake animation for errors */
+@keyframes shakeError {
+  0%, 100% { transform: translateX(-50%) translateX(0); }
+  20%, 60% { transform: translateX(-50%) translateX(-6px); }
+  40%, 80% { transform: translateX(-50%) translateX(6px); }
+}
+
+.shake-it {
+  animation: shakeError 0.3s ease-in-out;
+}
+
+
 /* ================================================================
    ██████  ██████  ██ ███    ██ ████████
    ██   ██ ██   ██ ██ ████   ██    ██
@@ -692,6 +825,25 @@ li { line-height: 1.55; margin-bottom: 3px; }
   .r-contact-chip::after { content: ' | '; color: #bbb; }
   .r-contact-chip:last-child::after { content: ''; }
 
+  .safe-phone-container {
+    display: inline-flex !important;
+    align-items: center;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+  .safe-phone-container::after { content: ' | '; color: #bbb; margin-left: 3pt; }
+
+  .print-only-phone {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 4px;
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-size: 8.5pt !important;
+    color: #000 !important;
+  }
+
   /* ---- LAYOUT ---- */
   .r-main {
     display: grid !important;
@@ -748,9 +900,30 @@ li { line-height: 1.55; margin-bottom: 3px; }
   .r-list { font-family: Arial, Helvetica, sans-serif !important; font-size: 8.5pt !important; color: #000 !important; }
 
   /* Language bars */
-  .lang-name  { font-family: Arial, Helvetica, sans-serif !important; font-size: 8.5pt !important; color: #000 !important; }
-  .lang-level { font-family: Arial, Helvetica, sans-serif !important; font-size: 7.5pt !important; color: #666 !important; }
-  .lang-bar   { border: 0.5pt solid #ccc !important; background: #eee !important; }
+  .r-lang-item {
+    display: block !important;
+    margin-bottom: 3pt !important;
+  }
+  .lang-name  {
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-size: 8.5pt !important;
+    color: #000 !important;
+    display: inline !important;
+    font-weight: bold !important;
+  }
+  .lang-level {
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-size: 8pt !important;
+    color: #444 !important;
+    display: inline !important;
+    font-style: italic !important;
+  }
+  .lang-level::before {
+    content: " — " !important;
+  }
+  .lang-bar {
+    display: none !important;
+  }
 
   /* Strengths */
   .strengths-grid { gap: 2pt !important; }

@@ -162,3 +162,138 @@
   border-radius: var(--radius);
   background: rgba(255,230,0,0.08);
 }
+
+/* ── Secure Phone & Verification popover styling ── */
+.safe-phone-container {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.phone-reveal-btn {
+  display: flex;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  justify-content: flex-start;
+  align-items: center;
+  outline: none;
+  font: inherit;
+  color: inherit;
+  box-shadow: none;
+}
+
+.phone-challenge-popover {
+  position: absolute;
+  bottom: 125%;
+  left: 0;
+  width: 100%;
+  background: var(--yellow);
+  border: var(--border-thin);
+  border-radius: var(--radius);
+  padding: 1rem;
+  box-shadow: var(--shadow-pop);
+  z-index: 100;
+  font-family: var(--font-body);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  animation: bounceIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Speech bubble tip */
+.phone-challenge-popover::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 30px;
+  border-width: 15px 10px 0 0;
+  border-style: solid;
+  border-color: var(--ink) transparent transparent transparent;
+}
+
+.phone-challenge-popover::before {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 31px;
+  border-width: 11px 8px 0 0;
+  border-style: solid;
+  border-color: var(--yellow) transparent transparent transparent;
+  z-index: 1;
+}
+
+.challenge-title {
+  font-family: var(--font-comic);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+}
+
+.challenge-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.challenge-question {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.challenge-input {
+  width: 50px;
+  background: var(--white);
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  font-family: var(--font-comic);
+  font-size: 1rem;
+  text-align: center;
+  color: var(--ink);
+  outline: none;
+}
+
+.challenge-input:focus {
+  border-color: var(--pink);
+}
+
+.challenge-btn {
+  background: var(--pink);
+  color: var(--white);
+  font-family: var(--font-comic);
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  padding: 0.35rem 0.8rem;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 2px 2px 0 var(--ink);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.challenge-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.challenge-error {
+  color: var(--pink);
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin-top: 2px;
+  display: none;
+}
+
+/* Shake animation for errors */
+@keyframes shakeError {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.shake-it {
+  animation: shakeError 0.3s ease-in-out;
+}
+

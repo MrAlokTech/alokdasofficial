@@ -17,6 +17,7 @@
   setupBursts();
   setupPanelKeys();
   setupContactForm();
+  setupPhoneReveal();
   renderProjectsGrid();
 
   /* Dynamic year in footer */
