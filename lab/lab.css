@@ -1,0 +1,1951 @@
+/* ============================================================
+   lab.css — Stylesheet for the Virtual QC Lab Assistant Dashboard
+   Inherits core global styles and builds custom lab tools.
+   ============================================================ */
+
+@import url('/css/tokens.css');
+@import url('/css/base.css');
+@import url('/css/nav.css');
+@import url('/css/bursts.css');
+@import url('/css/footer.css');
+
+/* ── LAYOUT & CONTAINER ── */
+.lab-container {
+  width: 100%;
+  max-width: 1200px;
+  box-sizing: border-box;
+  margin: calc(var(--nav-height) + 40px) auto 60px auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 30px;
+  position: relative;
+  z-index: 10;
+}
+
+/* ── SIDEBAR: MEET THE ANALYST ── */
+.lab-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.sidebar-card {
+  background-color: var(--cream);
+  border: var(--border-thin);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow-pop);
+}
+
+.sidebar-badge {
+  display: inline-block;
+  background-color: var(--pink);
+  color: var(--white);
+  font-family: var(--font-comic);
+  font-size: 1rem;
+  padding: 4px 10px;
+  border: var(--border-thin);
+  transform: rotate(-1.5deg);
+  margin-bottom: 12px;
+  box-shadow: 2px 2px 0 var(--ink);
+  letter-spacing: 0.5px;
+}
+
+.sidebar-title {
+  font-family: var(--font-comic);
+  font-size: 1.9rem;
+  color: var(--ink);
+  margin-bottom: 2px;
+  letter-spacing: 1px;
+}
+
+.sidebar-role {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: var(--purple);
+  margin-bottom: 12px;
+  display: block;
+}
+
+.sidebar-bio {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: #444444;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.sidebar-subheading {
+  font-family: var(--font-comic);
+  font-size: 1.25rem;
+  color: var(--ink);
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
+.checklist-desc {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: #666666;
+  margin-bottom: 14px;
+}
+
+/* GLP Audit Checklist UI */
+.glp-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+}
+
+.chk-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+}
+
+.glp-chk {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  cursor: pointer;
+  accent-color: var(--pink);
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.chk-label span {
+  color: var(--ink);
+  transition: opacity 0.2s;
+}
+
+.glp-chk:checked + span {
+  opacity: 0.65;
+  text-decoration: line-through;
+}
+
+/* ── MAIN WORKBENCH & TAB SYSTEM ── */
+.lab-workbench {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  min-width: 0;
+}
+
+/* Tab selector ribbon */
+.tab-ribbon {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  background-color: var(--ink);
+  border-radius: var(--radius);
+  border: var(--border-thin);
+  padding: 6px;
+  gap: 6px;
+  box-shadow: var(--shadow-pop);
+  min-width: 0;
+}
+
+.tab-btn {
+  flex-grow: 1;
+  flex-shrink: 0;
+  white-space: nowrap;
+  background: none;
+  border: none;
+  border-radius: calc(var(--radius) - 4px);
+  color: var(--cream);
+  font-family: var(--font-comic);
+  font-size: 1.2rem;
+  padding: 12px 16px;
+  cursor: pointer;
+  outline: none;
+  letter-spacing: 1px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.tab-btn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--yellow);
+}
+
+.tab-btn.active {
+  background-color: var(--yellow);
+  color: var(--ink);
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+}
+
+/* Workbench Panes */
+.workbench-pane {
+  display: none;
+  min-width: 0;
+}
+
+.workbench-pane.active {
+  display: block;
+  animation: panePop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;
+}
+
+@keyframes panePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.98) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.pane-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 30px;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.pane-inputs,
+.pane-visuals {
+  min-width: 0;
+}
+
+.lab-card {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  background-color: var(--cream);
+  border: var(--border-thick);
+  border-radius: var(--radius);
+  padding: 30px 24px;
+  box-shadow: var(--shadow-pop);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+}
+
+.card-tag {
+  position: absolute;
+  top: -15px;
+  left: 20px;
+  font-family: var(--font-comic);
+  font-size: 0.95rem;
+  padding: 4px 12px;
+  border: var(--border-thin);
+  letter-spacing: 0.5px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.tag-yellow {
+  background-color: var(--yellow);
+  color: var(--ink);
+}
+
+.tag-pink {
+  background-color: var(--pink);
+  color: var(--white);
+}
+
+/* Slider Customization */
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.slider-badge {
+  font-family: var(--font-comic);
+  font-size: 1.1rem;
+  background-color: var(--ink);
+  color: var(--white);
+  padding: 2px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+
+.lab-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: #ddd;
+  border: 2px solid var(--ink);
+  outline: none;
+  cursor: pointer;
+  margin: 10px 0;
+}
+
+/* Track styling */
+.lab-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  background: #ddd;
+  border-radius: 4px;
+}
+
+/* Webkit Thumb styling */
+.lab-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 22px;
+  width: 22px;
+  border-radius: 50%;
+  background: var(--pink);
+  border: 2px solid var(--ink);
+  margin-top: -9px;
+  box-shadow: 1.5px 1.5px 0 var(--ink);
+  transition: transform 0.1s;
+}
+
+.lab-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15) rotate(5deg);
+}
+
+/* Firefox Thumb styling */
+.lab-slider::-moz-range-thumb {
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  background: var(--pink);
+  border: 2px solid var(--ink);
+  box-shadow: 1.5px 1.5px 0 var(--ink);
+  cursor: pointer;
+}
+
+.slider-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #666;
+}
+
+/* Select Form Styles */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-family: var(--font-comic);
+  font-size: 1.1rem;
+  color: var(--ink);
+  letter-spacing: 0.5px;
+}
+
+.custom-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.form-select {
+  width: 100%;
+  padding: 10px 14px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: var(--ink);
+  background-color: var(--white);
+  border: var(--border-thin);
+  border-radius: var(--radius);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+}
+
+.custom-select-wrapper::after {
+  content: '▼';
+  font-size: 0.75rem;
+  color: var(--ink);
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* ── MIXER VISUALS (Beaker & Charts) ── */
+.visualizer-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.visualizer-content {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 24px;
+  flex-grow: 1;
+  align-items: center;
+}
+
+/* Beaker Container & Liquid Animations */
+.beaker-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 250px;
+}
+
+.lab-beaker {
+  width: 130px;
+  height: 200px;
+  background-color: rgba(255, 255, 255, 0.45);
+  border: 4px solid var(--ink);
+  border-top: none;
+  border-radius: 0 0 16px 16px;
+  position: relative;
+  box-shadow: inset 4px -4px 0 rgba(255,255,255,0.6);
+}
+
+/* Lip of beaker */
+.lab-beaker::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -8px;
+  right: -8px;
+  height: 4px;
+  background-color: var(--ink);
+  border-radius: 4px;
+}
+
+/* Liquid level inside beaker */
+.beaker-liquid {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 25%; /* controlled dynamically by JS volume */
+  background-color: var(--blue);
+  border-radius: 0 0 12px 12px;
+  transition: height 0.4s ease, background-color 0.4s;
+  overflow: hidden;
+  box-shadow: inset 2px -2px 0 rgba(0,0,0,0.1);
+}
+
+/* Wave overlay inside liquid */
+.beaker-liquid-wave {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -190%;
+  left: -50%;
+  background-color: rgba(255, 255, 255, 0.25);
+  border-radius: 35%;
+  animation: waveRotate 5s linear infinite;
+}
+
+@keyframes waveRotate {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Gradations on beaker */
+.beaker-gradations {
+  position: absolute;
+  top: 15px;
+  bottom: 15px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+  line-height: 1;
+}
+
+.beaker-gradations span {
+  position: relative;
+  padding-left: 12px;
+}
+
+.beaker-gradations span::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 2px;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* Calculation Board Panel */
+.calculation-board {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.calc-main-title {
+  font-family: var(--font-comic);
+  font-size: 1.4rem;
+  color: var(--ink);
+  letter-spacing: 0.5px;
+  border-bottom: 2px dashed rgba(0, 0, 0, 0.15);
+  padding-bottom: 4px;
+}
+
+.calc-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: bold;
+}
+
+.calc-label {
+  color: #555;
+}
+
+.calc-val {
+  color: var(--ink);
+}
+
+.calc-result-row {
+  margin-top: 6px;
+  padding: 8px 12px;
+  background-color: var(--white);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.calc-result-row .calc-label {
+  font-family: var(--font-comic);
+  font-size: 1.1rem;
+  color: var(--ink);
+  letter-spacing: 0.5px;
+}
+
+.calc-result-val {
+  font-family: var(--font-comic);
+  font-size: 1.4rem;
+  color: var(--pink);
+}
+
+/* Comic Speech Instruction bubble */
+.calc-speech-bubble {
+  background-color: var(--yellow);
+  border: var(--border-thin);
+  border-radius: 16px;
+  padding: 8px 16px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  line-height: 1.3;
+  margin-top: 10px;
+  position: relative;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.calc-speech-bubble strong {
+  color: var(--pink);
+}
+
+/* ── SERIAL DILUTION TEST TUBES (Pane 2) ── */
+.dilution-visualizer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+/* Test tube rack UI */
+.test-tube-rack {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  background-color: rgba(0, 0, 0, 0.04);
+  border: 4px solid var(--ink);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 30px 20px 20px 20px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: inset 4px -4px 0 rgba(255,255,255,0.7);
+  position: relative;
+}
+
+.test-tube-rack::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 10px;
+  right: 10px;
+  height: 4px;
+  background-color: var(--ink);
+  border-radius: 4px;
+}
+
+.test-tube-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.test-tube {
+  width: 32px;
+  height: 140px;
+  background-color: rgba(255, 255, 255, 0.65);
+  border: 3px solid var(--ink);
+  border-radius: 0 0 16px 16px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 2px -2px 0 rgba(255,255,255,0.7);
+}
+
+.tube-liquid {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0%; /* updated in cascade animation */
+  background-color: var(--blue);
+  border-radius: 0 0 12px 12px;
+  transition: height 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.25), background-color 0.4s;
+  box-shadow: inset 1px -1px 0 rgba(0,0,0,0.1);
+}
+
+.tube-label {
+  font-family: var(--font-comic);
+  font-size: 0.75rem;
+  color: #666;
+  letter-spacing: 0.5px;
+}
+
+.tube-concentration {
+  font-family: var(--font-comic);
+  font-size: 0.95rem;
+  color: var(--ink);
+  letter-spacing: 0.5px;
+  background-color: var(--white);
+  padding: 1px 6px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  box-shadow: 1.5px 1.5px 0 var(--ink);
+  min-width: 60px;
+  text-align: center;
+}
+
+/* Dilution button */
+.btn-dilute {
+  background-color: var(--pink);
+  border: var(--border-thick);
+  border-radius: var(--radius);
+  color: var(--white);
+  font-family: var(--font-comic);
+  font-size: 1.25rem;
+  padding: 12px 16px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  box-shadow: var(--shadow-pop);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.25), box-shadow 0.2s;
+  outline: none;
+  width: 100%;
+  white-space: normal;
+}
+
+.btn-dilute:hover {
+  transform: translateY(-4px);
+  box-shadow: 7px 7px 0 var(--ink);
+}
+
+.btn-dilute:active {
+  transform: translateY(-1.5px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* ── PRINT COMPLIANCE REPORT COMPONENT ── */
+.glp-record-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.btn-generate-record {
+  background-color: var(--yellow);
+  border: var(--border-thick);
+  border-radius: var(--radius);
+  color: var(--ink);
+  font-family: var(--font-comic);
+  font-size: 1.35rem;
+  padding: 14px 28px;
+  cursor: pointer;
+  letter-spacing: 1.5px;
+  box-shadow: var(--shadow-pop);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.25), box-shadow 0.2s;
+  outline: none;
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+  white-space: normal;
+}
+
+.btn-generate-record:hover {
+  transform: translateY(-4px);
+  box-shadow: 7px 7px 0 var(--ink);
+}
+
+.btn-generate-record:active {
+  transform: translateY(-1.5px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Clean Official Sheet Styles (Printed sheet layout) */
+.glp-report-sheet {
+  display: none; /* hidden until generated */
+  background-color: var(--white);
+  border: 3px solid #000;
+  border-radius: 4px;
+  padding: 40px;
+  width: 100%;
+  max-width: 750px;
+  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.15);
+  font-family: Arial, sans-serif; /* Clean, formal look */
+  color: #000;
+  margin-top: 10px;
+}
+
+.glp-report-sheet.active {
+  display: block;
+  animation: panePop 0.4s ease forwards;
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 3px double #000;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+
+.report-logo {
+  font-family: var(--font-comic);
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+  color: #000;
+  border: 2px solid #000;
+  padding: 4px 10px;
+  display: inline-block;
+  line-height: 1;
+}
+
+.report-doc-info {
+  text-align: right;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.report-title {
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  margin-bottom: 24px;
+  text-decoration: underline;
+}
+
+.report-meta-table {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  row-gap: 10px;
+  column-gap: 30px;
+  border: 1px solid #000;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  background-color: #fafafa;
+}
+
+.report-meta-row {
+  display: flex;
+  font-size: 0.85rem;
+}
+
+.report-meta-label {
+  font-weight: bold;
+  width: 130px;
+  flex-shrink: 0;
+}
+
+.report-meta-val {
+  border-bottom: 1px solid #777;
+  flex-grow: 1;
+  padding-bottom: 2px;
+}
+
+.report-analyst-input {
+  width: 100%;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #333;
+  outline: none;
+  padding: 0;
+  margin: 0;
+}
+
+.report-subheading {
+  font-size: 1rem;
+  font-weight: bold;
+  border-bottom: 1px solid #000;
+  padding-bottom: 4px;
+  margin-bottom: 12px;
+  margin-top: 24px;
+}
+
+/* Formal Report Data Tables */
+.report-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  font-size: 0.85rem;
+}
+
+.report-data-table th,
+.report-data-table td {
+  border: 1px solid #000;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.report-data-table th {
+  background-color: #eaeaea;
+  font-weight: bold;
+}
+
+.report-data-table tr.highlight-row {
+  background-color: #fff9d1;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+/* Checklists & Sign-offs */
+.glp-report-checklist {
+  list-style: none;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  padding-left: 4px;
+}
+
+.report-footer-signs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  margin-top: 50px;
+  padding-top: 20px;
+}
+
+.sign-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sign-line {
+  width: 100%;
+  border-bottom: 1px solid #000;
+  height: 30px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.sign-line.sign-line-filled {
+  border-bottom: 2px dotted #000;
+  font-family: "Comic Neue", cursive;
+  font-size: 0.85rem;
+  padding-bottom: 2px;
+  height: auto;
+}
+
+.sign-label {
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #555;
+}
+
+/* Action panel for reporting */
+.report-actions-panel {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.report-actions-panel.active {
+  display: flex;
+}
+
+.btn-print-record {
+  background-color: var(--pink);
+  border: var(--border-thick);
+  border-radius: var(--radius);
+  color: var(--white);
+  font-family: var(--font-comic);
+  font-size: 1.35rem;
+  padding: 12px 24px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform 0.25s, box-shadow 0.25s;
+  outline: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: normal;
+}
+
+.btn-print-record:hover {
+  transform: translateY(-3px);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+.report-actions-tip {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: #555;
+  text-align: center;
+}
+
+/* ── NEW SIMULATORS: TITRATION, CALIBRATION, SAFETY, SPECTROPHOTOMETRY ── */
+
+/* Burette setup and animations */
+.lab-burette {
+  background-image: linear-gradient(to right, rgba(255,255,255,0.8), rgba(255,255,255,0.3));
+}
+
+.lab-flask {
+  background-image: linear-gradient(to right, rgba(255,255,255,0.7), rgba(255,255,255,0.2));
+  box-shadow: inset 2px -2px 0 rgba(255,255,255,0.6);
+}
+
+.titration-drop-fluid {
+  animation: dropFall 0.8s cubic-bezier(0.55, 0.055, 0.675, 0.19) infinite;
+}
+
+@keyframes dropFall {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(115px) scale(0.6);
+    opacity: 0;
+  }
+}
+
+/* Weight selection styling */
+.btn-weight {
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn-weight:hover {
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0 var(--ink) !important;
+}
+
+/* Digital Scale LED */
+.balance-led-screen {
+  background-color: #0d1e0d;
+}
+
+/* GHS Pictograms custom styling */
+.ghs-pictogram {
+  width: 32px;
+  height: 32px;
+  border: 2px solid #ff2d6b;
+  background-color: var(--white);
+  transform: rotate(45deg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 1.5px 1.5px 0 var(--ink);
+  transition: transform 0.3s ease;
+  margin: 6px;
+}
+.ghs-pictogram span {
+  transform: rotate(-45deg);
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: var(--ink);
+}
+
+/* Smoke and fire chamber triggers */
+@keyframes shakeHood {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  20%, 60% { transform: translate(-3px, 0) rotate(-1deg); }
+  40%, 80% { transform: translate(3px, 0) rotate(1deg); }
+}
+
+.hood-shaking {
+  animation: shakeHood 0.15s linear infinite;
+}
+
+/* LED Digital text effects */
+#spec-abs-led, #balance-led-readout {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* Wavelength scan styles */
+.spec-optical-layout {
+  box-sizing: border-box;
+}
+
+/* Expand tab-ribbon navigation for 6 buttons on responsive devices */
+.tab-ribbon {
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+}
+.tab-ribbon::-webkit-scrollbar {
+  display: none; /* WebKit */
+}
+
+/* Stable flag pulsing */
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+#cal-stable-flag.stable-pulsing {
+  animation: pulse 1.2s infinite;
+}
+
+/* Dynamic display setups for print template */
+.print-only {
+  display: none;
+}
+
+/* Minor custom spacing adjustments */
+.checklist-desc-spacing {
+  margin-bottom: 5px;
+}
+.calibration-form-field {
+  margin-top: 5px;
+  border-top: 2px dashed rgba(0,0,0,0.1);
+  padding-top: 10px;
+}
+.calibration-visualizer-card,
+.safety-visualizer-card {
+  justify-content: space-between;
+}
+#btn-mix-safety {
+  background-color: var(--pink);
+  margin-top: 10px;
+}
+
+/* 💧 Titration Desk Styles */
+.titration-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.btn-titration-action {
+  flex-grow: 1;
+  padding: 10px;
+  font-size: 1.1rem;
+  white-space: normal;
+  min-width: 0;
+}
+#btn-add-drop {
+  background-color: var(--blue);
+}
+.btn-reset-titration-btn {
+  flex-shrink: 0;
+  width: 44px;
+  padding: 10px;
+  background-color: var(--ink);
+}
+.titration-visualizer-grid {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  align-items: stretch;
+  gap: 16px;
+}
+.burette-setup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  position: relative;
+  width: 100%;
+}
+.lab-burette {
+  width: 14px;
+  height: 180px;
+  border: 3px solid var(--ink);
+  background-color: rgba(255,255,255,0.7);
+  position: relative;
+  border-radius: 0;
+  box-shadow: inset 1px 0 0 rgba(255,255,255,0.5);
+}
+.burette-fluid {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 194, 255, 0.25);
+  transition: height 0.3s ease;
+}
+.burette-marks {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 2px;
+  right: 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 0.5rem;
+  color: #555;
+  pointer-events: none;
+}
+.stopcock-valve {
+  width: 24px;
+  height: 12px;
+  background-color: var(--ink);
+  border: 2px solid var(--cream);
+  border-radius: 4px;
+  margin: 2px 0;
+  z-index: 5;
+}
+.lab-flask {
+  width: 70px;
+  height: 75px;
+  border: 3px solid var(--ink);
+  border-top: none;
+  background-color: rgba(255,255,255,0.7);
+  position: relative;
+  border-radius: 0 0 16px 16px;
+  clip-path: polygon(30% 0, 70% 0, 100% 100%, 0 100%);
+  overflow: hidden;
+  margin-top: 10px;
+}
+.flask-liquid {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transition: background-color 0.4s ease, height 0.4s ease;
+}
+.titration-drop-fluid {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: rgba(0, 194, 255, 0.6);
+  top: 190px;
+  display: none;
+  z-index: 10;
+}
+.titration-plotting {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  height: 100%;
+}
+.titration-canvas {
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  background-color: var(--white);
+  box-shadow: 2px 2px 0 var(--ink);
+  width: 100%;
+  height: 160px;
+  display: block;
+}
+
+/* ⚖️ Calibration Station Styles */
+.weight-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.btn-weight {
+  font-size: 1.05rem;
+  padding: 10px 5px;
+}
+#btn-weight-1 {
+  background-color: var(--purple);
+}
+#btn-weight-5 {
+  background-color: var(--blue);
+}
+#btn-weight-10 {
+  background-color: var(--pink);
+}
+#txt-observed-weight {
+  font-family: monospace;
+  font-weight: bold;
+  background-color: var(--white);
+  cursor: text;
+}
+.calibration-input-row {
+  display: flex;
+  gap: 8px;
+}
+#btn-cal-verify {
+  padding: 8px 12px;
+  font-size: 1rem;
+  width: auto;
+  flex-shrink: 0;
+  background-color: var(--yellow);
+  color: var(--ink);
+  border: var(--border-thin);
+}
+#btn-cal-clear {
+  padding: 8px 10px;
+  font-size: 1rem;
+  background-color: var(--ink);
+}
+.calibration-visualizer-grid {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  align-items: center;
+  gap: 20px;
+  flex-grow: 1;
+}
+.scale-pan-setup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+.scale-pan-top {
+  width: 60px;
+  height: 6px;
+  background-color: #aaa;
+  border: 2px solid var(--ink);
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+}
+#scale-active-weight {
+  width: 24px;
+  height: 28px;
+  background-color: #ffd700;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.55rem;
+  font-family: var(--font-comic);
+  box-shadow: 1.5px 1.5px 0 var(--ink);
+}
+.scale-pan-base {
+  width: 80px;
+  height: 20px;
+  background-color: var(--cream);
+  border: 3px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+  z-index: 2;
+}
+.scale-screen-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.balance-led-screen {
+  background-color: #0b1d0b;
+  border: 3px solid var(--ink);
+  padding: 12px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.balance-led-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.55rem;
+  color: #4da64d;
+  font-family: monospace;
+  letter-spacing: 0.5px;
+}
+#balance-led-readout {
+  font-family: monospace;
+  font-size: 2.1rem;
+  font-weight: bold;
+  color: #5eff5e;
+  text-shadow: 0 0 8px rgba(94,255,94,0.6);
+  text-align: right;
+  letter-spacing: 1px;
+  padding: 2px 0;
+}
+
+/* 🔥 Chemical Safety Matrix Styles */
+.safety-visualizer-grid {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 20px;
+  align-items: center;
+  flex-grow: 1;
+}
+.fume-hood {
+  width: 100%;
+  height: 120px;
+  border: 3px solid var(--ink);
+  background-color: #e5f6ff;
+  border-radius: var(--radius);
+  position: relative;
+  box-shadow: inset 3px 3px 0 rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.fume-hood-sash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 35px;
+  background-color: rgba(255,255,255,0.4);
+  border-bottom: 2px solid var(--ink);
+  z-index: 3;
+}
+#hood-status-icon {
+  font-size: 3.2rem;
+  transform: scale(1);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+  z-index: 2;
+}
+#hood-smoke {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  background-color: rgba(255, 45, 107, 0.25);
+  display: none;
+  z-index: 1;
+}
+.safety-placard-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+#ghs-placards-panel {
+  display: flex;
+  gap: 8px;
+  min-height: 48px;
+  align-items: center;
+}
+
+/* 🔬 Spectrophotometer Scanner Styles */
+.spec-visualizer-grid {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 16px;
+  align-items: stretch;
+}
+.spec-optical-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  border-right: 2px dashed rgba(0,0,0,0.1);
+  padding-right: 12px;
+  position: relative;
+}
+.spec-light-source {
+  font-size: 1.8rem;
+  margin-bottom: 5px;
+}
+.spec-optical-beam-path {
+  width: 100%;
+  height: 16px;
+  background-color: #ddd;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+.spec-emitter-beam {
+  position: absolute;
+  left: 0;
+  width: 35px;
+  height: 100%;
+  background-color: #fffa65;
+}
+#spec-light-beam {
+  position: absolute;
+  left: 35px;
+  width: 60px;
+  height: 100%;
+  background-color: #fffa65;
+  opacity: 0.9;
+  transition: opacity 0.3s;
+}
+#spec-detector-beam {
+  position: absolute;
+  left: 95px;
+  right: 0;
+  height: 100%;
+  background-color: #fffa65;
+  opacity: 0.6;
+  transition: opacity 0.3s;
+}
+#spec-cuvette {
+  position: absolute;
+  left: 35px;
+  width: 60px;
+  height: 100%;
+  border-left: 2px solid var(--ink);
+  border-right: 2px solid var(--ink);
+  background-color: rgba(0, 194, 255, 0.4);
+  transition: background-color 0.4s;
+}
+.spec-absorbance-box {
+  margin-top: 14px;
+  background-color: #1a0030;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  padding: 4px 8px;
+  width: 100%;
+  box-shadow: 2px 2px 0 var(--ink);
+  box-sizing: border-box;
+}
+.spec-absorbance-label {
+  font-size: 0.5rem;
+  color: #c48fff;
+  font-family: monospace;
+}
+#spec-abs-led {
+  font-size: 1.25rem;
+  font-family: monospace;
+  font-weight: bold;
+  color: #ea8aff;
+  text-align: center;
+}
+.spec-plotting-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  width: 100%;
+}
+.spec-canvas {
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  background-color: var(--white);
+  box-shadow: 2px 2px 0 var(--ink);
+  width: 100%;
+  height: 130px;
+  display: block;
+}
+
+/* 📖 Lab Manual styling */
+.lab-manual-card {
+  margin-top: 30px;
+  background-color: var(--cream);
+  border: var(--border-thick);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow-pop);
+  position: relative;
+  min-width: 0;
+}
+
+.manual-title {
+  font-family: var(--font-comic);
+  font-size: 1.6rem;
+  color: var(--ink);
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.manual-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  min-width: 0;
+}
+
+.manual-section {
+  background-color: var(--white);
+  border: var(--border-thin);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 3px 3px 0 var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.manual-section-title {
+  font-family: var(--font-comic);
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
+  border-bottom: 2px dashed rgba(0, 0, 0, 0.1);
+  padding-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.manual-section-title.what {
+  color: var(--pink);
+}
+
+.manual-section-title.how {
+  color: var(--blue);
+}
+
+.manual-section-title.why {
+  color: var(--purple);
+}
+
+.manual-text {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: #333;
+  line-height: 1.45;
+}
+
+/* ──────────────────────────────────────────
+   RESPONSIVE DESIGN (Media Queries)
+   ────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .lab-container {
+    grid-template-columns: 1fr;
+    margin-top: calc(var(--nav-height) + 20px);
+  }
+
+  .lab-sidebar {
+    display: none; /* hidden completely on mobile viewports for clean focus on calculators */
+  }
+
+  .pane-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .manual-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 600px) {
+  .lab-card {
+    padding: 24px 16px;
+  }
+
+  .visualizer-content {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 20px;
+  }
+
+  .beaker-container {
+    height: 180px;
+  }
+
+  .lab-beaker {
+    width: 110px;
+    height: 160px;
+  }
+
+  .calculation-board {
+    width: 100%;
+  }
+
+  .tab-btn {
+    font-size: 1rem;
+    padding: 8px 12px;
+  }
+
+  .glp-report-sheet {
+    padding: 20px;
+  }
+
+  .report-meta-table {
+    grid-template-columns: 1fr;
+    row-gap: 8px;
+  }
+
+  .report-title {
+    font-size: 1.25rem;
+  }
+
+  .burst {
+    display: none !important;
+  }
+
+  .report-data-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 💧 Titration Grid Stack */
+  .titration-visualizer-grid {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 20px;
+  }
+  .burette-setup {
+    height: 290px;
+    width: 100%;
+  }
+  .titration-plotting {
+    width: 100%;
+    align-items: center;
+  }
+  
+  /* ⚖️ Calibration Grid Stack */
+  .calibration-visualizer-grid {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 20px;
+  }
+  .scale-pan-setup {
+    height: 80px;
+  }
+  .scale-screen-panel {
+    width: 100%;
+  }
+  
+  /* 🔥 Safety Grid Stack */
+  .safety-visualizer-grid {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 20px;
+  }
+  .fume-hood {
+    max-width: 160px;
+  }
+  .safety-placard-panel {
+    width: 100%;
+  }
+  
+  /* 🔬 Spectrophotometer Grid Stack */
+  .spec-visualizer-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .spec-optical-layout {
+    border-right: none;
+    border-bottom: 2px dashed rgba(0,0,0,0.1);
+    padding-right: 0;
+    padding-bottom: 16px;
+    width: 100%;
+  }
+  .spec-plotting-area {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .lab-container {
+    padding: 0 10px;
+    margin-top: calc(var(--nav-height) + 15px);
+    margin-bottom: 30px;
+  }
+  
+  .lab-card {
+    padding: 16px 12px;
+  }
+  
+  .visualizer-card {
+    padding: 16px 8px;
+  }
+  
+  .weight-grid button {
+    font-size: 0.9rem;
+    padding: 8px 4px;
+  }
+
+  .report-footer-signs {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .btn-generate-record {
+    font-size: 1.1rem !important;
+    padding: 10px 16px !important;
+    white-space: normal !important;
+  }
+
+  #balance-led-readout {
+    font-size: 1.7rem !important;
+  }
+
+  .calc-speech-bubble {
+    font-size: 0.85rem !important;
+    padding: 8px 12px !important;
+  }
+
+  .lab-manual-card {
+    padding: 16px 12px !important;
+    margin-top: 20px !important;
+  }
+  
+  .manual-title {
+    font-size: 1.3rem !important;
+    margin-bottom: 12px !important;
+  }
+  
+  .manual-section {
+    padding: 12px !important;
+  }
+  
+  .manual-section-title {
+    font-size: 1rem !important;
+  }
+  
+  .manual-text {
+    font-size: 0.82rem !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .tab-btn {
+    font-size: 0.85rem;
+    padding: 6px 8px;
+  }
+
+  .test-tube-rack {
+    gap: 8px;
+    padding: 20px 10px 10px 10px;
+  }
+
+  .test-tube {
+    width: 26px;
+    height: 110px;
+  }
+
+  .tube-concentration {
+    font-size: 0.8rem;
+    min-width: 50px;
+  }
+  
+  .btn-dilute, .btn-auto-titrate, .btn-weight {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .calibration-input-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .calibration-input-row #btn-cal-verify {
+    width: 100%;
+  }
+  
+  .titration-actions {
+    gap: 6px;
+  }
+  
+  .btn-titration-action {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+  
+  .btn-reset-titration-btn {
+    width: 38px;
+    padding: 8px;
+  }
+
+  .report-meta-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .report-meta-label {
+    width: 100%;
+    margin-bottom: 2px;
+  }
+
+  .calc-row {
+    font-size: 0.85rem !important;
+  }
+  
+  .calc-result-row {
+    padding: 8px 10px !important;
+  }
+  
+  .calc-result-row .calc-label {
+    font-size: 1rem !important;
+  }
+  
+  .calc-result-val {
+    font-size: 1.15rem !important;
+  }
+}
+
+@media (max-width: 320px) {
+  .lab-container {
+    padding: 0 6px !important;
+  }
+  
+  .lab-card {
+    padding: 14px 8px !important;
+    gap: 15px !important;
+  }
+  
+  .card-tag {
+    font-size: 0.8rem !important;
+    padding: 3px 8px !important;
+    left: 10px !important;
+  }
+  
+  .calc-result-row {
+    padding: 6px 8px !important;
+  }
+  
+  .calc-result-row .calc-label {
+    font-size: 0.9rem !important;
+  }
+  
+  .calc-result-val {
+    font-size: 1.1rem !important;
+  }
+  
+  .btn-generate-record {
+    font-size: 1rem !important;
+    padding: 10px 12px !important;
+  }
+  
+  .tab-btn {
+    font-size: 0.8rem !important;
+    padding: 6px 6px !important;
+  }
+  
+  #btn-mix-safety {
+    font-size: 1rem !important;
+  }
+  
+  .weight-grid {
+    gap: 6px !important;
+  }
+  
+  .btn-weight {
+    font-size: 0.85rem !important;
+  }
+}
+
+
+/* ──────────────────────────────────────────
+   PRINT STYLING (CGMP Report Print mode)
+   ────────────────────────────────────────── */
+@media print {
+  /* Hides everything except report sheet on print layout */
+  body {
+    background-color: #fff !important;
+    background-image: none !important;
+    color: #000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-family: Arial, sans-serif !important;
+  }
+
+  /* Reset design elements */
+  .halftone-bg,
+  .burst,
+  .comic-nav,
+  .lab-sidebar,
+  .tab-ribbon,
+  .pane-inputs,
+  .card-tag,
+  .calc-speech-bubble,
+  .btn-generate-record,
+  .report-actions-panel,
+  .comic-footer,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Force display sheet */
+  .glp-report-sheet {
+    display: block !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    max-width: 100% !important;
+    page-break-after: avoid;
+  }
+
+  /* Display print-only elements */
+  .print-only {
+    display: inline !important;
+  }
+
+  .lab-container {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .lab-workbench {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .workbench-pane {
+    display: none !important; /* Hide workbench inputs and interactives */
+  }
+
+  /* Clean up tables */
+  .report-data-table th {
+    background-color: #f2f2f2 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .report-data-table tr.highlight-row {
+    background-color: #fffde8 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

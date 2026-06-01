@@ -240,5 +240,67 @@ window.PROJECTS_DATA = [
     footerLive: { href: 'https://play.google.com/store/apps/dev?id=6525734462153266152', label: '📱 Google Play Store' },
   },
 
+  /* ── 4. Virtual Lab Assistant ────────────────────────── */
+  {
+    slug: 'virtual-lab',
+    number: '004',
+    edition: 'Interactive Lab Edition ⚗️',
+    icon: '⚗️',
+    title: 'VIRTUAL QC<br>LAB ASSISTANT',
+    shortTitle: 'Virtual QC Laboratory Assistant',
+    subtitle: 'Chemistry Calculations & GLP Logger · Built with Pure JS',
+    cardBadges: [{ label: '⚡ Interactive', type: 'live' }, { label: 'Pure JS' }],
+    chips: ['Analytical Chemistry', 'SOP / GLP Standards', 'Volumetric Mathematics', 'Direct SOP PDF Printer'],
+    cardDesc: 'An immersive retro laboratory dashboard built to demonstrate my dual-specialty. Recruiters can select compounds, calculate molarities on dynamic beaker fills, cascade serial dilutions in animated test-tube racks, and instantly print formal, compliant GLP batch worksheets.',
+    autoplay: 4000,
+    carousel: [
+      { bg: 'linear-gradient(135deg,#1B1A2F,#3C1A4A)', icon: '🧪', label: 'VIRTUAL WORKBENCH SLIDERS' },
+      { bg: 'linear-gradient(135deg,#00214A,#0F4C81)', icon: '🧫', label: 'DILUTION CASCADE ANIMATIONS' },
+      { bg: 'linear-gradient(135deg,#1C2F1E,#2E5C34)', icon: '📋', label: 'GLP BATCH RECORD SHEET' }
+    ],
+    detailLink: '/lab/',
+    liveLink: { href: '/lab/', label: '🌐 Open Lab' },
+    headerBadges: [
+      { label: '🚀 Live', type: 'live' },
+      { label: 'Pure HTML / CSS / Vanilla JS' },
+      { label: 'Calculators Desk' }
+    ],
+    facts: [
+      { key: 'Type', val: 'Standalone Dashboard Utility' },
+      { key: 'Platform', val: 'Web (Responsive)' },
+      { key: 'Status', val: 'Active ✅' },
+      { key: 'Category', val: 'Chemistry meets Code' }
+    ],
+    techTitle: '🛠️ CORE COMPLIANCES',
+    techPills: ['Standard Operating Procedures (SOP)', 'Good Laboratory Practice (GLP)', 'cGMP Compliance Standards', 'Analytical Molarity Math', 'Dilution Cascading', 'A4 PDF Page CSS Printing'],
+    extraSidebar: null,
+    links: [
+      { href: '/lab/', label: '🌐 Open Lab', type: 'primary' },
+      { href: '/#contact', label: '💬 Pitch a Lab Project', type: 'secondary' }
+    ],
+    navExtra: [
+      { href: '/lab/', label: '🌐 Open Lab Desk', type: 'live' }
+    ],
+    overviewTitle: '⚗️ OVERVIEW',
+    overview: [
+      'In pharmaceutical Quality Control and chemical assay environments, minor manual errors in reagent formulation or dilution calculations can violate GLP parameters and deviate results. The Virtual QC Lab Assistant Dashboard was designed to demonstrate how lightweight software custom-built by a chemist solves this problem.',
+      'It sits at the absolute intersection of my dual domain specialties, showing biotech and pharmaceutical recruiters that I can translate strict SOP calculations and GLP compliance protocols directly into functional, snappy, and accessible interactive systems.'
+    ],
+    galleryTitle: '📸 MODULE GALLERY',
+    featuresTitle: '🧪 INTEGRATED MODULES',
+    features: [
+      { icon: '🧪', name: 'Molarity Mixer & Dilution Cascade', desc: 'Formulate reagents and run 1:10 sequential dilutions with dynamic beaker fluid HSL scaling and fading test tube opacities.' },
+      { icon: '💧', name: 'Acid-Base Titration Desk', desc: 'Perform a strong acid/base titration, watch indicators shift colors dynamically based on equilibrium pH, and plot real-time sigmoidal curves.' },
+      { icon: '⚖️', name: 'ISO 17025 Scale Calibration', desc: 'Place analytical weights, simulate micro-flickering environmental drifts, and log tolerance checks inside a cGMP batch log.' },
+      { icon: '🔥', name: 'GHS Chemical Safety Matrix', desc: 'Simulate laboratory chemical mixing (e.g. KMnO₄ + H₂SO₄) to dynamically render standard hazard placards and safety warnings.' },
+      { icon: '🔬', name: 'UV-Vis Spectrophotometer', desc: 'Adjust cuvette path lengths and concentrations, observe real-time light beam attenuation, and plot linear Beer-Lambert curves.' },
+      { icon: '📋', name: 'cGMP GLP SOP PDF Compiler', desc: 'Sync all calibration and volumetric assay data into a unified, formal laboratory worksheet that prints perfectly to black-and-white A4 paper.' }
+    ],
+    challengeTitle: '🎓 KEY LEARNING',
+    challenge: 'This project highlights how software developers with deep academic foundations in B.Sc. and M.Sc. Chemistry are uniquely positioned to build next-generation LIMS, lab automation scripts, and digital QC protocols. It proves that cGMP documentation guidelines (ALCOA+ principles) are as central to my coding standards as they are to my laboratory analytical assays.',
+    footerLine2: 'Vanilla HTML / CSS / Vanilla JS',
+    footerLive: { href: '/lab/', label: '🌐 alokdasofficial.in/lab' }
+  },
+
 
 ];

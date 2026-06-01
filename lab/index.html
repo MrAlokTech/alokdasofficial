@@ -1,0 +1,1282 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Virtual QC Lab Assistant Dashboard — Alok Das | Chemistry &amp; Code
+    </title>
+
+    <!-- SEO -->
+    <meta
+      name="description"
+      content="Interactive Quality Control Laboratory workbench by Alok Das, M.Sc. Chemistry candidate. Calculate molarity, simulate serial dilutions, and export cGMP/GLP compliant SOP batch records instantly."
+    />
+    <meta name="author" content="Alok Das" />
+    <meta name="robots" content="index, follow" />
+    <meta
+      property="og:title"
+      content="Virtual QC Lab Assistant Dashboard — Alok Das"
+    />
+    <meta
+      property="og:description"
+      content="Immersive laboratory workbench mixing Chemistry &amp; Code. Formulate reagents, run serial dilutions, and print GLP compliance logs."
+    />
+    <meta property="og:url" content="https://alokdasofficial.in/lab" />
+    <meta name="theme-color" content="#FFE600" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- FontAwesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Local Stylesheet -->
+    <link rel="stylesheet" href="/lab/lab.css" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+  </head>
+  <body>
+    <!-- Global Halftone Background and Comic Bursts (hidden on print) -->
+    <div class="halftone-bg no-print" aria-hidden="true"></div>
+    <div class="burst burst-1 no-print" aria-hidden="true">POW!</div>
+    <div class="burst burst-2 no-print" aria-hidden="true">ZAP!</div>
+    <div class="burst burst-3 no-print" aria-hidden="true">WOW!</div>
+    <div class="burst burst-4 no-print" aria-hidden="true">BAM!</div>
+
+    <!-- Navigation Header (hidden on print) -->
+    <nav
+      class="comic-nav no-print"
+      role="navigation"
+      aria-label="Main navigation"
+    >
+      <a href="/" class="nav-logo" aria-label="Alok Das home">
+        <img src="/assets/logo.png" alt="Alok Das Logo" class="nav-logo-img" />
+      </a>
+      <a href="/" class="nav-back-btn">← BACK TO BASE</a>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="lab-container">
+      <!-- ─── SIDEBAR: MEET THE ANALYST (hidden on print) ─── -->
+      <aside class="lab-sidebar no-print" aria-label="Analyst details">
+        <div class="sidebar-card">
+          <span class="sidebar-badge">THE ANALYST 🧪</span>
+          <h2 class="sidebar-title">ALOK DAS</h2>
+          <span class="sidebar-role">M.Sc. Chemistry Candidate</span>
+          <p class="sidebar-bio">
+            In Quality Control environments, precision is absolute. Even a minor
+            calculation error when preparing reagents can deviate assay
+            standards and compromise batch approvals.
+          </p>
+          <p class="sidebar-bio">
+            I built this interactive laboratory workbench to show how custom
+            software eliminates manual errors and automatically enforces
+            compliance with Good Laboratory Practice (GLP) standards.
+          </p>
+        </div>
+
+        <div class="sidebar-card">
+          <h3 class="sidebar-subheading">🛡️ GLP AUDIT CHECKLIST</h3>
+          <p class="checklist-desc">
+            Click items to complete standard operating verification:
+          </p>
+          <ul class="glp-checklist" role="list">
+            <li>
+              <label class="chk-label">
+                <input type="checkbox" class="glp-chk" checked />
+                <span>PPE Calibrated (Lab Coat + Glasses)</span>
+              </label>
+            </li>
+            <li>
+              <label class="chk-label">
+                <input type="checkbox" class="glp-chk" />
+                <span>Analytical Weigh Balance Calibrated</span>
+              </label>
+            </li>
+            <li>
+              <label class="chk-label">
+                <input type="checkbox" class="glp-chk" />
+                <span>Standard Reagent Lot Verified</span>
+              </label>
+            </li>
+            <li>
+              <label class="chk-label">
+                <input type="checkbox" class="glp-chk" />
+                <span>SOP Batch record prepared in LIMS</span>
+              </label>
+            </li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- ─── MAIN WORKBENCH ─── -->
+      <section class="lab-workbench" aria-label="Lab workbench">
+        <!-- Tab navigation ribbon (hidden on print) -->
+        <div class="tab-ribbon no-print" role="tablist">
+          <button
+            type="button"
+            class="tab-btn active"
+            id="tab-molarity"
+            role="tab"
+            aria-selected="true"
+            aria-controls="pane-molarity"
+          >
+            💥 MOLARITY
+          </button>
+          <button
+            type="button"
+            class="tab-btn"
+            id="tab-dilution"
+            role="tab"
+            aria-selected="false"
+            aria-controls="pane-dilution"
+          >
+            🧪 DILUTION
+          </button>
+          <button
+            type="button"
+            class="tab-btn"
+            id="tab-titration"
+            role="tab"
+            aria-selected="false"
+            aria-controls="pane-titration"
+          >
+            💧 TITRATION
+          </button>
+          <button
+            type="button"
+            class="tab-btn"
+            id="tab-calibration"
+            role="tab"
+            aria-selected="false"
+            aria-controls="pane-calibration"
+          >
+            ⚖️ CALIBRATION
+          </button>
+          <button
+            type="button"
+            class="tab-btn"
+            id="tab-safety"
+            role="tab"
+            aria-selected="false"
+            aria-controls="pane-safety"
+          >
+            🔥 SAFETY
+          </button>
+          <button
+            type="button"
+            class="tab-btn"
+            id="tab-spec"
+            role="tab"
+            aria-selected="false"
+            aria-controls="pane-spec"
+          >
+            🔬 UV-VIS SPEC
+          </button>
+        </div>
+
+        <!-- ──────────────────────────────────────────
+             WORKBENCH PANE 1: MOLARITY MIXER
+             ────────────────────────────────────────── -->
+        <div
+          class="workbench-pane active"
+          id="pane-molarity"
+          role="tabpanel"
+          aria-labelledby="tab-molarity"
+        >
+          <div class="pane-grid">
+            <!-- Left inputs (hidden on print) -->
+            <div class="pane-inputs no-print">
+              <div class="lab-card">
+                <div class="card-tag tag-yellow">INPUT PARAMETERS</div>
+
+                <!-- Input: Select Compound -->
+                <div class="form-field">
+                  <label class="form-label" for="select-compound"
+                    >SELECT REAGENT CHEMICAL</label
+                  >
+                  <div class="custom-select-wrapper">
+                    <select class="form-select" id="select-compound">
+                      <option value="NaOH">Sodium Hydroxide (NaOH)</option>
+                      <option value="NaCl">Sodium Chloride (NaCl)</option>
+                      <option value="CuSO4">Copper(II) Sulfate (CuSO₄)</option>
+                      <option value="KMnO4">
+                        Potassium Permanganate (KMnO₄)
+                      </option>
+                      <option value="HCl">
+                        Hydrochloric Acid (HCl, 37% w/w)
+                      </option>
+                      <option value="H2SO4">
+                        Sulfuric Acid (H₂SO₄, 98% w/w)
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Input: Target Volume -->
+                <div class="form-field">
+                  <div class="slider-header">
+                    <label class="form-label" for="slider-volume"
+                      >TARGET SOLUTION VOLUME</label
+                    >
+                    <span class="slider-badge" id="badge-volume">250 mL</span>
+                  </div>
+                  <input
+                    type="range"
+                    class="lab-slider"
+                    id="slider-volume"
+                    min="50"
+                    max="1000"
+                    step="25"
+                    value="250"
+                  />
+                  <div class="slider-ticks">
+                    <span>50 mL</span>
+                    <span>500 mL</span>
+                    <span>1000 mL</span>
+                  </div>
+                </div>
+
+                <!-- Input: Target Concentration -->
+                <div class="form-field">
+                  <div class="slider-header">
+                    <label class="form-label" for="slider-concentration"
+                      >TARGET CONCENTRATION</label
+                    >
+                    <span class="slider-badge" id="badge-concentration"
+                      >0.10 M</span
+                    >
+                  </div>
+                  <input
+                    type="range"
+                    class="lab-slider"
+                    id="slider-concentration"
+                    min="0.01"
+                    max="2.00"
+                    step="0.01"
+                    value="0.10"
+                  />
+                  <div class="slider-ticks">
+                    <span>0.01 M</span>
+                    <span>1.00 M</span>
+                    <span>2.00 M</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Visualizer -->
+            <div class="pane-visuals">
+              <div class="lab-card visualizer-card">
+                <div class="card-tag tag-pink no-print">
+                  VIRTUAL MIXING BENCH
+                </div>
+
+                <div class="visualizer-content">
+                  <!-- Animated Beaker representation -->
+                  <div class="beaker-container" aria-hidden="true">
+                    <div class="lab-beaker" id="beaker">
+                      <!-- Liquid level filled dynamically -->
+                      <div class="beaker-liquid" id="beaker-liquid">
+                        <!-- Liquid wave visual inside beaker -->
+                        <div class="beaker-liquid-wave"></div>
+                      </div>
+                      <!-- Grid gradation marks -->
+                      <div class="beaker-gradations">
+                        <span>1000mL</span>
+                        <span>800mL</span>
+                        <span>600mL</span>
+                        <span>400mL</span>
+                        <span>200mL</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Mathematical parameters display -->
+                  <div class="calculation-board">
+                    <h3 class="calc-main-title">FORMULATION ANALYSIS</h3>
+
+                    <div class="calc-row">
+                      <span class="calc-label">Chemical Formula:</span>
+                      <span class="calc-val" id="calc-formula">NaOH</span>
+                    </div>
+                    <div class="calc-row">
+                      <span class="calc-label">Molar Mass:</span>
+                      <span class="calc-val" id="calc-molar-mass"
+                        >40.00 g/mol</span
+                      >
+                    </div>
+                    <div class="calc-row">
+                      <span class="calc-label">Moles Required:</span>
+                      <span class="calc-val" id="calc-moles">0.025 mol</span>
+                    </div>
+                    <div class="calc-row calc-result-row">
+                      <span class="calc-label" id="calc-result-label"
+                        >MASS TO WEIGH OUT:</span
+                      >
+                      <span
+                        class="calc-val calc-result-val"
+                        id="calc-result-val"
+                        >1.00 g</span
+                      >
+                    </div>
+
+                    <!-- Dynamic comic instructions burst bubble (hidden on print) -->
+                    <div
+                      class="calc-speech-bubble no-print"
+                      id="molarity-speech"
+                    >
+                      ⚡ WEIGH OUT <strong>1.00 g</strong> OF NaOH &amp; DILUTE
+                      TO <strong>250 mL</strong>!
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 📖 LAB MANUAL: MOLARITY MIXER -->
+          <div class="lab-manual-card no-print">
+            <h4 class="manual-title">📖 STATION DECK MANUAL: MOLARITY MIXER</h4>
+            <div class="manual-grid">
+              <div class="manual-section">
+                <h5 class="manual-section-title what"><i class="fa-solid fa-circle-info"></i> WHAT IT IS</h5>
+                <p class="manual-text">An interactive formulation workbench for preparing high-precision chemical reagents. It dynamically calculates target moles and exact weight mass for solids, or required stock volume for liquid acids, in real-time.</p>
+              </div>
+              <div class="manual-section">
+                <h5 class="manual-section-title how"><i class="fa-solid fa-gamepad"></i> HOW TO USE</h5>
+                <p class="manual-text">Select your target reagent from the dropdown, then adjust the Volume and Concentration sliders. Note the computed weight mass (or stock volume for acids) on the digital readout panel.</p>
+              </div>
+              <div class="manual-section">
+                <h5 class="manual-section-title why"><i class="fa-solid fa-lightbulb"></i> WHY WE USE IT</h5>
+                <p class="manual-text">Solution formulation is the foundation of analytical chemistry. Formulating standards with absolute stoichiometric accuracy prevents Out-of-Specification (OOS) assay deviations and secures GLP compliance.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ──────────────────────────────────────────
+             WORKBENCH PANE 2: SERIAL DILUTION
+             ────────────────────────────────────────── -->
+        <div
+          class="workbench-pane"
+          id="pane-dilution"
+          role="tabpanel"
+          aria-labelledby="tab-dilution"
+        >
+          <div class="pane-grid">
+            <!-- Left inputs (hidden on print) -->
+            <div class="pane-inputs no-print">
+              <div class="lab-card">
+                <div class="card-tag tag-yellow">DILUTION PARAMETERS</div>
+
+                <!-- Input: Starting concentration -->
+                <div class="form-field">
+                  <label class="form-label" for="select-start-conc"
+                    >STARTING CONCENTRATION (TUBE 0)</label
+                  >
+                  <div class="custom-select-wrapper">
+                    <select class="form-select" id="select-start-conc">
+                      <option value="1.0">1.0 M (Concentrated Standard)</option>
+                      <option value="2.0">2.0 M</option>
+                      <option value="0.5">0.5 M</option>
+                      <option value="0.1">0.1 M</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Input: Liquid dye color -->
+                <div class="form-field">
+                  <label class="form-label" for="select-dye"
+                    >VISUAL DYE / COMPOUND COLOR</label
+                  >
+                  <div class="custom-select-wrapper">
+                    <select class="form-select" id="select-dye">
+                      <option value="permanganate">
+                        Potassium Permanganate (Deep Magenta)
+                      </option>
+                      <option value="copper">
+                        Copper Sulfate (Bright Cyan)
+                      </option>
+                      <option value="cobalt">
+                        Cobalt Chloride (Vibrant Pink)
+                      </option>
+                      <option value="chromate">
+                        Potassium Chromate (Vibrant Yellow)
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Action Button -->
+                <button type="button" class="btn-dilute" id="btn-run-dilution">
+                  🧪 PERFORM DILUTION CASCADE!
+                </button>
+              </div>
+            </div>
+
+            <!-- Right Visualizer -->
+            <div class="pane-visuals">
+              <div class="lab-card visualizer-card">
+                <div class="card-tag tag-pink no-print">
+                  TEST TUBE ARRAY visualizer
+                </div>
+
+                <div class="dilution-visualizer-content">
+                  <!-- Row of 4 test tubes inside rack -->
+                  <div
+                    class="test-tube-rack"
+                    id="test-tube-rack"
+                    aria-hidden="true"
+                  >
+                    <!-- Tube 1 -->
+                    <div class="test-tube-slot">
+                      <div class="test-tube">
+                        <div
+                          class="tube-liquid"
+                          id="tube-liq-1"
+                          style="height: 0%"
+                        ></div>
+                      </div>
+                      <div class="tube-label">TUBE 1</div>
+                      <div class="tube-concentration" id="tube-conc-1">--</div>
+                    </div>
+
+                    <!-- Tube 2 -->
+                    <div class="test-tube-slot">
+                      <div class="test-tube">
+                        <div
+                          class="tube-liquid"
+                          id="tube-liq-2"
+                          style="height: 0%"
+                        ></div>
+                      </div>
+                      <div class="tube-label">TUBE 2</div>
+                      <div class="tube-concentration" id="tube-conc-2">--</div>
+                    </div>
+
+                    <!-- Tube 3 -->
+                    <div class="test-tube-slot">
+                      <div class="test-tube">
+                        <div
+                          class="tube-liquid"
+                          id="tube-liq-3"
+                          style="height: 0%"
+                        ></div>
+                      </div>
+                      <div class="tube-label">TUBE 3</div>
+                      <div class="tube-concentration" id="tube-conc-3">--</div>
+                    </div>
+
+                    <!-- Tube 4 -->
+                    <div class="test-tube-slot">
+                      <div class="test-tube">
+                        <div
+                          class="tube-liquid"
+                          id="tube-liq-4"
+                          style="height: 0%"
+                        ></div>
+                      </div>
+                      <div class="tube-label">TUBE 4</div>
+                      <div class="tube-concentration" id="tube-conc-4">--</div>
+                    </div>
+                  </div>
+
+                  <!-- Dilution info speech bubble -->
+                  <div
+                    class="calc-speech-bubble dilution-speech no-print"
+                    id="dilution-speech"
+                  >
+                    🔬 CLICK "PERFORM DILUTION CASCADE" TO PIPETTE THE
+                    SOLUTIONS!
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 📖 LAB MANUAL: DILUTION CASCADE -->
+          <div class="lab-manual-card no-print">
+            <h4 class="manual-title">📖 STATION DECK MANUAL: DILUTION CASCADE</h4>
+            <div class="manual-grid">
+              <div class="manual-section">
+                <h5 class="manual-section-title what"><i class="fa-solid fa-circle-info"></i> WHAT IT IS</h5>
+                <p class="manual-text">A multi-tube dilution simulator representing a 10-fold (1:10) serial dilution array. It models physical compound diffusion, color fading, and exponential molarity reduction across a cascade rack of four experimental test tubes.</p>
+              </div>
+              <div class="manual-section">
+                <h5 class="manual-section-title how"><i class="fa-solid fa-gamepad"></i> HOW TO USE</h5>
+                <p class="manual-text">Prepare your initial reagent lot in the Molarity tab, switch here, and click "Perform Dilution Cascade". Watch the pipette fill the tubes sequentially. Molarities are tracked in clean scientific exponents.</p>
+              </div>
+              <div class="manual-section">
+                <h5 class="manual-section-title why"><i class="fa-solid fa-lightbulb"></i> WHY WE USE IT</h5>
+                <p class="manual-text">Serial dilutions are vital for establishing linear calibration lines in spectrophotometric (UV-Vis) or chromatographic (HPLC) assays. Preparing very low standard levels from a single stock minimizes pipetting error propagation.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ──────────────────────────────────────────
+             WORKBENCH PANE 3: ACID-BASE TITRATION
+             ────────────────────────────────────────── -->
+        <div class="workbench-pane" id="pane-titration" role="tabpanel" aria-labelledby="tab-titration">
+          <div class="pane-grid">
+            <!-- Left inputs (hidden on print) -->
+            <div class="pane-inputs no-print">
+              <div class="lab-card">
+                <div class="card-tag tag-yellow">TITRATION CONTROL</div>
+
+                <div class="form-field">
+                  <label class="form-label" for="select-titrant">SELECT TITRANT (IN BURETTE)</label>
+                  <div class="custom-select-wrapper">
+                    <select class="form-select" id="select-titrant">
+                      <option value="HCl">Hydrochloric Acid (HCl, 0.10 M)</option>
+                      <option value="HNO3">Nitric Acid (HNO₃, 0.10 M)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label" for="select-analyte">SELECT ANALYTE (IN FLASK)</label>
+                  <div class="custom-select-wrapper">
+                    <select class="form-select" id="select-analyte">
+                      <option value="NaOH">Sodium Hydroxide (NaOH, 25.0 mL, 0.10 M)</option>
+                      <option value="KOH">Potassium Hydroxide (KOH, 25.0 mL, 0.10 M)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label" for="select-indicator">SELECT pH INDICATOR</label>
+                  <div class="custom-select-wrapper">
+                    <select class="form-select" id="select-indicator">
+                      <option value="phenolphthalein">Phenolphthalein (Clear ↔ Pink)</option>
+                      <option value="methylOrange">Methyl Orange (Red ↔ Yellow)</option>
+                      <option value="bromothymolBlue">Bromothymol Blue (Yellow ↔ Blue)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-field">
+                  <div class="slider-header">
+                    <label class="form-label" for="slider-drop-size">DROP SIZE</label>
+                    <span class="slider-badge" id="badge-drop-size">0.50 mL</span>
+                  </div>
+                  <input type="range" class="lab-slider" id="slider-drop-size" min="0.10" max="1.00" step="0.05" value="0.50" />
+                </div>
+
+                <div class="titration-actions">
+                  <button type="button" class="btn-dilute btn-titration-action" id="btn-add-drop">
+                    💧 ADD DROP
+                  </button>
+                  <button type="button" class="btn-auto-titrate btn-dilute btn-titration-action" id="btn-auto-titrate">
+                    ▶ TITRATE
+                  </button>
+                  <button type="button" class="btn-dilute btn-reset-titration-btn" id="btn-reset-titration">
+                    🔄
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Visualizer -->
+            <div class="pane-visuals">
+              <div class="lab-card visualizer-card">
+                <div class="card-tag tag-pink no-print">VIRTUAL TITRATION CURVE</div>
+                
+                <div class="visualizer-content titration-visualizer-grid">
+                  <div class="burette-setup">
+                    <!-- Burette tube layout -->
+                    <div class="lab-burette">
+                      <div id="burette-fluid" class="burette-fluid"></div>
+                      <!-- Marks -->
+                      <div class="burette-marks">
+                        <span>0</span><span>10</span><span>20</span><span>30</span><span>40</span><span>50</span>
+                      </div>
+                    </div>
+                    <!-- Stopcock valve -->
+                    <div class="stopcock-valve"></div>
+                    <!-- Beaker/Flask -->
+                    <div class="lab-flask">
+                      <div id="flask-liquid" class="flask-liquid"></div>
+                    </div>
+                    <!-- Dynamic dripping drop -->
+                    <div id="titration-drop" class="titration-drop-fluid"></div>
+                  </div>
+
+                  <div class="titration-plotting">
+                    <canvas id="titration-curve-canvas" width="220" height="150" class="titration-canvas"></canvas>
+                    <div class="calc-speech-bubble" id="titration-speech">
+                      💧 pH: <strong id="titration-ph-badge">13.00</strong> | Vol Added: <strong id="titration-vol-badge">0.0 mL</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 📖 LAB MANUAL: TITRATION DESK -->
+          <div class="lab-manual-card no-print">
+            <h4 class="manual-title">📖 STATION DECK MANUAL: TITRATION DESK</h4>
+            <div class="manual-grid">
+              <div class="manual-section">
+                <h5 class="manual-section-title what"><i class="fa-solid fa-circle-info"></i> WHAT IT IS</h5>
+                <p class="manual-text">A strong acid (HCl) and strong base (NaOH) titration desk. It monitors neutralization pH changes, calculating equilibrium ratios to plot a classic sigmoidal neutralization curve in real-time.</p>
+              </div>
+              <div class="manual-section">
+                <h5 class="manual-section-title how"><i class="fa-solid fa-gamepad"></i> HOW TO USE</h5>
+                <p class="manual-text">Choose an organic indicator (Phenolphthalein, Methyl Orange, or Bromothymol Blue). Click "Add Single Drop" or toggle "Auto-Titrate" to drip HCl titrant. Observe the sudden HSL liquid color transition around the equivalence point (pH 7).</p>
+              </div>
+              <div class="manual-section">
+                <h5 class="manual-section-title why"><i class="fa-solid fa-lightbulb"></i> WHY WE USE IT</h5>
+                <p class="manual-text">Titration is a core wet chemistry assay used to determine unknown analyte concentrations. Analyzing neutralization curves enables QC labs to verify active ingredient percentages against strict regulatory specifications.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ──────────────────────────────────────────
+             WORKBENCH PANE 4: ANALYTICAL BALANCE CALIBRATION
+             ────────────────────────────────────────── -->
+        <div class="workbench-pane" id="pane-calibration" role="tabpanel" aria-labelledby="tab-calibration">
+          <div class="pane-grid">
+            <!-- Left inputs (hidden on print) -->
+            <div class="pane-inputs no-print">
+              <div class="lab-card">
+                <div class="card-tag tag-yellow">REFERENCE STANDARDS</div>
+                
+                <p class="checklist-desc checklist-desc-spacing">Place standard weights onto the analytical balance to verify ISO calibrations:</p>
+                
+                <div class="weight-grid">
+                  <button type="button" class="btn-dilute btn-weight" id="btn-weight-1">1.0000 g</button>
+                  <button type="button" class="btn-dilute btn-weight" id="btn-weight-5">5.0000 g</button>
+                  <button type="button" class="btn-dilute btn-weight" id="btn-weight-10">10.0000 g</button>
+                </div>
+
+                <div class="form-field calibration-form-field">
+                  <label class="form-label" for="txt-observed-weight">OBSERVED VALUE (g)</label>
+                  <div class="calibration-input-row">
+                    <input type="text" class="form-select" id="txt-observed-weight" placeholder="0.0000" readonly />
+                    <button type="button" class="btn-dilute" id="btn-cal-verify">
+                      📝 LOG ENTRY
+                    </button>
+                  </div>
+                </div>
+
+                <button type="button" class="btn-dilute" id="btn-cal-clear">
+                  🧹 CLEAR SCALES / TARE
+                </button>
+              </div>
+            </div>
+
+            <!-- Right Visualizer -->
+            <div class="pane-visuals">
+              <div class="lab-card visualizer-card calibration-visualizer-card">
+                <div class="card-tag tag-pink no-print">ISO 17025 BALANCE SYSTEM</div>
+
+                <div class="visualizer-content calibration-visualizer-grid">
+                  <!-- Retro digital scale pan -->
+                  <div class="scale-pan-setup">
+                    <div class="scale-pan-top"></div>
+                    <div id="scale-active-weight"></div>
+                    <div class="scale-pan-base"></div>
+                  </div>
+
+                  <!-- LED screen panel -->
+                  <div class="scale-screen-panel">
+                    <div class="balance-led-screen">
+                      <div class="balance-led-header">
+                        <span>METTLER TOLEDO QC-01</span>
+                        <span id="cal-stable-flag">● STABLE</span>
+                      </div>
+                      <div id="balance-led-readout">0.0000 g</div>
+                    </div>
+
+                    <div class="calc-speech-bubble" id="cal-speech">
+                      ⚖️ <strong>Standby mode:</strong> Place a weight on the scale pan to begin compliance verification assay!
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 📖 LAB MANUAL: BALANCE CALIBRATION -->
+          <div class="lab-manual-card no-print">
+            <h4 class="manual-title">📖 STATION DECK MANUAL: BALANCE CALIBRATION</h4>
+            <div class="manual-grid">
+              <div class="manual-section">
+                <h5 class="manual-section-title what"><i class="fa-solid fa-circle-info"></i> WHAT IT IS</h5>
+                <p class="manual-text">An ISO/IEC 17025 standard calibration desk modeling high-precision analytical weighing. It simulates realistic scale drift, thermal fluctuations, and stability indicators for weight verification.</p>
+              </div>
+              <div class="manual-section">
+                <h5 class="manual-section-title how"><i class="fa-solid fa-gamepad"></i> HOW TO USE</h5>
+                <p class="manual-text">Select and place reference weights (1g, 5g, or 10g) on the balance pan. Observe the LED screen fluctuations until "● STABLE" is achieved. Enter the observed reading, verify compliance, and log successful checks.</p>
+              </div>
+              <div class="manual-section">
+                <h5 class="manual-section-title why"><i class="fa-solid fa-lightbulb"></i> WHY WE USE IT</h5>
+                <p class="manual-text">Daily balance calibration is a critical regulatory requirement under cGMP rules. Micro-deviations in balance calibration propagate massive systematic errors across all subsequent reagent and standard formulations.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ──────────────────────────────────────────
+             WORKBENCH PANE 5: GHS CHEMICAL SAFETY MATRIX
+             ────────────────────────────────────────── -->
+        <div class="workbench-pane" id="pane-safety" role="tabpanel" aria-labelledby="tab-safety">
+          <div class="pane-grid">
+            <!-- Left inputs (hidden on print) -->
+            <div class="pane-inputs no-print">
+              <div class="lab-card">
+                <div class="card-tag tag-yellow">REACTION MIXER</div>
+
+                <div class="form-field">
+                  <label class="form-label" for="select-safety-a">CHEMICAL REAGENT A</label>
+                  <div class="custom-select-wrapper">
+                    <select class="form-select" id="select-safety-a">
+                      <option value="NaOH">Sodium Hydroxide (NaOH)</option>
+                      <option value="KMnO4">Potassium Permanganate (KMnO₄)</option>
+                      <option value="HCl">Hydrochloric Acid (HCl)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label" for="select-safety-b">CHEMICAL REAGENT B</label>
+                  <div class="custom-select-wrapper">
+                    <select class="form-select" id="select-safety-b">
+                      <option value="HCl">Hydrochloric Acid (HCl)</option>
+                      <option value="glycerin">Glycerin (Organic Polyol)</option>
+                      <option value="NaCl">Sodium Chloride (NaCl)</option>
+                      <option value="H2SO4">Sulfuric Acid (H₂SO₄)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button type="button" class="btn-dilute" id="btn-mix-safety">
+                  💥 TRIGGER CHEMICAL INTERACTION!
+                </button>
+              </div>
+            </div>
+
+            <!-- Right Visualizer -->
+            <div class="pane-visuals">
+              <div class="lab-card visualizer-card safety-visualizer-card">
+                <div class="card-tag tag-pink no-print">Visual Fume Chamber</div>
+
+                <div class="visualizer-content safety-visualizer-grid">
+                  <!-- Fume hood display -->
+                  <div class="fume-hood">
+                    <!-- Glass sash -->
+                    <div class="fume-hood-sash"></div>
+                    <!-- Reaction icons / warnings -->
+                    <div id="hood-status-icon">🧪</div>
+                    <div id="hood-smoke"></div>
+                  </div>
+
+                  <!-- Danger placarding board -->
+                  <div class="safety-placard-panel">
+                    <!-- GHS placards holder -->
+                    <div id="ghs-placards-panel">
+                      <!-- GHS icons will be populated dynamically -->
+                    </div>
+
+                    <div class="calc-speech-bubble" id="safety-speech">
+                      ⚠️ <strong>Fume Hood Active:</strong> Select Reagent A and B and click mix to verify hazard compatibility profiles.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 📖 LAB MANUAL: SAFETY MATRIX -->
+          <div class="lab-manual-card no-print">
+            <h4 class="manual-title">📖 STATION DECK MANUAL: SAFETY MATRIX</h4>
+            <div class="manual-grid">
+              <div class="manual-section">
+                <h5 class="manual-section-title what"><i class="fa-solid fa-circle-info"></i> WHAT IT IS</h5>
+                <p class="manual-text">An OSHA-aligned hazard compatibility matrix. It simulates the mixing of incompatible laboratory chemicals in a fume hood, dynamically generating OSHA warning placards and safety guidelines.</p>
+              </div>
+              <div class="manual-section">
+                <h5 class="manual-section-title how"><i class="fa-solid fa-gamepad"></i> HOW TO USE</h5>
+                <p class="manual-text">Select two reagent compounds from the mixing console and click "Mix Chemicals". The fume hood visualizes reactions (heat/neutralization, explosive combustions) and displays standard hazard GHS pictograms.</p>
+              </div>
+              <div class="manual-section">
+                <h5 class="manual-section-title why"><i class="fa-solid fa-lightbulb"></i> WHY WE USE IT</h5>
+                <p class="manual-text">Maintaining strict storage segregation and compatibility rules is an absolute requirement under OSHA 1910 rules. Proactive hazard checks eliminate fire, explosion, or toxic gas exposure risks in commercial labs.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ──────────────────────────────────────────
+             WORKBENCH PANE 6: SPECTROPHOTOMETRY
+             ────────────────────────────────────────── -->
+        <div class="workbench-pane" id="pane-spec" role="tabpanel" aria-labelledby="tab-spec">
+          <div class="pane-grid">
+            <!-- Left inputs (hidden on print) -->
+            <div class="pane-inputs no-print">
+              <div class="lab-card">
+                <div class="card-tag tag-yellow">UV-VIS SCANNER</div>
+
+                <div class="form-field">
+                  <label class="form-label" for="select-spec-compound">ABSORBING COMPOUND</label>
+                  <div class="custom-select-wrapper">
+                    <select class="form-select" id="select-spec-compound">
+                      <option value="CuSO4">Copper(II) Sulfate (Cyan, λ = 800nm)</option>
+                      <option value="KMnO4">Potassium Permanganate (Magenta, λ = 525nm)</option>
+                      <option value="cobalt">Cobalt Chloride (Pink, λ = 511nm)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-field">
+                  <div class="slider-header">
+                    <label class="form-label" for="slider-spec-path">CUVETTE PATH LENGTH (l)</label>
+                    <span class="slider-badge" id="badge-spec-path">1.0 cm</span>
+                  </div>
+                  <input type="range" class="lab-slider" id="slider-spec-path" min="0.1" max="2.0" step="0.1" value="1.0" />
+                </div>
+
+                <div class="form-field">
+                  <div class="slider-header">
+                    <label class="form-label" for="slider-spec-conc">CONCENTRATION (c)</label>
+                    <span class="slider-badge" id="badge-spec-conc">0.50 mM</span>
+                  </div>
+                  <input type="range" class="lab-slider" id="slider-spec-conc" min="0.01" max="2.00" step="0.01" value="0.50" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Visualizer -->
+            <div class="pane-visuals">
+              <div class="lab-card visualizer-card">
+                <div class="card-tag tag-pink no-print">BEER-LAMBERT CALIBRATION</div>
+
+                <div class="visualizer-content spec-visualizer-grid">
+                  <!-- Optical path diagram -->
+                  <div class="spec-optical-layout">
+                    <!-- Light bulb source -->
+                    <div class="spec-light-source">💡</div>
+                    
+                    <!-- Optical beam path -->
+                    <div class="spec-optical-beam-path">
+                      <!-- Bright emitter beam -->
+                      <div class="spec-emitter-beam"></div>
+                      <!-- Attenuated light beam crossing cuvette -->
+                      <div id="spec-light-beam"></div>
+                      <!-- Final beam detected -->
+                      <div id="spec-detector-beam"></div>
+                      
+                      <!-- Virtual Cuvette slot -->
+                      <div id="spec-cuvette"></div>
+                    </div>
+                    
+                    <!-- Absorbance values display box -->
+                    <div class="spec-absorbance-box">
+                      <div class="spec-absorbance-label">ABSORBANCE (A):</div>
+                      <div id="spec-abs-led">0.301</div>
+                    </div>
+                  </div>
+
+                  <!-- Absorbtion Graph curve plotting -->
+                  <div class="spec-plotting-area">
+                    <canvas id="spec-plot-canvas" width="220" height="150" class="spec-canvas"></canvas>
+                    <div class="calc-speech-bubble" id="spec-speech">
+                      📈 Transmittance: <strong id="spec-trans-badge">50.0%</strong> | Extinction ε: <strong id="spec-eps-badge">600</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 📖 LAB MANUAL: UV-VIS SPEC -->
+          <div class="lab-manual-card no-print">
+            <h4 class="manual-title">📖 STATION DECK MANUAL: UV-VIS SPEC</h4>
+            <div class="manual-grid">
+              <div class="manual-section">
+                <h5 class="manual-section-title what"><i class="fa-solid fa-circle-info"></i> WHAT IT IS</h5>
+                <p class="manual-text">A virtual UV-Vis spectrophotometer operating on Beer-Lambert physics. It calculates absorbance and transmittance levels based on path lengths and concentrations, plotting a linear standard curve.</p>
+              </div>
+              <div class="manual-section">
+                <h5 class="manual-section-title how"><i class="fa-solid fa-gamepad"></i> HOW TO USE</h5>
+                <p class="manual-text">Adjust the Cuvette Path Length and Sample Concentration sliders. Watch the optical light beam fade dynamically as transmittance drops, and track the linear Beer-Lambert line plot on the grid canvas.</p>
+              </div>
+              <div class="manual-section">
+                <h5 class="manual-section-title why"><i class="fa-solid fa-lightbulb"></i> WHY WE USE IT</h5>
+                <p class="manual-text">Spectrophotometry is a major screening method used to quantify protein, nucleic acid, or active pharmaceutical ingredient concentrations. Establishing clear linear standard bounds guarantees assay robustness.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ──────────────────────────────────────────
+             PRINTABLE SECTION: GLP BATCH COMPLIANCE RECORD
+             ────────────────────────────────────────── -->
+        <div class="glp-record-section">
+          <!-- Button triggering report compilation (hidden on print) -->
+          <button
+            type="button"
+            class="btn-generate-record no-print"
+            id="btn-trigger-record"
+          >
+            📋 COMPILE OFFICIAL GLP BATCH RECORD
+          </button>
+
+          <!-- The official report sheet (hidden by default on screen until compiled; visible on print!) -->
+          <article class="glp-report-sheet" id="glp-report-sheet">
+            <header class="report-header">
+              <div class="report-logo">ALOK DAS LABS</div>
+              <div class="report-doc-info">
+                <strong>STANDARD OPERATING PROCEDURE</strong><br />
+                Document No: AD-QC-SOP-084 · Revision: 02
+              </div>
+            </header>
+
+            <h1 class="report-title">CGMP / GLP REAGENT PREPARATION RECORD</h1>
+
+            <!-- Meta details (Name input is interactively editable on screen, prints as plain text) -->
+            <div class="report-meta-table">
+              <div class="report-meta-row">
+                <span class="report-meta-label">Operator / Analyst:</span>
+                <span class="report-meta-val no-print">
+                  <input
+                    type="text"
+                    class="report-analyst-input"
+                    id="report-operator"
+                    value="Alok Das"
+                    placeholder="Type your name here..."
+                  />
+                </span>
+                <span
+                  class="report-meta-val print-only"
+                  id="report-operator-print"
+                  >Alok Das</span
+                >
+              </div>
+              <div class="report-meta-row">
+                <span class="report-meta-label">Operation Date:</span>
+                <span class="report-meta-val" id="report-date">--</span>
+              </div>
+              <div class="report-meta-row">
+                <span class="report-meta-label">Laboratory Location:</span>
+                <span class="report-meta-val"
+                  >AD-QC-Bench 01 (Hojai, Assam)</span
+                >
+              </div>
+            </div>
+
+            <!-- Calculated assay values table -->
+            <h3 class="report-subheading">
+              1. Reagent Assay &amp; Formulation Metrics
+            </h3>
+            <table class="report-data-table">
+              <thead>
+                <tr>
+                  <th>Parameters</th>
+                  <th>Standard Specification / Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Formulated Compound</strong></td>
+                  <td id="rep-compound">Sodium Hydroxide (NaOH)</td>
+                </tr>
+                <tr>
+                  <td><strong>Compound Class / Lot</strong></td>
+                  <td>ACS Analytical Grade · Lot #AD-2026-CHMC</td>
+                </tr>
+                <tr>
+                  <td><strong>Molecular Weight</strong></td>
+                  <td id="rep-molar-mass">40.00 g/mol</td>
+                </tr>
+                <tr>
+                  <td><strong>Target Solution Volume</strong></td>
+                  <td id="rep-volume">250 mL</td>
+                </tr>
+                <tr>
+                  <td><strong>Target Concentration</strong></td>
+                  <td id="rep-concentration">0.10 M</td>
+                </tr>
+                <tr>
+                  <td><strong>Theoretical Moles Needed</strong></td>
+                  <td id="rep-moles">0.025 mol</td>
+                </tr>
+                <tr class="highlight-row">
+                  <td><strong>Calculated Formulation Mass</strong></td>
+                  <td id="rep-calculated-mass">1.00 g</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Serial Dilution cascade parameters table -->
+            <h3 class="report-subheading">
+              2. Dilution Cascade &amp; Exponents Log
+            </h3>
+            <table class="report-data-table">
+              <thead>
+                <tr>
+                  <th>Assay ID</th>
+                  <th>Dilution Ratio</th>
+                  <th>Calculated Concentration (M)</th>
+                  <th>Data Integrity Verification Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Tube 1 (Primary)</strong></td>
+                  <td>1 : 10</td>
+                  <td id="rep-tube-1">1.00 x 10⁻¹ M</td>
+                  <td>VERIFIED (System Calibrated) ✓</td>
+                </tr>
+                <tr>
+                  <td><strong>Tube 2 (Secondary)</strong></td>
+                  <td>1 : 100</td>
+                  <td id="rep-tube-2">1.00 x 10⁻² M</td>
+                  <td>VERIFIED (System Calibrated) ✓</td>
+                </tr>
+                <tr>
+                  <td><strong>Tube 3 (Tertiary)</strong></td>
+                  <td>1 : 1000</td>
+                  <td id="rep-tube-3">1.00 x 10⁻³ M</td>
+                  <td>VERIFIED (System Calibrated) ✓</td>
+                </tr>
+                <tr>
+                  <td><strong>Tube 4 (Quaternary)</strong></td>
+                  <td>1 : 10000</td>
+                  <td id="rep-tube-4">1.00 x 10⁻⁴ M</td>
+                  <td>VERIFIED (System Calibrated) ✓</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Analytical Balance ISO Calibration Logs -->
+            <h3 class="report-subheading">
+              3. Analytical Balance ISO Calibration Logs
+            </h3>
+            <table class="report-data-table">
+              <thead>
+                <tr>
+                  <th>Standard Mass</th>
+                  <th>Expected Tolerance</th>
+                  <th>Observed Reading</th>
+                  <th>Calibration Deviation</th>
+                  <th>ISO 17025 Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1.0000 g</strong> Standard</td>
+                  <td>± 0.0002 g</td>
+                  <td id="rep-cal-1">--</td>
+                  <td id="rep-cal-dev-1">--</td>
+                  <td id="rep-cal-status-1">PENDING VERIFICATION ✗</td>
+                </tr>
+                <tr>
+                  <td><strong>5.0000 g</strong> Standard</td>
+                  <td>± 0.0002 g</td>
+                  <td id="rep-cal-5">--</td>
+                  <td id="rep-cal-dev-5">--</td>
+                  <td id="rep-cal-status-5">PENDING VERIFICATION ✗</td>
+                </tr>
+                <tr>
+                  <td><strong>10.0000 g</strong> Standard</td>
+                  <td>± 0.0002 g</td>
+                  <td id="rep-cal-10">--</td>
+                  <td id="rep-cal-dev-10">--</td>
+                  <td id="rep-cal-status-10">PENDING VERIFICATION ✗</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Volumetric Titration Standardization Logs -->
+            <h3 class="report-subheading">
+              4. Volumetric Titration Assay Standardization Logs
+            </h3>
+            <table class="report-data-table">
+              <thead>
+                <tr>
+                  <th>Assay parameters</th>
+                  <th>Analytical Value / Metric</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Standardized Titrant (Burette)</strong></td>
+                  <td id="rep-tit-titrant">--</td>
+                </tr>
+                <tr>
+                  <td><strong>Analyte Solution (Flask)</strong></td>
+                  <td id="rep-tit-analyte">--</td>
+                </tr>
+                <tr>
+                  <td><strong>Selected pH Indicator</strong></td>
+                  <td id="rep-tit-indicator">--</td>
+                </tr>
+                <tr>
+                  <td><strong>Equivalence Endpoint Volume</strong></td>
+                  <td id="rep-tit-endpoint">--</td>
+                </tr>
+                <tr class="highlight-row">
+                  <td><strong>Calculated Analyte Concentration</strong></td>
+                  <td id="rep-tit-conc-result">--</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- GLP Signs checklist block -->
+            <h3 class="report-subheading">
+              5. Good Laboratory Practice Verification Checks
+            </h3>
+            <ul class="glp-report-checklist" role="list">
+              <li>
+                [✓] Analytical weighing balance checked with standard weights
+                prior to formulation.
+              </li>
+              <li>
+                [✓] Volumetric flask inspected for clean glass parameters and
+                zero meniscus curvature.
+              </li>
+              <li>
+                [✓] All calculations double-checked via automated algorithms
+                (100% human-error prevention).
+              </li>
+              <li>
+                [✓] Records maintained in system and logged under cGMP
+                guidelines.
+              </li>
+            </ul>
+
+            <!-- Official Signature Sign-offs -->
+            <footer class="report-footer-signs">
+              <div class="sign-block">
+                <div class="sign-line"></div>
+                <span class="sign-label"
+                  >Formulated &amp; Verified By (Analyst)</span
+                >
+              </div>
+              <div class="sign-block">
+                <div class="sign-line sign-line-filled">
+                  Alok Das
+                </div>
+                <span class="sign-label"
+                  >Approved By (QC Manager / Recruiter)</span
+                >
+              </div>
+            </footer>
+          </article>
+
+          <!-- Report action panel (hidden on print) -->
+          <div class="report-actions-panel no-print" id="report-actions-panel">
+            <button
+              type="button"
+              class="btn-print-record"
+              id="btn-print-record"
+            >
+              <i class="fa-solid fa-print"></i> SAVE / PRINT COMPLIANCE REPORT
+              (PDF)
+            </button>
+            <p class="report-actions-tip">
+              💡 <strong>Recruiter Tip:</strong> Turn on "Background graphics"
+              in print options to preserve colors, or save directly as a clean
+              PDF!
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer component (hidden on print) -->
+    <footer class="comic-footer no-print" role="contentinfo">
+      <div class="footer-inner">
+        <!-- Left: Brand -->
+        <div class="footer-brand">
+          <span class="footer-logo">ALOK DAS</span>
+          <span class="footer-tagline"
+            >Chemistry &amp; Code · Hojai, Assam 🇮🇳</span
+          >
+        </div>
+
+        <!-- Center: Nav -->
+        <nav class="footer-nav" aria-label="Footer navigation">
+          <a href="/" class="footer-nav-link">Home</a>
+          <span class="footer-nav-sep" aria-hidden="true">·</span>
+          <a href="/#about" class="footer-nav-link">About</a>
+          <span class="footer-nav-sep" aria-hidden="true">·</span>
+          <a href="/#projects" class="footer-nav-link">Projects</a>
+          <span class="footer-nav-sep" aria-hidden="true">·</span>
+          <a href="/#games" class="footer-nav-link">Games</a>
+          <span class="footer-nav-sep" aria-hidden="true">·</span>
+          <a href="/#contact" class="footer-nav-link">Contact</a>
+          <span class="footer-nav-sep" aria-hidden="true">·</span>
+          <a href="/resume" class="footer-nav-link">Resume</a>
+          <span class="footer-nav-sep" aria-hidden="true">·</span>
+          <a href="/feedback" class="footer-nav-link">Feedback</a>
+        </nav>
+
+        <!-- Right: Socials + Back to top -->
+        <div class="footer-right">
+          <div class="footer-socials">
+            <a
+              href="mailto:alok@alokdasofficial.in"
+              class="footer-social-link"
+              aria-label="Email Alok"
+              title="Email"
+              >✉</a
+            >
+            <a
+              href="https://github.com/MrAlokTech/"
+              target="_blank"
+              rel="noopener"
+              class="footer-social-link"
+              aria-label="GitHub"
+              title="GitHub"
+              >⌥</a
+            >
+            <a
+              href="https://wa.me/message/PLW3AG4MQZNUI1"
+              target="_blank"
+              rel="noopener"
+              class="footer-social-link"
+              aria-label="WhatsApp"
+              title="WhatsApp"
+              >📞</a
+            >
+          </div>
+          <a
+            href="#tab-molarity"
+            class="footer-back-top"
+            aria-label="Back to top"
+            >↑ Back to top</a
+          >
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copy">
+          © <span id="footer-year"></span> Alok Das · Built with 💝
+        </p>
+      </div>
+    </footer>
+
+    <!-- Script imports -->
+    <script src="/js/config.js"></script>
+    <script src="/lab/lab.js"></script>
+    <script src="/js/firebase-tracker.js"></script>
+    <script>
+      /* Dynamic year in footer */
+      var yearEl = document.getElementById("footer-year");
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>

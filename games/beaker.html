@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flappy Beaker — Alok Das Game Zone</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0D0D0D;font-family:'Comic Neue',cursive;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:1rem;color:#FFFEF0;user-select:none;-webkit-user-select:none;}
+  .back{position:fixed;top:1rem;left:1rem;background:#FFE600;color:#0D0D0D;font-weight:700;padding:.4rem 1rem;border-radius:8px;border:3px solid #0D0D0D;text-decoration:none;font-size:.9rem;box-shadow:3px 3px 0 #0D0D0D;z-index:100;}
+  h1{font-family:'Bangers',cursive;font-size:3rem;color:#FFE600;letter-spacing:4px;text-shadow:3px 3px 0 #FF2D6B;margin-bottom:.5rem;text-align:center}
+  .meta{font-size:.85rem;color:#aaa;margin-bottom:1rem;text-align:center}
+  .score-bar{display:flex;gap:2rem;justify-content:center;margin-bottom:.8rem}
+  .score-item{text-align:center}
+  .score-label{font-size:.7rem;letter-spacing:2px;color:#aaa;text-transform:uppercase}
+  .score-val{font-family:'Bangers',cursive;font-size:2rem;color:#FFE600}
+  .game-container{position:relative}
+  canvas{border:5px solid #FFE600;border-radius:12px;box-shadow:6px 6px 0 #FF2D6B;display:block;background:#1A0030;cursor:pointer}
+  
+  /* Start & Game Over Screen Overlays */
+  .screen-overlay {position:absolute;inset:0;background:rgba(26,0,48,0.85);display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;padding:2rem;text-align:center;}
+  .overlay-title {font-family:'Bangers',cursive;font-size:2.8rem;color:#FFE600;text-shadow:3px 3px 0 #FF2D6B;margin-bottom:1rem;letter-spacing:2px;}
+  .overlay-desc {font-size:0.95rem;color:#FFFEF0;opacity:0.9;line-height:1.5;margin-bottom:1.5rem;max-width:280px;}
+  .btn-play {font-family:'Bangers',cursive;font-size:1.3rem;letter-spacing:2px;background:#FFE600;color:#0D0D0D;padding:.6rem 1.8rem;border-radius:10px;border:3px solid #0D0D0D;cursor:pointer;box-shadow:4px 4px 0 #FF2D6B;transition:transform 0.15s,box-shadow 0.15s;outline:none;}
+  .btn-play:hover {transform:translate(-2px,-2px);box-shadow:6px 6px 0 #00C2FF}
+  .btn-play:active {transform:translate(1px,1px);box-shadow:2px 2px 0 #FF2D6B}
+
+  @import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap');
+</style>
+</head>
+<body>
+<a href="../games/index.html" class="back">← BACK</a>
+<h1>⚗️ FLAPPY BEAKER</h1>
+<p class="meta">Spacebar / Tap Screen to bounce · Steer between chemical columns</p>
+
+<div class="score-bar">
+  <div class="score-item"><div class="score-label">Score</div><div class="score-val" id="score">0</div></div>
+  <div class="score-item"><div class="score-label">Best</div><div class="score-val" id="best">0</div></div>
+</div>
+
+<div class="game-container">
+  <canvas id="c" width="360" height="480"></canvas>
+  
+  <!-- Startup Screen -->
+  <div class="screen-overlay" id="start-screen">
+    <div class="overlay-title">LAUNCH BENCH!</div>
+    <p class="overlay-desc">Steer Alok's experimental beaker through narrow fume hood pipes! Avoid collisions and prevent contamination.</p>
+    <button class="btn-play" id="start-btn">START ASSAY →</button>
+  </div>
+
+  <!-- Game Over Screen -->
+  <div class="screen-overlay" id="gameover-screen" style="display:none;">
+    <div class="overlay-title" style="color:#FF2D6B; text-shadow:3px 3px 0 #FFE600;">💥 KABOOM!</div>
+    <p class="overlay-desc" id="gameover-desc">Your beaker cracked! Contamination detected in the assay deck.</p>
+    <button class="btn-play" id="restart-btn">RETRY RUN ↺</button>
+  </div>
+</div>
+
+<script>
+var canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+var scoreEl=document.getElementById('score'),bestEl=document.getElementById('best');
+var startScreen=document.getElementById('start-screen'),gameoverScreen=document.getElementById('gameover-screen'),gameoverDesc=document.getElementById('gameover-desc');
+var startBtn=document.getElementById('start-btn'),restartBtn=document.getElementById('restart-btn');
+
+// Persistence
+var best=parseInt(localStorage.getItem('beaker_best')||'0');
+bestEl.textContent=best;
+
+// Web Audio API Synthesizer (Zero asset dependancy!)
+var audioCtx = null;
+function playSound(type) {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    
+    var osc = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    
+    var now = audioCtx.currentTime;
+    
+    if (type === 'flap') {
+      // Short rising jump pitch
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.exponentialRampToValueAtTime(320, now + 0.12);
+      gain.gain.setValueAtTime(0.25, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+      osc.start(now);
+      osc.stop(now + 0.12);
+    } else if (type === 'score') {
+      // Chime ping
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(520, now);
+      osc.frequency.setValueAtTime(784, now + 0.08); // high note
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+      osc.start(now);
+      osc.stop(now + 0.25);
+    } else if (type === 'crash') {
+      // Exploding/falling low crash
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(180, now);
+      osc.frequency.linearRampToValueAtTime(40, now + 0.45);
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.45);
+      osc.start(now);
+      osc.stop(now + 0.45);
+    }
+  } catch (e) {}
+}
+
+// Game Physics Parameters
+var GRAVITY = 0.32;
+var FLAP_STRENGTH = -5.8;
+var PIPE_SPEED = 2.1;
+var PIPE_SPAWN_RATE = 110; // frames
+var PIPE_GAP = 135;
+var PIPE_WIDTH = 64;
+
+var beaker, pipes, score, state, frameCount, loopId;
+
+function initGame() {
+  beaker = {
+    x: 75,
+    y: 200,
+    velocity: 0,
+    radius: 16,
+    angle: 0
+  };
+  pipes = [];
+  score = 0;
+  scoreEl.textContent = 0;
+  frameCount = 0;
+  state = 'start'; // 'start', 'playing', 'gameover'
+}
+
+function spawnPipe() {
+  var minH = 50;
+  var maxH = canvas.height - PIPE_GAP - minH;
+  var topH = Math.floor(Math.random() * (maxH - minH + 1)) + minH;
+  pipes.push({
+    x: canvas.width,
+    topHeight: topH,
+    bottomHeight: canvas.height - topH - PIPE_GAP,
+    passed: false
+  });
+}
+
+function bounce() {
+  if (state === 'playing') {
+    beaker.velocity = FLAP_STRENGTH;
+    playSound('flap');
+  }
+}
+
+// Physics Loop
+function update() {
+  if (state !== 'playing') return;
+  
+  frameCount++;
+  
+  // Beaker movement
+  beaker.velocity += GRAVITY;
+  beaker.y += beaker.velocity;
+  
+  // Angle tilting
+  beaker.angle = Math.min(Math.PI / 4, Math.max(-Math.PI / 8, beaker.velocity * 0.06));
+  
+  // Ceiling and Floor collision
+  if (beaker.y - beaker.radius < 0 || beaker.y + beaker.radius > canvas.height) {
+    endGame();
+    return;
+  }
+  
+  // Spawn pipes
+  if (frameCount % PIPE_SPAWN_RATE === 0) {
+    spawnPipe();
+  }
+  
+  // Update pipes
+  for (var i = pipes.length - 1; i >= 0; i--) {
+    var p = pipes[i];
+    p.x -= PIPE_SPEED;
+    
+    // Collision checking
+    // Top Pipe bounds
+    var inX = (beaker.x + beaker.radius > p.x && beaker.x - beaker.radius < p.x + PIPE_WIDTH);
+    var hitTop = inX && (beaker.y - beaker.radius < p.topHeight);
+    var hitBottom = inX && (beaker.y + beaker.radius > canvas.height - p.bottomHeight);
+    
+    if (hitTop || hitBottom) {
+      endGame();
+      return;
+    }
+    
+    // Scoring check
+    if (!p.passed && p.x + PIPE_WIDTH < beaker.x) {
+      p.passed = true;
+      score++;
+      scoreEl.textContent = score;
+      playSound('score');
+      if (score > best) {
+        best = score;
+        bestEl.textContent = best;
+        localStorage.setItem('beaker_best', best);
+      }
+    }
+    
+    // Remove offscreen
+    if (p.x + PIPE_WIDTH < 0) {
+      pipes.splice(i, 1);
+    }
+  }
+}
+
+// Draw graphics on Canvas
+function draw() {
+  // Clear with dark purple lab background
+  ctx.fillStyle = '#1A0030';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Halftone retro grid background
+  ctx.fillStyle = 'rgba(255,255,255,0.035)';
+  var gridSize = 20;
+  for (var x = 0; x < canvas.width; x += gridSize) {
+    for (var y = 0; y < canvas.height; y += gridSize) {
+      ctx.beginPath();
+      ctx.arc(x + gridSize/2, y + gridSize/2, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  
+  // Draw pipes (OSHA Fume column styled)
+  pipes.forEach(function (p) {
+    ctx.strokeStyle = '#0D0D0D';
+    ctx.lineWidth = 4;
+    
+    // Top Column
+    ctx.fillStyle = '#FF2D6B'; // Active pink
+    ctx.beginPath();
+    ctx.roundRect(p.x, -10, PIPE_WIDTH, p.topHeight + 10, [0, 0, 6, 6]);
+    ctx.fill(); ctx.stroke();
+    
+    // Top lip
+    ctx.fillStyle = '#FFE600';
+    ctx.beginPath();
+    ctx.roundRect(p.x - 4, p.topHeight - 12, PIPE_WIDTH + 8, 12, 3);
+    ctx.fill(); ctx.stroke();
+    
+    // Bottom Column
+    ctx.fillStyle = '#FF2D6B';
+    ctx.beginPath();
+    ctx.roundRect(p.x, canvas.height - p.bottomHeight, PIPE_WIDTH, p.bottomHeight + 10, [6, 6, 0, 0]);
+    ctx.fill(); ctx.stroke();
+    
+    // Bottom lip
+    ctx.fillStyle = '#FFE600';
+    ctx.beginPath();
+    ctx.roundRect(p.x - 4, canvas.height - p.bottomHeight, PIPE_WIDTH + 8, 12, 3);
+    ctx.fill(); ctx.stroke();
+  });
+  
+  // Draw Alok's cute Beaker (Using precise canvas paths!)
+  ctx.save();
+  ctx.translate(beaker.x, beaker.y);
+  ctx.rotate(beaker.angle);
+  
+  // 1. Draw liquid inside beaker
+  ctx.fillStyle = '#00C2FF'; // Glowing Cyan reagent
+  ctx.beginPath();
+  ctx.roundRect(-14, -2, 28, 18, [0, 0, 10, 10]);
+  ctx.fill();
+  
+  // Liquid wave surface
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  ctx.beginPath();
+  ctx.ellipse(0, -2, 14, 3, 0, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // 2. Beaker glass body
+  ctx.strokeStyle = '#0D0D0D';
+  ctx.lineWidth = 3.5;
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; // Transparent reflection
+  ctx.beginPath();
+  ctx.roundRect(-16, -18, 32, 36, [0, 0, 12, 12]);
+  ctx.fill(); ctx.stroke();
+  
+  // Beaker lip
+  ctx.fillStyle = '#0D0D0D';
+  ctx.fillRect(-20, -21, 40, 3.5);
+  
+  // White dynamic reflection line
+  ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(10, -10);
+  ctx.lineTo(10, 12);
+  ctx.stroke();
+  
+  // Small rising bubbles inside beaker
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.beginPath();
+  ctx.arc(-5, 6, 2.5, 0, Math.PI*2);
+  ctx.arc(3, -1, 1.8, 0, Math.PI*2);
+  ctx.fill();
+  
+  ctx.restore();
+}
+
+function gameTick() {
+  update();
+  draw();
+  loopId = requestAnimationFrame(gameTick);
+}
+
+function startGame() {
+  initGame();
+  state = 'playing';
+  startScreen.style.display = 'none';
+  gameoverScreen.style.display = 'none';
+  playSound('flap');
+  if (typeof window.trackEvent === 'function') {
+    window.trackEvent('game_start', 'Flappy Beaker', null);
+  }
+}
+
+function endGame() {
+  state = 'gameover';
+  playSound('crash');
+  gameoverDesc.textContent = 'Your beaker cracked! Contamination level: ' + score + ' ppm. Press below to retry!';
+  gameoverScreen.style.display = 'flex';
+  if (typeof window.trackEvent === 'function') {
+    window.trackEvent('game_over', 'Flappy Beaker', { score: score });
+  }
+}
+
+// Event Listeners
+startBtn.addEventListener('click', startGame);
+restartBtn.addEventListener('click', startGame);
+
+window.addEventListener('keydown', function (e) {
+  if (e.key === ' ' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (state === 'start') startGame();
+    else if (state === 'playing') bounce();
+    else if (state === 'gameover') startGame();
+  }
+});
+
+canvas.addEventListener('click', function (e) {
+  e.preventDefault();
+  if (state === 'playing') bounce();
+});
+
+canvas.addEventListener('touchstart', function (e) {
+  e.preventDefault();
+  if (state === 'playing') bounce();
+}, {passive: false});
+
+// Initial Setup
+initGame();
+gameTick(); // Start loop immediately
+</script>
+<!-- Firebase analytics tracker -->
+<script src="/js/firebase-tracker.js"></script>
+</body>
+</html>

@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feedback &amp; Ideas Survey — Alok Das | Chemistry &amp; Code</title>
+
+    <!-- SEO -->
+    <meta
+      name="description"
+      content="Help shape future apps and tools! Provide feedback on published apps like Alomole and Mileage Tracker, or vote on new chemistry and utility ideas."
+    />
+    <meta name="author" content="Alok Das" />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:title" content="Feedback &amp; Ideas Survey — Alok Das" />
+    <meta
+      property="og:description"
+      content="Voice your thoughts on existing apps or vote on upcoming projects in the lab!"
+    />
+    <meta property="og:url" content="https://alokdasofficial.in/feedback" />
+    <meta name="theme-color" content="#FFE600" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- FontAwesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Local Stylesheet -->
+    <link rel="stylesheet" href="/feedback/feedback.css" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+  </head>
+  <body>
+    <!-- Global Halftone Background and Comic Bursts -->
+    <div class="halftone-bg" aria-hidden="true"></div>
+    <div class="burst burst-1" aria-hidden="true">POW!</div>
+    <div class="burst burst-2" aria-hidden="true">ZAP!</div>
+    <div class="burst burst-3" aria-hidden="true">WOW!</div>
+    <div class="burst burst-4" aria-hidden="true">BAM!</div>
+
+    <!-- Navigation Header -->
+    <nav class="comic-nav" role="navigation" aria-label="Main navigation">
+      <a href="/" class="nav-logo" aria-label="Alok Das home">
+        <img src="/assets/logo.png" alt="Alok Das Logo" class="nav-logo-img" />
+      </a>
+      <a href="/" class="nav-back-btn">← BACK TO BASE</a>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="feedback-container">
+      <div class="feedback-card" id="feedback-card">
+        <!-- Progress Bar at top of card -->
+        <div class="progress-track" id="progress-track" aria-hidden="true">
+          <div class="progress-bar" id="progress-bar" style="width: 20%"></div>
+        </div>
+
+        <!-- ──────────────────────────────────────────
+             PANEL 1: MODE SELECTOR (Step 1)
+             ────────────────────────────────────────── -->
+        <section class="feedback-panel active" id="panel-selector" aria-labelledby="heading-select">
+          <div class="panel-header">
+            <span class="panel-badge">MISSION SELECT 🎯</span>
+            <h1 class="panel-title" id="heading-select">CHOOSE YOUR PATH!</h1>
+            <p class="panel-desc">
+              Would you like to review my published apps or vote on upcoming projects in the chemistry &amp; code lab?
+            </p>
+          </div>
+
+          <div class="mode-grid">
+            <!-- Mode A Card -->
+            <button type="button" class="mode-button" id="btn-path-review" aria-label="Review Existing Apps">
+              <span class="mode-icon" aria-hidden="true">🚀</span>
+              <span class="mode-title">REVIEW RELEASED APPS</span>
+              <span class="mode-desc">Give feedback on Alomole, Mileage Tracker, or my overall work!</span>
+              <span class="mode-action-pill">SELECT PATH →</span>
+            </button>
+
+            <!-- Mode B Card -->
+            <button type="button" class="mode-button" id="btn-path-survey" aria-label="Vote on Upcoming Ideas">
+              <span class="mode-icon" aria-hidden="true">🔮</span>
+              <span class="mode-title">VOTE ON FUTURE IDEAS</span>
+              <span class="mode-desc">Rate interest on Tickly, ClassNotes, or pitch a chemical lab assistant!</span>
+              <span class="mode-action-pill">SELECT PATH →</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- ──────────────────────────────────────────
+             PANEL 2: APP REVIEW FORM (Step 2 - Review)
+             ────────────────────────────────────────── -->
+        <section class="feedback-panel" id="panel-review" aria-labelledby="heading-review">
+          <div class="panel-actions">
+            <button type="button" class="back-link" data-prev="1"><i class="fa-solid fa-arrow-left"></i> Change Path</button>
+          </div>
+
+          <div class="panel-header">
+            <span class="panel-badge">FIELD REPORT 📝</span>
+            <h2 class="panel-title" id="heading-review">APP EVALUATION DECK</h2>
+          </div>
+
+          <div class="form-step-content">
+            <!-- Dropdown: Select App -->
+            <div class="form-field">
+              <label class="form-label" for="select-app">WHICH APP HAVE YOU DEPLOYED/TESTED?</label>
+              <div class="custom-select-wrapper">
+                <select class="form-select" id="select-app" name="selectedApp">
+                  <option value="alomole">Alomole — Chemistry Companion ⚗️</option>
+                  <option value="mileage">Mileage Tracker — Fuel &amp; Cost 🚗</option>
+                  <option value="tickly">Tickly — ToDo App 📋</option>
+                  <option value="classnotes">ClassNotes — Shared Notes Platform 📂</option>
+                  <option value="general">Overall Portfolio / Other Work 💻</option>
+                </select>
+              </div>
+              <!-- Placeholder for dynamic app icon, title, and link preview -->
+              <div id="app-preview-container" class="app-preview-container"></div>
+            </div>
+
+            <!-- Comic Star/Burst rating selector -->
+            <div class="form-field">
+              <span class="form-label">HOW POWERFUL IS THIS UTILITY?</span>
+              <div class="comic-rating-container" role="radiogroup" aria-label="Rate this app out of 5 stars">
+                <button type="button" class="rating-burst" data-value="1" role="radio" aria-checked="false" aria-label="1 star - Meh">
+                  <span class="burst-bg"></span>
+                  <span class="burst-text">1</span>
+                </button>
+                <button type="button" class="rating-burst" data-value="2" role="radio" aria-checked="false" aria-label="2 stars - Okay">
+                  <span class="burst-bg"></span>
+                  <span class="burst-text">2</span>
+                </button>
+                <button type="button" class="rating-burst" data-value="3" role="radio" aria-checked="false" aria-label="3 stars - Good">
+                  <span class="burst-bg"></span>
+                  <span class="burst-text">3</span>
+                </button>
+                <button type="button" class="rating-burst" data-value="4" role="radio" aria-checked="false" aria-label="4 stars - Great">
+                  <span class="burst-bg"></span>
+                  <span class="burst-text">4</span>
+                </button>
+                <button type="button" class="rating-burst" data-value="5" role="radio" aria-checked="false" aria-label="5 stars - Mind-Blowing">
+                  <span class="burst-bg"></span>
+                  <span class="burst-text">5</span>
+                </button>
+              </div>
+              <!-- Speech bubble showing current rating descriptive text -->
+              <div class="rating-speech-bubble" id="rating-label-bubble">
+                <span id="rating-desc-text">SELECT A RATING! ⚡</span>
+              </div>
+            </div>
+
+            <!-- Text area: Loved Features -->
+            <div class="form-field">
+              <label class="form-label" for="txt-loved-features">WHAT IS THIS APP'S GREATEST SUPERPOWER?</label>
+              <textarea
+                class="form-textarea"
+                id="txt-loved-features"
+                name="lovedFeatures"
+                placeholder="What features do you love the most? E.g., the formula balancer is super fast, the offline local DB feels very snappy..."
+              ></textarea>
+            </div>
+
+            <!-- Text area: Improvements -->
+            <div class="form-field">
+              <label class="form-label" for="txt-improvements">WHAT WOULD MAKE IT EVEN STRONGER?</label>
+              <textarea
+                class="form-textarea"
+                id="txt-improvements"
+                name="appImprovements"
+                placeholder="What features or improvements do you want to see added? Don't hold back!"
+              ></textarea>
+            </div>
+
+            <div class="panel-footer-actions">
+              <button type="button" class="form-next-btn" id="btn-review-continue">
+                CONTINUE TO CONTACT DETAILS <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ──────────────────────────────────────────
+             PANEL 3: NEW IDEAS SURVEY FORM (Step 2 - Survey)
+             ────────────────────────────────────────── -->
+        <section class="feedback-panel" id="panel-survey" aria-labelledby="heading-survey">
+          <div class="panel-actions">
+            <button type="button" class="back-link" data-prev="1"><i class="fa-solid fa-arrow-left"></i> Change Path</button>
+          </div>
+
+          <div class="panel-header">
+            <span class="panel-badge">FUTURE MISSIONS 🔮</span>
+            <h2 class="panel-title" id="heading-survey">PROTOTYPE VOTING ROOM</h2>
+            <p class="panel-desc">
+              Here are some new applications currently cooking in the lab. Vote on your interest level for each!
+            </p>
+          </div>
+
+          <div class="form-step-content">
+            <div class="voting-deck" role="list">
+              <!-- Idea 1 -->
+              <div class="idea-card" role="listitem">
+                <div class="idea-header">
+                  <span class="idea-icon">📋</span>
+                  <div class="idea-meta">
+                    <h3 class="idea-title">Tickly — Minimalist Offline ToDo</h3>
+                    <p class="idea-desc">A highly focused local task manager with simple sub-task nesting and calendar-grid views. Built offline-first.</p>
+                  </div>
+                </div>
+                <div class="idea-voting-row" data-idea="tickly">
+                  <button type="button" class="vote-chip" data-value="high">HIGH INTEREST ⚡</button>
+                  <button type="button" class="vote-chip" data-value="maybe">MAYBE 🤔</button>
+                  <button type="button" class="vote-chip" data-value="no">NO INTEREST 💤</button>
+                </div>
+              </div>
+
+              <!-- Idea 2 -->
+              <div class="idea-card" role="listitem">
+                <div class="idea-header">
+                  <span class="idea-icon">📂</span>
+                  <div class="idea-meta">
+                    <h3 class="idea-title">ClassNotes — Formula &amp; Study Hub</h3>
+                    <p class="idea-desc">A web platform designed to seamlessly share organic chemistry reaction pathways, equations, and B.Sc. study logs.</p>
+                  </div>
+                </div>
+                <div class="idea-voting-row" data-idea="classnotes">
+                  <button type="button" class="vote-chip" data-value="high">HIGH INTEREST ⚡</button>
+                  <button type="button" class="vote-chip" data-value="maybe">MAYBE 🤔</button>
+                  <button type="button" class="vote-chip" data-value="no">NO INTEREST 💤</button>
+                </div>
+              </div>
+
+              <!-- Idea 3 -->
+              <div class="idea-card" role="listitem">
+                <div class="idea-header">
+                  <span class="idea-icon">🔬</span>
+                  <div class="idea-meta">
+                    <h3 class="idea-title">QC Lab Assistant &amp; GLP Logger</h3>
+                    <p class="idea-desc">An Android helper tool for QC analysts to log instrument calibrations, prepare buffers, track molarity, and review GLP checks.</p>
+                  </div>
+                </div>
+                <div class="idea-voting-row" data-idea="lab_assistant">
+                  <button type="button" class="vote-chip" data-value="high">HIGH INTEREST ⚡</button>
+                  <button type="button" class="vote-chip" data-value="maybe">MAYBE 🤔</button>
+                  <button type="button" class="vote-chip" data-value="no">NO INTEREST 💤</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Custom Suggestion -->
+            <div class="form-field">
+              <label class="form-label" for="txt-new-idea">GOT ANOTHER EXPERIMENT FOR THE LAB?</label>
+              <textarea
+                class="form-textarea"
+                id="txt-new-idea"
+                name="newIdeaSuggestions"
+                placeholder="Pitch your own app idea or custom features you'd love Alok to build. E.g., 'Make an offline periodic table flashcard app!'"
+              ></textarea>
+            </div>
+
+            <div class="panel-footer-actions">
+              <button type="button" class="form-next-btn" id="btn-survey-continue">
+                CONTINUE TO CONTACT DETAILS <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ──────────────────────────────────────────
+             PANEL 4: CONTACT & DETAILS (Step 3)
+             ────────────────────────────────────────── -->
+        <section class="feedback-panel" id="panel-contact" aria-labelledby="heading-contact">
+          <div class="panel-actions">
+            <!-- Go back based on dynamic path selected -->
+            <button type="button" class="back-link" id="btn-contact-back"><i class="fa-solid fa-arrow-left"></i> Back to Survey</button>
+          </div>
+
+          <div class="panel-header">
+            <span class="panel-badge">SECRET PROFILE 👤</span>
+            <h2 class="panel-title" id="heading-contact">AGENT REVELATION</h2>
+            <p class="panel-desc">
+              Who is sending this transmission? Leave your contact details so Alok can send updates or respond to your ideas!
+            </p>
+          </div>
+
+          <form id="gas-feedback-form" novalidate>
+            <!-- Hidden inputs to bundle step data in the actual form element -->
+            <input type="hidden" name="formType" id="hidden-form-type" value="" />
+            <input type="hidden" name="selectedApp" id="hidden-selected-app" value="" />
+            <input type="hidden" name="rating" id="hidden-rating" value="" />
+            <input type="hidden" name="lovedFeatures" id="hidden-loved-features" value="" />
+            <input type="hidden" name="appImprovements" id="hidden-app-improvements" value="" />
+            <input type="hidden" name="newIdeasInterest" id="hidden-new-ideas-interest" value="" />
+            <input type="hidden" name="newIdeaSuggestions" id="hidden-new-idea-suggestions" value="" />
+
+            <div class="form-step-content">
+              <!-- Input: Name -->
+              <div class="form-field">
+                <label class="form-label" for="txt-name">NAME / ALIAS <span class="required-asterisk">*</span></label>
+                <input
+                  class="form-input"
+                  type="text"
+                  id="txt-name"
+                  name="name"
+                  placeholder="Alok Das"
+                  required
+                />
+                <span class="field-error-msg" id="error-name">Please reveal your name, agent!</span>
+              </div>
+
+              <!-- Input: Email -->
+              <div class="form-field">
+                <label class="form-label" for="txt-email">EMAIL FOR COMMUNICATIONS <span class="required-asterisk">*</span></label>
+                <input
+                  class="form-input"
+                  type="email"
+                  id="txt-email"
+                  name="email"
+                  placeholder="alok@alokdasofficial.in"
+                  required
+                />
+                <span class="field-error-msg" id="error-email">A valid coordinate frequency (email) is required!</span>
+              </div>
+
+              <!-- Dropdown: Role -->
+              <div class="form-field">
+                <label class="form-label" for="select-role">YOUR ROLE IN THE SECTOR</label>
+                <div class="custom-select-wrapper">
+                  <select class="form-select" id="select-role" name="role">
+                    <option value="student">B.Sc. / Academic Student 🎓</option>
+                    <option value="qc_analyst">QC Analyst / Lab Practitioner ⚗️</option>
+                    <option value="developer">Software Engineer / Fellow Developer 💻</option>
+                    <option value="recruiter">Recruiter / Employer 🤝</option>
+                    <option value="explorer">General Explorer / Comic Fan 🦸</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- General Error Message Banner -->
+              <div class="submission-error-banner" id="form-error-banner">
+                ❌ Error: Please correct the marked fields before transmitting!
+              </div>
+
+              <div class="panel-footer-actions">
+                <button type="submit" class="form-submit-btn" id="btn-submit-feedback">
+                  ⚡ TRANSMIT SIGNAL!
+                </button>
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <!-- ──────────────────────────────────────────
+             PANEL 5: TRANSMISSION SUCCESS (Step 4)
+             ────────────────────────────────────────── -->
+        <section class="feedback-panel" id="panel-success" aria-labelledby="heading-success">
+          <div class="success-pop-container">
+            <div class="success-burst" aria-hidden="true">BAM!</div>
+            
+            <h2 class="panel-title success-title" id="heading-success">TRANSMISSION RECEIVED!</h2>
+            <div class="success-icon-badge">⚡</div>
+            
+            <p class="panel-desc success-desc">
+              Your signal has bypassed all firewall parameters and arrived safely in Alok's databank. 
+              The coordinates provided will be used to calibrate upcoming code experiments and chemistry operations!
+            </p>
+
+            <div class="success-actions">
+              <a href="/" class="success-home-btn">← RETURN TO BASE</a>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer component -->
+    <footer class="comic-footer" role="contentinfo">
+      <div class="footer-inner">
+        <!-- Left: Brand -->
+        <div class="footer-brand">
+          <span class="footer-logo">ALOK DAS</span>
+          <span class="footer-tagline">Chemistry &amp; Code · Hojai, Assam 🇮🇳</span>
+        </div>
+
+        <!-- Center: Nav -->
+        <nav class="footer-nav" aria-label="Footer navigation">
+          <a href="/" class="footer-nav-link">Home</a>
+          <span class="footer-nav-sep" aria-hidden="true">·</span>
+          <a href="/#about" class="footer-nav-link">About</a>
+          <span class="footer-nav-sep" aria-hidden="true">·</span>
+          <a href="/#projects" class="footer-nav-link">Projects</a>
+          <span class="footer-nav-sep" aria-hidden="true">·</span>
+          <a href="/lab" class="footer-nav-link">Lab</a>
+          <span class="footer-nav-sep" aria-hidden="true">·</span>
+          <a href="/#games" class="footer-nav-link">Games</a>
+          <span class="footer-nav-sep" aria-hidden="true">·</span>
+          <a href="/#contact" class="footer-nav-link">Contact</a>
+          <span class="footer-nav-sep" aria-hidden="true">·</span>
+          <a href="/resume" class="footer-nav-link">Resume</a>
+          <span class="footer-nav-sep" aria-hidden="true">·</span>
+          <a href="/feedback" class="footer-nav-link">Feedback</a>
+        </nav>
+
+        <!-- Right: Socials + Back to top -->
+        <div class="footer-right">
+          <div class="footer-socials">
+            <a href="mailto:alok@alokdasofficial.in" class="footer-social-link" aria-label="Email Alok" title="Email">✉</a>
+            <a href="https://github.com/MrAlokTech/" target="_blank" rel="noopener" class="footer-social-link" aria-label="GitHub" title="GitHub">⌥</a>
+            <a href="https://wa.me/message/PLW3AG4MQZNUI1" target="_blank" rel="noopener" class="footer-social-link" aria-label="WhatsApp" title="WhatsApp">📞</a>
+          </div>
+          <a href="#feedback-card" class="footer-back-top" aria-label="Back to top">↑ Back to top</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copy">
+          © <span id="footer-year"></span> Alok Das · Built with 💝
+        </p>
+      </div>
+    </footer>
+
+    <!-- Shared configuration parameter -->
+    <script src="/js/config.js"></script>
+    <!-- Custom feedback interactive logic script -->
+    <script src="/feedback/feedback.js"></script>
+    <!-- Firebase analytics tracker -->
+    <script src="/js/firebase-tracker.js"></script>
+
+    <script>
+      /* Dynamic year in footer */
+      var yearEl = document.getElementById("footer-year");
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>

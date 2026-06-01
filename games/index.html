@@ -48,6 +48,12 @@ h1{font-family:'Bangers',cursive;font-size:clamp(2.5rem,10vw,4rem);color:#FFE600
     <p class="desc">Play XO against a computer opponent. Choose Easy or Smart mode. First to 3 in a row wins. Score tracked per session!</p>
     <a href="tictactoe.html" class="play">PLAY NOW →</a>
   </div>
+  <div class="card">
+    <span class="icon">⚗️</span>
+    <div class="title">FLAPPY BEAKER</div>
+    <p class="desc">Guide a floating chemical beaker through narrow fume hood columns! Tap or press Spacebar to bounce. Avoid collisions and beat your high score!</p>
+    <a href="beaker.html" class="play">PLAY NOW →</a>
+  </div>
 </div>
 
 <!-- Unified Footer -->
@@ -100,13 +106,18 @@ h1{font-family:'Bangers',cursive;font-size:clamp(2.5rem,10vw,4rem);color:#FFE600
     var games = [
       { href: 'snake.html',     name: 'Snake' },
       { href: 'memory.html',    name: 'Element Match' },
-      { href: 'tictactoe.html', name: 'Tic-Tac-Toe' }
+      { href: 'tictactoe.html', name: 'Tic-Tac-Toe' },
+      { href: 'beaker.html',    name: 'Flappy Beaker' }
     ];
-    document.querySelectorAll('a.play').forEach(function (btn, i) {
-      var gameName = (games[i] && games[i].name) || btn.textContent.trim();
+    document.querySelectorAll('a.play').forEach(function (btn) {
       btn.addEventListener('click', function () {
+        var href = btn.getAttribute('href');
+        var gameName = 'Game';
+        games.forEach(function (g) {
+          if (g.href === href) gameName = g.name;
+        });
         if (typeof window.trackEvent === 'function') {
-          window.trackEvent('game_play_click', gameName, { href: btn.getAttribute('href') });
+          window.trackEvent('game_play_click', gameName, { href: href });
         }
       });
     });
