@@ -632,10 +632,11 @@
   </head>
   <body>
     <header>
-      <a class="logo" href="https://alokdasofficial.in"
-        >alokdasofficial<span>.in</span> / focus</a
-      >
+      <div class="logo">Focus</div>
       <div class="header-right">
+        <button class="icon-btn" id="fullscreenBtn" title="Toggle Fullscreen">
+          ⤢
+        </button>
         <button class="icon-btn" id="settingsBtn" title="Settings">⚙</button>
         <button class="icon-btn" id="themeBtn" title="Toggle theme">☀</button>
       </div>
@@ -1342,6 +1343,38 @@
       const ytScript = document.createElement("script");
       ytScript.src = "https://www.youtube.com/iframe_api";
       document.head.appendChild(ytScript);
+
+      // ── FULLSCREEN TOGGLE ──
+      const fullscreenBtn = document.getElementById("fullscreenBtn");
+
+      function toggleFullscreen() {
+        // Check if we are currently in fullscreen mode
+        if (!document.fullscreenElement) {
+          // If not, request fullscreen on the entire HTML document
+          document.documentElement.requestFullscreen().catch((err) => {
+            console.error("Error attempting to enable fullscreen:", err);
+          });
+        } else {
+          // If we are, exit fullscreen
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+        }
+      }
+
+      // Listen for the button click
+      fullscreenBtn.addEventListener("click", toggleFullscreen);
+
+      // Listen for fullscreen changes (e.g., if the user presses the 'Esc' key to exit)
+      document.addEventListener("fullscreenchange", () => {
+        if (document.fullscreenElement) {
+          fullscreenBtn.textContent = "⤧"; // Change to 'contract' icon
+          fullscreenBtn.title = "Exit Fullscreen";
+        } else {
+          fullscreenBtn.textContent = "⤢"; // Change back to 'expand' icon
+          fullscreenBtn.title = "Toggle Fullscreen";
+        }
+      });
 
       // ── INIT ──
       setTheme();
