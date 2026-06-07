@@ -1,0 +1,1176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>World Clock</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #f5f4f0;
+        --surface: #ffffff;
+        --surface2: #f0eeea;
+        --border: rgba(0, 0, 0, 0.08);
+        --text: #1a1917;
+        --text2: #6b6860;
+        --text3: #a09d98;
+        --accent: #1a1917;
+        --hand-h: #1a1917;
+        --hand-m: #1a1917;
+        --hand-s: #c0392b;
+        --tick: rgba(0, 0, 0, 0.12);
+        --dot: #1a1917;
+        --add-btn-bg: #1a1917;
+        --add-btn-text: #f5f4f0;
+        --modal-bg: rgba(0, 0, 0, 0.4);
+        --danger: #c0392b;
+      }
+
+      [data-theme="dark"] {
+        --bg: #111110;
+        --surface: #1c1c1a;
+        --surface2: #242422;
+        --border: rgba(255, 255, 255, 0.07);
+        --text: #f0eeea;
+        --text2: #8a8880;
+        --text3: #555350;
+        --accent: #f0eeea;
+        --hand-h: #f0eeea;
+        --hand-m: #f0eeea;
+        --hand-s: #e05555;
+        --tick: rgba(255, 255, 255, 0.1);
+        --dot: #f0eeea;
+        --add-btn-bg: #f0eeea;
+        --add-btn-text: #111110;
+        --modal-bg: rgba(0, 0, 0, 0.65);
+        --danger: #e05555;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        transition:
+          background 0.3s,
+          color 0.3s;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2rem 2.5rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .logo {
+        font-family: "DM Mono", monospace;
+        font-size: 13px;
+        font-weight: 400;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text2);
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .theme-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text2);
+        font-size: 16px;
+        transition: all 0.2s;
+      }
+      .theme-btn:hover {
+        background: var(--surface2);
+      }
+
+      .time-toggle {
+        display: flex;
+        align-items: center;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 3px;
+        gap: 2px;
+      }
+      .time-toggle button {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        padding: 4px 10px;
+        border-radius: 14px;
+        border: none;
+        background: none;
+        color: var(--text3);
+        cursor: pointer;
+        transition:
+          background 0.18s,
+          color 0.18s;
+      }
+      .time-toggle button.active {
+        background: var(--add-btn-bg);
+        color: var(--add-btn-text);
+      }
+
+      .add-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 16px;
+        height: 36px;
+        border-radius: 18px;
+        background: var(--add-btn-bg);
+        color: var(--add-btn-text);
+        border: none;
+        font-family: "DM Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      .add-btn:hover {
+        opacity: 0.8;
+      }
+
+      main {
+        padding: 2.5rem;
+      }
+
+      .clocks-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 16px;
+      }
+
+      @media (min-width: 768px) {
+        .clocks-grid.few-clocks {
+          grid-template-columns: repeat(3, 1fr);
+          align-items: stretch;
+        }
+        .clocks-grid.few-clocks .add-placeholder {
+          min-height: unset;
+        }
+        .clocks-grid.few-clocks .clock-card {
+          padding: 2.5rem 2rem;
+          gap: 1.75rem;
+          justify-content: center;
+        }
+        .clocks-grid.few-clocks .clock-card .analog-clock {
+          width: 180px;
+          height: 180px;
+        }
+        .clocks-grid.few-clocks .clock-card .clock-city {
+          font-size: 20px;
+        }
+        .clocks-grid.few-clocks .clock-card .clock-tzname {
+          font-size: 11px;
+        }
+        .clocks-grid.few-clocks .clock-card .clock-offset {
+          font-size: 12px;
+        }
+        .clocks-grid.few-clocks .clock-card .digital-time {
+          font-size: 32px;
+        }
+        .clocks-grid.few-clocks .clock-card .digital-date {
+          font-size: 13px;
+        }
+      }
+
+      .clock-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 1.75rem 1.5rem;
+        position: relative;
+        transition:
+          background 0.3s,
+          border-color 0.3s,
+          transform 0.15s,
+          opacity 0.15s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.25rem;
+        cursor: grab;
+      }
+      .clock-card:active {
+        cursor: grabbing;
+      }
+      .clock-card.dragging {
+        opacity: 0.35;
+        transform: scale(0.97);
+      }
+      .clock-card.drag-over {
+        border-color: var(--text2);
+        background: var(--surface2);
+      }
+
+      .drag-handle {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        opacity: 0;
+        transition: opacity 0.2s;
+        cursor: grab;
+        padding: 2px;
+      }
+      .drag-handle span {
+        display: block;
+        width: 12px;
+        height: 1.5px;
+        background: var(--text3);
+        border-radius: 1px;
+      }
+      .clock-card:hover .drag-handle {
+        opacity: 1;
+      }
+
+      .remove-btn {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        color: var(--text3);
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition:
+          opacity 0.2s,
+          color 0.2s;
+        line-height: 1;
+      }
+      .clock-card:hover .remove-btn {
+        opacity: 1;
+      }
+      .remove-btn:hover {
+        color: var(--danger) !important;
+        border-color: var(--danger) !important;
+      }
+
+      .clock-location {
+        text-align: center;
+        width: 100%;
+      }
+      .clock-city {
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--text);
+        margin-bottom: 2px;
+      }
+      .clock-tzname {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        color: var(--text2);
+        letter-spacing: 0.04em;
+        margin-bottom: 2px;
+      }
+      .clock-offset {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--text3);
+        letter-spacing: 0.05em;
+      }
+
+      .analog-clock {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        flex-shrink: 0;
+      }
+      .analog-clock svg {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+      .clock-face-circle {
+        fill: var(--surface2);
+        stroke: var(--border);
+        stroke-width: 1;
+      }
+      .tick-mark {
+        stroke: var(--tick);
+      }
+      .hour-hand {
+        stroke: var(--hand-h);
+        stroke-width: 2.5;
+        stroke-linecap: round;
+      }
+      .minute-hand {
+        stroke: var(--hand-m);
+        stroke-width: 1.5;
+        stroke-linecap: round;
+      }
+      .second-hand {
+        stroke: var(--hand-s);
+        stroke-width: 1;
+        stroke-linecap: round;
+      }
+      .center-dot {
+        fill: var(--dot);
+      }
+      .center-dot-s {
+        fill: var(--hand-s);
+      }
+
+      .digital-time {
+        font-family: "DM Mono", monospace;
+        font-size: 22px;
+        font-weight: 300;
+        letter-spacing: 0.04em;
+        color: var(--text);
+      }
+      .digital-time .ampm {
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        color: var(--text3);
+        margin-left: 2px;
+      }
+      @media (min-width: 768px) {
+        .clocks-grid.few-clocks .clock-card .digital-time .ampm {
+          font-size: 16px;
+        }
+      }
+
+      .digital-date {
+        font-size: 12px;
+        color: var(--text3);
+        font-weight: 400;
+        letter-spacing: 0.02em;
+        margin-top: -8px;
+      }
+
+      .add-placeholder {
+        border: 1.5px dashed var(--border);
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 300px;
+        cursor: pointer;
+        color: var(--text3);
+        font-size: 13px;
+        transition:
+          border-color 0.2s,
+          color 0.2s;
+      }
+      .add-placeholder:hover {
+        border-color: var(--text2);
+        color: var(--text2);
+      }
+      .add-placeholder-icon {
+        font-size: 28px;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: var(--modal-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        backdrop-filter: blur(4px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s;
+      }
+      .modal-overlay.open {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .modal {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 2rem;
+        width: min(480px, 90vw);
+        max-height: 70vh;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .modal-title {
+        font-size: 15px;
+        font-weight: 500;
+      }
+      .modal-close {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        cursor: pointer;
+        font-size: 16px;
+        color: var(--text2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 10px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        color: var(--text);
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .search-input:focus {
+        border-color: var(--accent);
+      }
+      .search-input::placeholder {
+        color: var(--text3);
+      }
+
+      .tz-list {
+        overflow-y: auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-height: 0;
+      }
+
+      .tz-item {
+        padding: 10px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: background 0.15s;
+      }
+      .tz-item:hover {
+        background: var(--surface2);
+      }
+      .tz-item-name {
+        font-size: 14px;
+      }
+      .tz-item-tz {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--text3);
+      }
+
+      .empty-state {
+        padding: 2.5rem;
+        text-align: center;
+      }
+      .empty-state h2 {
+        font-size: 18px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: var(--text);
+      }
+      .empty-state p {
+        font-size: 14px;
+        color: var(--text2);
+        margin-bottom: 1.5rem;
+      }
+
+      footer {
+        margin-top: auto;
+        padding: 2rem 2.5rem;
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .footer-left {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        color: var(--text3);
+      }
+
+      .footer-left a {
+        color: var(--text2);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .footer-left a:hover {
+        color: var(--text);
+      }
+
+      .footer-dot {
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: var(--text3);
+        flex-shrink: 0;
+      }
+
+      .footer-right {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        color: var(--text3);
+      }
+
+      .footer-right button {
+        background: none;
+        border: none;
+        font-family: inherit;
+        font-size: inherit;
+        letter-spacing: inherit;
+        color: var(--text3);
+        cursor: pointer;
+        padding: 0;
+        transition: color 0.2s;
+      }
+      .footer-right button:hover {
+        color: var(--text2);
+      }
+
+      .privacy-overlay {
+        position: fixed;
+        inset: 0;
+        background: var(--modal-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 200;
+        backdrop-filter: blur(4px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s;
+      }
+      .privacy-overlay.open {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .privacy-modal {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 2.25rem;
+        width: min(540px, 92vw);
+        max-height: 78vh;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+
+      .privacy-modal h2 {
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--text);
+      }
+
+      .privacy-section h3 {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text3);
+        margin-bottom: 6px;
+      }
+
+      .privacy-section p {
+        font-size: 13px;
+        line-height: 1.7;
+        color: var(--text2);
+      }
+
+      .privacy-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .privacy-close {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        cursor: pointer;
+        font-size: 16px;
+        color: var(--text2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">World Clock</div>
+      <div class="header-actions">
+        <div class="time-toggle">
+          <button id="btn12h">12h</button>
+          <button id="btn24h">24h</button>
+        </div>
+        <button class="theme-btn" id="themeBtn" title="Toggle theme">☀</button>
+        <button class="add-btn" id="openModalBtn">
+          <span style="font-size: 18px; line-height: 1">+</span> Add Clock
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <div class="clocks-grid" id="clocksGrid"></div>
+    </main>
+
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal">
+        <div class="modal-header">
+          <span class="modal-title">Add a timezone</span>
+          <button class="modal-close" id="closeModal">×</button>
+        </div>
+        <input
+          type="text"
+          class="search-input"
+          id="tzSearch"
+          placeholder="Search city or timezone…"
+          autocomplete="off"
+        />
+        <div class="tz-list" id="tzList"></div>
+      </div>
+    </div>
+
+    <script>
+      const TIMEZONES = [
+        { city: "New York", tz: "America/New_York" },
+        { city: "Los Angeles", tz: "America/Los_Angeles" },
+        { city: "Chicago", tz: "America/Chicago" },
+        { city: "Toronto", tz: "America/Toronto" },
+        { city: "Vancouver", tz: "America/Vancouver" },
+        { city: "Mexico City", tz: "America/Mexico_City" },
+        { city: "São Paulo", tz: "America/Sao_Paulo" },
+        { city: "Buenos Aires", tz: "America/Argentina/Buenos_Aires" },
+        { city: "London", tz: "Europe/London" },
+        { city: "Paris", tz: "Europe/Paris" },
+        { city: "Berlin", tz: "Europe/Berlin" },
+        { city: "Amsterdam", tz: "Europe/Amsterdam" },
+        { city: "Rome", tz: "Europe/Rome" },
+        { city: "Madrid", tz: "Europe/Madrid" },
+        { city: "Lisbon", tz: "Europe/Lisbon" },
+        { city: "Athens", tz: "Europe/Athens" },
+        { city: "Istanbul", tz: "Europe/Istanbul" },
+        { city: "Moscow", tz: "Europe/Moscow" },
+        { city: "Cairo", tz: "Africa/Cairo" },
+        { city: "Nairobi", tz: "Africa/Nairobi" },
+        { city: "Lagos", tz: "Africa/Lagos" },
+        { city: "Johannesburg", tz: "Africa/Johannesburg" },
+        { city: "Dubai", tz: "Asia/Dubai" },
+        { city: "Riyadh", tz: "Asia/Riyadh" },
+        { city: "Karachi", tz: "Asia/Karachi" },
+        { city: "Mumbai", tz: "Asia/Kolkata" },
+        { city: "New Delhi", tz: "Asia/Kolkata" },
+        { city: "Kolkata", tz: "Asia/Kolkata" },
+        { city: "Dhaka", tz: "Asia/Dhaka" },
+        { city: "Colombo", tz: "Asia/Colombo" },
+        { city: "Kathmandu", tz: "Asia/Kathmandu" },
+        { city: "Bangkok", tz: "Asia/Bangkok" },
+        { city: "Jakarta", tz: "Asia/Jakarta" },
+        { city: "Singapore", tz: "Asia/Singapore" },
+        { city: "Kuala Lumpur", tz: "Asia/Kuala_Lumpur" },
+        { city: "Hong Kong", tz: "Asia/Hong_Kong" },
+        { city: "Shanghai", tz: "Asia/Shanghai" },
+        { city: "Beijing", tz: "Asia/Shanghai" },
+        { city: "Taipei", tz: "Asia/Taipei" },
+        { city: "Seoul", tz: "Asia/Seoul" },
+        { city: "Tokyo", tz: "Asia/Tokyo" },
+        { city: "Osaka", tz: "Asia/Tokyo" },
+        { city: "Sydney", tz: "Australia/Sydney" },
+        { city: "Melbourne", tz: "Australia/Melbourne" },
+        { city: "Brisbane", tz: "Australia/Brisbane" },
+        { city: "Perth", tz: "Australia/Perth" },
+        { city: "Auckland", tz: "Pacific/Auckland" },
+        { city: "Honolulu", tz: "Pacific/Honolulu" },
+        { city: "Anchorage", tz: "America/Anchorage" },
+        { city: "Phoenix", tz: "America/Phoenix" },
+        { city: "Denver", tz: "America/Denver" },
+        { city: "UTC", tz: "UTC" },
+      ];
+
+      const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      let clocks = JSON.parse(
+        localStorage.getItem("worldclocks") || "null",
+      ) || [
+        { city: "Your Local Time", tz: LOCAL_TZ, local: true },
+        { city: "London", tz: "Europe/London" },
+        { city: "Tokyo", tz: "Asia/Tokyo" },
+      ];
+      if (!clocks.find((c) => c.local)) {
+        clocks[0].local = true;
+      }
+
+      let darkMode = localStorage.getItem("wc-dark") === "true";
+      let use12h = localStorage.getItem("wc-12h") === "true";
+      let ticker = null;
+
+      function saveClocks() {
+        localStorage.setItem("worldclocks", JSON.stringify(clocks));
+      }
+
+      function getOffsetStr(tz) {
+        try {
+          const fmt = new Intl.DateTimeFormat("en", {
+            timeZone: tz,
+            timeZoneName: "short",
+          });
+          const parts = fmt.formatToParts(new Date());
+          const tzName = parts.find((p) => p.type === "timeZoneName");
+          return tzName ? tzName.value : "";
+        } catch {
+          return "";
+        }
+      }
+
+      function getTzLabel(tz) {
+        return tz.replace(/_/g, " ").replace("/", " / ");
+      }
+
+      function getTime(tz) {
+        try {
+          const parts = new Intl.DateTimeFormat("en", {
+            timeZone: tz,
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,
+          }).formatToParts(new Date());
+          const get = (t) =>
+            parseInt(parts.find((p) => p.type === t)?.value || "0");
+          return { h: get("hour") % 24, m: get("minute"), s: get("second") };
+        } catch {
+          return { h: 0, m: 0, s: 0 };
+        }
+      }
+
+      function getDateStr(tz) {
+        try {
+          return new Intl.DateTimeFormat("en", {
+            timeZone: tz,
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+          }).format(new Date());
+        } catch {
+          return "";
+        }
+      }
+
+      function pad(n) {
+        return String(n).padStart(2, "0");
+      }
+
+      function formatDigital(h, m, s) {
+        if (use12h) {
+          const ampm = h >= 12 ? "PM" : "AM";
+          const h12 = h % 12 || 12;
+          return `${pad(h12)}:${pad(m)}:${pad(s)} <span class="ampm">${ampm}</span>`;
+        }
+        return `${pad(h)}:${pad(m)}:${pad(s)}`;
+      }
+
+      function makeClockSVG(id) {
+        const cx = 60,
+          cy = 60,
+          r = 54;
+        let ticks = "";
+        for (let i = 0; i < 60; i++) {
+          const angle = (i * 6 * Math.PI) / 180;
+          const isMajor = i % 5 === 0;
+          const outer = r;
+          const inner = isMajor ? r - 9 : r - 5;
+          const x1 = cx + outer * Math.sin(angle);
+          const y1 = cy - outer * Math.cos(angle);
+          const x2 = cx + inner * Math.sin(angle);
+          const y2 = cy - inner * Math.cos(angle);
+          ticks += `<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" class="tick-mark" stroke-width="${isMajor ? 1.5 : 0.75}"/>`;
+        }
+        return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="${cx}" cy="${cy}" r="${r}" class="clock-face-circle"/>
+    ${ticks}
+    <line id="hh-${id}" x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy - 28}" class="hour-hand"/>
+    <line id="hm-${id}" x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy - 38}" class="minute-hand"/>
+    <line id="hs-${id}" x1="${cx}" y1="${cy + 8}" x2="${cx}" y2="${cy - 44}" class="second-hand"/>
+    <circle cx="${cx}" cy="${cy}" r="3" class="center-dot"/>
+    <circle cx="${cx}" cy="${cy}" r="1.5" class="center-dot-s"/>
+  </svg>`;
+      }
+
+      function rotateHand(el, angle) {
+        if (!el) return;
+        el.setAttribute("transform", `rotate(${angle}, 60, 60)`);
+      }
+
+      function updateHands(id, h, m, s) {
+        const hAngle = (h % 12) * 30 + m * 0.5 + s * (0.5 / 60);
+        const mAngle = m * 6 + s * 0.1;
+        const sAngle = s * 6;
+        rotateHand(document.getElementById(`hh-${id}`), hAngle);
+        rotateHand(document.getElementById(`hm-${id}`), mAngle);
+        rotateHand(document.getElementById(`hs-${id}`), sAngle);
+      }
+
+      function updateDigital(id, h, m, s) {
+        const el = document.getElementById(`dt-${id}`);
+        if (el) el.innerHTML = formatDigital(h, m, s);
+      }
+
+      function renderClocks() {
+        const grid = document.getElementById("clocksGrid");
+        grid.innerHTML = "";
+
+        if (clocks.length <= 2) {
+          grid.classList.add("few-clocks");
+        } else {
+          grid.classList.remove("few-clocks");
+        }
+
+        if (clocks.length === 0) {
+          grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <h2>No clocks yet</h2><p>Add a timezone to get started.</p>
+    </div>`;
+        }
+
+        clocks.forEach((c, i) => {
+          const { h, m, s } = getTime(c.tz);
+          const offset = getOffsetStr(c.tz);
+          const dateStr = getDateStr(c.tz);
+          const tzLabel = getTzLabel(c.tz);
+          const card = document.createElement("div");
+          card.className = "clock-card";
+          card.setAttribute("draggable", "true");
+          card.dataset.idx = i;
+          card.innerHTML = `
+      <div class="drag-handle" title="Drag to reorder"><span></span><span></span><span></span></div>
+      ${c.local ? "" : `<button class="remove-btn" data-idx="${i}" title="Remove">×</button>`}
+      <div class="clock-location">
+        <div class="clock-city">${c.city}</div>
+        ${c.local ? `<div class="clock-tzname">${tzLabel}</div>` : ""}
+        <div class="clock-offset">${offset}</div>
+      </div>
+      <div class="analog-clock">${makeClockSVG(i)}</div>
+      <div id="dt-${i}" class="digital-time">${formatDigital(h, m, s)}</div>
+      <div class="digital-date">${dateStr}</div>
+    `;
+          grid.appendChild(card);
+          updateHands(i, h, m, s);
+        });
+
+        const plus = document.createElement("div");
+        plus.className = "add-placeholder";
+        plus.innerHTML = `<span class="add-placeholder-icon">+</span><span>Add timezone</span>`;
+        plus.addEventListener("click", openModal);
+        grid.appendChild(plus);
+
+        grid.querySelectorAll(".remove-btn").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const idx = parseInt(btn.dataset.idx);
+            clocks.splice(idx, 1);
+            saveClocks();
+            renderClocks();
+            if (
+              document.getElementById("modalOverlay").classList.contains("open")
+            ) {
+              renderTZList(document.getElementById("tzSearch").value);
+            }
+          });
+        });
+
+        initDrag();
+      }
+
+      let dragSrc = null;
+
+      function initDrag() {
+        const cards = document.querySelectorAll(".clock-card");
+        cards.forEach((card) => {
+          card.addEventListener("dragstart", (e) => {
+            dragSrc = card;
+            card.classList.add("dragging");
+            e.dataTransfer.effectAllowed = "move";
+            e.dataTransfer.setData("text/plain", card.dataset.idx);
+          });
+          card.addEventListener("dragend", () => {
+            card.classList.remove("dragging");
+            document
+              .querySelectorAll(".clock-card")
+              .forEach((c) => c.classList.remove("drag-over"));
+          });
+          card.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
+            if (card !== dragSrc) {
+              document
+                .querySelectorAll(".clock-card")
+                .forEach((c) => c.classList.remove("drag-over"));
+              card.classList.add("drag-over");
+            }
+          });
+          card.addEventListener("dragleave", () =>
+            card.classList.remove("drag-over"),
+          );
+          card.addEventListener("drop", (e) => {
+            e.preventDefault();
+            if (card === dragSrc) return;
+            const fromIdx = parseInt(dragSrc.dataset.idx);
+            const toIdx = parseInt(card.dataset.idx);
+            const moved = clocks.splice(fromIdx, 1)[0];
+            clocks.splice(toIdx, 0, moved);
+            saveClocks();
+            renderClocks();
+          });
+        });
+      }
+
+      function tickAll() {
+        clocks.forEach((c, i) => {
+          const { h, m, s } = getTime(c.tz);
+          updateHands(i, h, m, s);
+          updateDigital(i, h, m, s);
+          const dateEl = document.querySelectorAll(".digital-date")[i];
+          if (dateEl) dateEl.textContent = getDateStr(c.tz);
+        });
+      }
+
+      function startTicker() {
+        if (ticker) clearInterval(ticker);
+        ticker = setInterval(tickAll, 1000);
+      }
+
+      function setTheme() {
+        document.documentElement.setAttribute(
+          "data-theme",
+          darkMode ? "dark" : "light",
+        );
+        document.getElementById("themeBtn").textContent = darkMode ? "☀" : "☾";
+        localStorage.setItem("wc-dark", darkMode);
+      }
+
+      function setTimeFormat() {
+        document.getElementById("btn12h").classList.toggle("active", use12h);
+        document.getElementById("btn24h").classList.toggle("active", !use12h);
+        localStorage.setItem("wc-12h", use12h);
+        renderClocks();
+      }
+
+      document.getElementById("themeBtn").addEventListener("click", () => {
+        darkMode = !darkMode;
+        setTheme();
+      });
+
+      document.getElementById("btn12h").addEventListener("click", () => {
+        use12h = true;
+        setTimeFormat();
+      });
+      document.getElementById("btn24h").addEventListener("click", () => {
+        use12h = false;
+        setTimeFormat();
+      });
+
+      let filteredTZ = [...TIMEZONES];
+
+      function isAdded(t) {
+        return clocks.some((c) => c.city === t.city && c.tz === t.tz);
+      }
+
+      function renderTZList(filter = "") {
+        const list = document.getElementById("tzList");
+        const q = filter.toLowerCase();
+        filteredTZ = TIMEZONES.filter(
+          (t) =>
+            (t.city.toLowerCase().includes(q) ||
+              t.tz.toLowerCase().includes(q)) &&
+            !isAdded(t),
+        );
+        list.innerHTML = filteredTZ.length
+          ? filteredTZ
+              .map(
+                (t, i) => `
+      <div class="tz-item" data-idx="${i}">
+        <span class="tz-item-name">${t.city}</span>
+        <span class="tz-item-tz">${t.tz.split("/").pop().replace(/_/g, " ")}</span>
+      </div>`,
+              )
+              .join("")
+          : `<div style="padding:1rem;color:var(--text3);font-size:13px;text-align:center">${q ? "No results" : "All timezones added"}</div>`;
+
+        list.querySelectorAll(".tz-item").forEach((el) => {
+          el.addEventListener("click", () => {
+            const t = filteredTZ[parseInt(el.dataset.idx)];
+            clocks.push({ city: t.city, tz: t.tz });
+            saveClocks();
+            renderClocks();
+            renderTZList(document.getElementById("tzSearch").value);
+          });
+        });
+      }
+
+      function openModal() {
+        document.getElementById("modalOverlay").classList.add("open");
+        document.getElementById("tzSearch").value = "";
+        renderTZList("");
+        setTimeout(() => document.getElementById("tzSearch").focus(), 100);
+      }
+
+      function closeModal() {
+        document.getElementById("modalOverlay").classList.remove("open");
+      }
+
+      document
+        .getElementById("openModalBtn")
+        .addEventListener("click", openModal);
+      document
+        .getElementById("closeModal")
+        .addEventListener("click", closeModal);
+      document.getElementById("modalOverlay").addEventListener("click", (e) => {
+        if (e.target === e.currentTarget) closeModal();
+      });
+      document.getElementById("tzSearch").addEventListener("input", (e) => {
+        renderTZList(e.target.value);
+      });
+
+      setTheme();
+      setTimeFormat();
+      renderClocks();
+      startTicker();
+    </script>
+
+    <footer>
+      <div class="footer-left">
+        <span>built &amp; hosted by</span>
+        <span class="footer-dot"></span>
+        <a href="https://alokdasofficial.in" target="_blank" rel="noopener"
+          >Alok Das</a
+        >
+      </div>
+      <div class="footer-right">
+        <button id="openPrivacy">privacy policy</button>
+      </div>
+    </footer>
+
+    <div class="privacy-overlay" id="privacyOverlay">
+      <div class="privacy-modal">
+        <div class="privacy-header">
+          <h2>Privacy Policy</h2>
+          <button class="privacy-close" id="closePrivacy">×</button>
+        </div>
+        <div class="privacy-section">
+          <h3>What we collect</h3>
+          <p>
+            Nothing. This app runs entirely in your browser. No personal data,
+            usage data, or analytics are collected or transmitted to any server.
+          </p>
+        </div>
+        <div class="privacy-section">
+          <h3>Local storage</h3>
+          <p>
+            Your clock preferences (selected timezones, their order, and your
+            light/dark mode choice) are saved in your browser's localStorage.
+            This data never leaves your device.
+          </p>
+        </div>
+        <div class="privacy-section">
+          <h3>Third-party services</h3>
+          <p>
+            Google Fonts is loaded to render typography. This is a standard CDN
+            request; Google may log your IP as part of font delivery. No other
+            third-party services are used.
+          </p>
+        </div>
+        <div class="privacy-section">
+          <h3>Cookies</h3>
+          <p>No cookies are set by this application.</p>
+        </div>
+        <div class="privacy-section">
+          <h3>Contact</h3>
+          <p>
+            Questions? Reach out via
+            <a
+              href="https://alokdasofficial.in/#contact"
+              target="_blank"
+              rel="noopener"
+              style="color: var(--text2)"
+              >alokdasofficial.in</a
+            >.
+          </p>
+        </div>
+      </div>
+    </div>
+    <script>
+      document.getElementById("openPrivacy").addEventListener("click", () => {
+        document.getElementById("privacyOverlay").classList.add("open");
+      });
+      document.getElementById("closePrivacy").addEventListener("click", () => {
+        document.getElementById("privacyOverlay").classList.remove("open");
+      });
+      document
+        .getElementById("privacyOverlay")
+        .addEventListener("click", (e) => {
+          if (e.target === e.currentTarget)
+            document.getElementById("privacyOverlay").classList.remove("open");
+        });
+    </script>
+  </body>
+</html>
