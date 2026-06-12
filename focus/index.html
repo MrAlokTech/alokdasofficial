@@ -399,6 +399,150 @@
         min-height: 16px;
       }
 
+      /* ── YOUTUBE SEEK CONTROLS ── */
+      .yt-controls {
+        display: none;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .yt-controls.visible {
+        display: flex;
+      }
+
+      .yt-seek-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .yt-time {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        color: var(--text3);
+        white-space: nowrap;
+        min-width: 36px;
+      }
+      .yt-time.right {
+        text-align: right;
+      }
+      input[type="range"].yt-seek {
+        flex: 1;
+        accent-color: var(--accent);
+        height: 3px;
+        cursor: pointer;
+        /* Custom track styling */
+        -webkit-appearance: none;
+        appearance: none;
+        background: linear-gradient(
+          to right,
+          var(--accent) 0%,
+          var(--progress-track) 0%
+        );
+        border-radius: 2px;
+      }
+      input[type="range"].yt-seek::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent);
+        cursor: pointer;
+      }
+      input[type="range"].yt-seek::-moz-range-thumb {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent);
+        border: none;
+        cursor: pointer;
+      }
+
+      .yt-title {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.04em;
+        color: var(--text2);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 0 2px;
+      }
+
+      /* ── YOUTUBE HISTORY ── */
+      .yt-history-wrap {
+        display: none;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .yt-history-wrap.visible {
+        display: flex;
+      }
+      .yt-history-label {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--text3);
+      }
+      .yt-history-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .yt-hist-chip {
+        font-family: "DM Sans", sans-serif;
+        font-size: 11px;
+        color: var(--text2);
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 4px 10px;
+        cursor: pointer;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        transition:
+          background 0.15s,
+          color 0.15s;
+      }
+      .yt-hist-chip:hover {
+        background: var(--accent);
+        color: var(--bg);
+        border-color: transparent;
+      }
+
+      /* ── BREAK NOTICE ── */
+      .break-notice {
+        display: none;
+        align-items: center;
+        gap: 6px;
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        color: var(--break-fill);
+      }
+      .break-notice.visible {
+        display: flex;
+      }
+      .break-notice-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--break-fill);
+        animation: pulse-dot 1.8s ease-in-out infinite;
+      }
+      @keyframes pulse-dot {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.4;
+          transform: scale(0.7);
+        }
+      }
+
       /* ── CUSTOM MODAL ── */
       .modal-overlay {
         position: fixed;
@@ -547,7 +691,6 @@
         letter-spacing: 0.06em;
         color: var(--text3);
       }
-
       .footer-right button {
         background: none;
         border: none;
@@ -566,14 +709,15 @@
       /* hidden YT frame */
       #yt-frame-wrap {
         position: fixed;
-        width: 300px; /* Give it a realistic size to avoid YouTube blocking it */
+        width: 300px;
         height: 300px;
-        top: -9999px; /* Push it completely off the screen */
+        top: -9999px;
         left: -9999px;
         opacity: 0;
         pointer-events: none;
       }
 
+      /* ── PRIVACY MODAL ── */
       .privacy-overlay {
         position: fixed;
         inset: 0;
@@ -591,7 +735,6 @@
         opacity: 1;
         pointer-events: all;
       }
-
       .privacy-modal {
         background: var(--surface);
         border: 1px solid var(--border);
@@ -604,13 +747,11 @@
         flex-direction: column;
         gap: 1.25rem;
       }
-
       .privacy-modal h2 {
         font-size: 15px;
         font-weight: 500;
         color: var(--text);
       }
-
       .privacy-section h3 {
         font-family: "DM Mono", monospace;
         font-size: 10px;
@@ -619,19 +760,16 @@
         color: var(--text3);
         margin-bottom: 6px;
       }
-
       .privacy-section p {
         font-size: 13px;
         line-height: 1.7;
         color: var(--text2);
       }
-
       .privacy-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
       }
-
       .privacy-close {
         width: 30px;
         height: 30px;
@@ -743,6 +881,7 @@
             <span class="vol-val" id="volVal">40</span>
           </div>
         </div>
+
         <div class="ambient-row">
           <button class="ambient-btn" data-sound="none">
             <span class="ambient-icon">🔇</span> None
@@ -757,6 +896,14 @@
             <span class="ambient-icon">🌃</span> Night
           </button>
         </div>
+
+        <!-- break notice -->
+        <div class="break-notice" id="breakNotice">
+          <div class="break-notice-dot"></div>
+          sound paused during break
+        </div>
+
+        <!-- YouTube load row -->
         <div class="yt-row">
           <input
             class="yt-input"
@@ -774,6 +921,31 @@
             <span>▶ YT</span>
           </button>
         </div>
+
+        <!-- YouTube seek controls (visible after a video is loaded) -->
+        <div class="yt-controls" id="ytControls">
+          <div class="yt-title" id="ytTitle"></div>
+          <div class="yt-seek-row">
+            <span class="yt-time" id="ytCurrentTime">0:00</span>
+            <input
+              type="range"
+              class="yt-seek"
+              id="ytSeek"
+              min="0"
+              max="100"
+              value="0"
+              step="0.1"
+            />
+            <span class="yt-time right" id="ytDuration">0:00</span>
+          </div>
+        </div>
+
+        <!-- YouTube history -->
+        <div class="yt-history-wrap" id="ytHistoryWrap">
+          <span class="yt-history-label">Recent</span>
+          <div class="yt-history-row" id="ytHistoryRow"></div>
+        </div>
+
         <div class="yt-status" id="ytStatus"></div>
       </div>
     </main>
@@ -871,8 +1043,43 @@
           <h3>Local storage</h3>
           <p>
             Your time preferences (selected sessions, custom time sessions,
-            their order, and your light/dark mode choice) are saved in your
-            browser's localStorage. This data never leaves your device.
+            their order, and your light/dark mode choice) and YouTube watch
+            history are saved in your browser's localStorage. This data never
+            leaves your device.
+          </p>
+        </div>
+        <div class="privacy-section">
+          <h3>YouTube content</h3>
+          <p>
+            This app allows you to load and play YouTube videos via the official
+            YouTube IFrame API. We do not host, download, store, or re-serve any
+            YouTube content. All videos are played directly from YouTube's own
+            servers. We make no claim of ownership over any YouTube video, and
+            do not receive, track, or benefit from any view counts or analytics
+            associated with videos played through this app. YouTube playback is
+            subject to YouTube's own
+            <a
+              href="https://www.youtube.com/t/terms"
+              target="_blank"
+              rel="noopener"
+              style="color: var(--text2)"
+              >Terms of Service</a
+            >.
+          </p>
+        </div>
+        <div class="privacy-section">
+          <h3>Ambient sound credits</h3>
+          <p>
+            The ambient sound tracks (Rain, Bird, Night) included in this app
+            are sourced from
+            <a
+              href="https://pixabay.com"
+              target="_blank"
+              rel="noopener"
+              style="color: var(--text2)"
+              >Pixabay</a
+            >. All credits belong to their respective creators on Pixabay. We
+            make no claim of ownership over these audio files.
           </p>
         </div>
         <div class="privacy-section">
@@ -902,7 +1109,10 @@
         </div>
       </div>
     </div>
+
+    <!-- ── SCRIPTS ── -->
     <script>
+      // Privacy modal
       document.getElementById("openPrivacy").addEventListener("click", () => {
         document.getElementById("privacyOverlay").classList.add("open");
       });
@@ -918,7 +1128,9 @@
     </script>
 
     <script>
-      // ── STATE ──
+      // ═══════════════════════════════════════════════════════
+      // STATE
+      // ═══════════════════════════════════════════════════════
       let darkMode = localStorage.getItem("focus-dark") === "true";
       let focusMins = parseInt(localStorage.getItem("focus-fm") || "25");
       let breakMins = parseInt(localStorage.getItem("focus-bm") || "5");
@@ -934,7 +1146,9 @@
 
       const CIRCUMFERENCE = 2 * Math.PI * 118; // 741.4
 
-      // ── THEME ──
+      // ═══════════════════════════════════════════════════════
+      // THEME
+      // ═══════════════════════════════════════════════════════
       function setTheme() {
         document.documentElement.setAttribute(
           "data-theme",
@@ -948,7 +1162,9 @@
         setTheme();
       });
 
-      // ── TIMER DISPLAY ──
+      // ═══════════════════════════════════════════════════════
+      // TIMER DISPLAY
+      // ═══════════════════════════════════════════════════════
       function pad(n) {
         return String(n).padStart(2, "0");
       }
@@ -973,7 +1189,6 @@
           longbreak: "long break",
         };
         document.getElementById("timerLabel").textContent = labels[phase];
-
         document.title = `${pad(m)}:${pad(s)} — ${labels[phase]} · Focus`;
       }
 
@@ -987,7 +1202,9 @@
         }
       }
 
-      // ── PLAY / PAUSE ──
+      // ═══════════════════════════════════════════════════════
+      // PLAY / PAUSE
+      // ═══════════════════════════════════════════════════════
       function setPlaying(val) {
         running = val;
         document.getElementById("playBtn").textContent = running ? "⏸" : "▶";
@@ -1004,6 +1221,57 @@
         updateDisplay();
       }
 
+      // ═══════════════════════════════════════════════════════
+      // PHASE TRANSITIONS  ← auto-pause on break happens here
+      // ═══════════════════════════════════════════════════════
+      // ── BREAK SOUND SNAPSHOT ───────────────────────────────────
+      // Stores what was playing before a break so it can be restored after.
+      let preBreakSound = null; // { type: 'ambient', track: 'rain' }
+      // { type: 'yt' }
+      // null = nothing was playing
+
+      function pauseAllSoundForBreak() {
+        // ✦ Snapshot current sound state before stopping
+        if (ytActive) {
+          preBreakSound = { type: "yt" };
+        } else if (currentAmbient !== "none") {
+          preBreakSound = { type: "ambient", track: currentAmbient };
+        } else {
+          preBreakSound = null;
+        }
+
+        // Stop ambient
+        stopAmbient();
+        currentAmbient = "none";
+        document
+          .querySelectorAll(".ambient-btn[data-sound]")
+          .forEach((b) => b.classList.remove("active"));
+        // Stop YouTube
+        if (ytActive) toggleYT(false);
+        // Show break notice
+        document.getElementById("breakNotice").classList.add("visible");
+      }
+
+      function hidBreakNotice() {
+        document.getElementById("breakNotice").classList.remove("visible");
+      }
+
+      function resumeSoundAfterBreak() {
+        if (!preBreakSound) return;
+        if (preBreakSound.type === "yt") {
+          toggleYT(true);
+        } else if (preBreakSound.type === "ambient") {
+          const track = preBreakSound.track;
+          currentAmbient = track;
+          startAmbient(track);
+          // Re-mark the correct button as active
+          document.querySelectorAll(".ambient-btn[data-sound]").forEach((b) => {
+            b.classList.toggle("active", b.dataset.sound === track);
+          });
+        }
+        preBreakSound = null;
+      }
+
       function nextPhase() {
         if (phase === "focus") {
           sessionsDone++;
@@ -1015,14 +1283,23 @@
             phase = "break";
             totalSeconds = breakMins * 60;
           }
+          // ✦ Snapshot + pause all sound when break starts
+          pauseAllSoundForBreak();
         } else if (phase === "longbreak") {
           sessionsDone = 0;
           phase = "focus";
           totalSeconds = focusMins * 60;
           renderDots();
+          hidBreakNotice();
+          // ✦ Restore sound when focus resumes
+          resumeSoundAfterBreak();
         } else {
+          // short break → focus
           phase = "focus";
           totalSeconds = focusMins * 60;
+          hidBreakNotice();
+          // ✦ Restore sound when focus resumes
+          resumeSoundAfterBreak();
         }
         remaining = totalSeconds;
         updateDisplay();
@@ -1034,13 +1311,15 @@
         sessionsDone = 0;
         totalSeconds = focusMins * 60;
         remaining = totalSeconds;
+        preBreakSound = null; // discard snapshot on manual reset
+        hidBreakNotice();
         updateDisplay();
         renderDots();
       }
 
-      document.getElementById("playBtn").addEventListener("click", () => {
-        setPlaying(!running);
-      });
+      document
+        .getElementById("playBtn")
+        .addEventListener("click", () => setPlaying(!running));
       document.getElementById("prevBtn").addEventListener("click", () => {
         remaining = totalSeconds;
         setPlaying(false);
@@ -1053,7 +1332,9 @@
 
       ticker = setInterval(tick, 1000);
 
-      // ── MODE TABS ──
+      // ═══════════════════════════════════════════════════════
+      // MODE TABS
+      // ═══════════════════════════════════════════════════════
       document.querySelectorAll(".mode-tab").forEach((btn) => {
         btn.addEventListener("click", () => {
           document
@@ -1072,7 +1353,9 @@
         });
       });
 
-      // ── SETTINGS MODAL ──
+      // ═══════════════════════════════════════════════════════
+      // SETTINGS MODAL
+      // ═══════════════════════════════════════════════════════
       function openSettings() {
         document.getElementById("customFocus").value = focusMins;
         document.getElementById("customBreak").value = breakMins;
@@ -1123,7 +1406,9 @@
         resetTimer();
       });
 
-      // ── CHIME (Web Audio) ──
+      // ═══════════════════════════════════════════════════════
+      // CHIME
+      // ═══════════════════════════════════════════════════════
       function playChime() {
         try {
           const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1145,28 +1430,26 @@
         } catch (e) {}
       }
 
-      // ── AMBIENT SOUNDS ──
+      // ═══════════════════════════════════════════════════════
+      // AMBIENT SOUNDS
+      // ═══════════════════════════════════════════════════════
       let currentAmbient = "none";
       let currentAudioElement = null;
 
-      // 1. Define your audio files here.
-      // Update these paths to point to where your MP3s are actually saved!
       const ambientTracks = {
         rain: new Audio("sounds/rain.mp3"),
         white: new Audio("sounds/white.mp3"),
         brown: new Audio("sounds/night.mp3"),
       };
-
-      // 2. Configure tracks for streaming and infinite looping
       for (let key in ambientTracks) {
-        ambientTracks[key].loop = true; // Plays endlessly for the timer
-        ambientTracks[key].preload = "none"; // Prevents downloading until clicked
+        ambientTracks[key].loop = true;
+        ambientTracks[key].preload = "none";
       }
 
       function stopAmbient() {
         if (currentAudioElement) {
           currentAudioElement.pause();
-          currentAudioElement.currentTime = 0; // Reset to the beginning
+          currentAudioElement.currentTime = 0;
           currentAudioElement = null;
         }
       }
@@ -1174,72 +1457,185 @@
       function startAmbient(type) {
         stopAmbient();
         if (type === "none" || !ambientTracks[type]) return;
-
         currentAudioElement = ambientTracks[type];
-
-        // Set to current volume slider value before playing
         currentAudioElement.volume =
           document.getElementById("volSlider").value / 100;
-
-        // Play the track (browsers handle the chunking automatically!)
-        currentAudioElement.play().catch((err) => {
-          console.error("Could not play ambient sound:", err);
-        });
+        currentAudioElement
+          .play()
+          .catch((err) => console.error("Could not play ambient:", err));
       }
 
       function setAmbientVolume(v) {
-        if (currentAudioElement) {
-          currentAudioElement.volume = v / 100;
-        }
+        if (currentAudioElement) currentAudioElement.volume = v / 100;
       }
 
-      // 3. Handle button clicks (This remains mostly the same as your old code)
       document.querySelectorAll(".ambient-btn[data-sound]").forEach((btn) => {
         if (btn.dataset.sound === "yt") return;
-
         btn.addEventListener("click", () => {
           const s = btn.dataset.sound;
+
+          // "None" always stops everything — ambient AND YouTube.
+          if (s === "none") {
+            stopAmbient();
+            currentAmbient = "none";
+            document
+              .querySelectorAll(".ambient-btn[data-sound]")
+              .forEach((b) => b.classList.remove("active"));
+            if (ytActive) toggleYT(false);
+            return;
+          }
+
           if (currentAmbient === s) {
-            // Toggle off
+            // Toggle the same ambient track off
             stopAmbient();
             currentAmbient = "none";
             document
               .querySelectorAll(".ambient-btn[data-sound]")
               .forEach((b) => b.classList.remove("active"));
           } else {
-            // Toggle on
+            // Switch to a new ambient track
             currentAmbient = s;
             startAmbient(s);
             document
               .querySelectorAll(".ambient-btn[data-sound]")
               .forEach((b) => b.classList.remove("active"));
             btn.classList.add("active");
-
-            // Deactivate YT if switching to ambient
             if (ytActive) toggleYT(false);
           }
         });
       });
 
-      // 4. Update the volume slider listener
       document.getElementById("volSlider").addEventListener("input", (e) => {
         const v = parseInt(e.target.value);
         document.getElementById("volVal").textContent = v;
-        setAmbientVolume(v); // Update MP3 volume
-        setYTVolume(v); // Update YouTube volume
+        setAmbientVolume(v);
+        setYTVolume(v);
       });
 
-      // ── YOUTUBE PLAYER ──
+      // ═══════════════════════════════════════════════════════
+      // YOUTUBE HISTORY  (localStorage cache)
+      // ═══════════════════════════════════════════════════════
+      const YT_HISTORY_KEY = "focus-yt-history";
+      const YT_HISTORY_MAX = 8;
+
+      function getHistory() {
+        try {
+          return JSON.parse(localStorage.getItem(YT_HISTORY_KEY) || "[]");
+        } catch {
+          return [];
+        }
+      }
+
+      function saveToHistory(id, title) {
+        let hist = getHistory().filter((h) => h.id !== id); // deduplicate
+        hist.unshift({ id, title: title || id }); // newest first
+        if (hist.length > YT_HISTORY_MAX) hist = hist.slice(0, YT_HISTORY_MAX);
+        localStorage.setItem(YT_HISTORY_KEY, JSON.stringify(hist));
+        renderHistory();
+      }
+
+      function renderHistory() {
+        const hist = getHistory();
+        const wrap = document.getElementById("ytHistoryWrap");
+        const row = document.getElementById("ytHistoryRow");
+        if (!hist.length) {
+          wrap.classList.remove("visible");
+          return;
+        }
+        wrap.classList.add("visible");
+        row.innerHTML = "";
+        hist.forEach(({ id, title }) => {
+          const chip = document.createElement("button");
+          chip.className = "yt-hist-chip";
+          chip.textContent = title || id;
+          chip.title = title || id;
+          chip.addEventListener("click", () => loadYTById(id));
+          row.appendChild(chip);
+        });
+      }
+
+      // ═══════════════════════════════════════════════════════
+      // YOUTUBE SEEK BAR
+      // ═══════════════════════════════════════════════════════
+      let seekInterval = null;
+      let isSeeking = false;
+
+      function fmtTime(secs) {
+        secs = Math.floor(secs || 0);
+        const m = Math.floor(secs / 60);
+        const s = secs % 60;
+        return `${m}:${pad(s)}`;
+      }
+
+      function startSeekPolling() {
+        stopSeekPolling();
+        seekInterval = setInterval(updateSeekBar, 800);
+      }
+      function stopSeekPolling() {
+        if (seekInterval) {
+          clearInterval(seekInterval);
+          seekInterval = null;
+        }
+      }
+
+      function updateSeekBar() {
+        if (!ytPlayer || typeof ytPlayer.getCurrentTime !== "function") return;
+        if (isSeeking) return;
+        const current = ytPlayer.getCurrentTime() || 0;
+        const duration = ytPlayer.getDuration() || 0;
+        if (duration > 0) {
+          const pct = (current / duration) * 100;
+          const seek = document.getElementById("ytSeek");
+          seek.value = pct;
+          // Update the fill gradient
+          seek.style.background = `linear-gradient(to right, var(--accent) ${pct}%, var(--progress-track) ${pct}%)`;
+          document.getElementById("ytCurrentTime").textContent =
+            fmtTime(current);
+          document.getElementById("ytDuration").textContent = fmtTime(duration);
+        }
+      }
+
+      const ytSeekEl = document.getElementById("ytSeek");
+
+      ytSeekEl.addEventListener("mousedown", () => (isSeeking = true));
+      ytSeekEl.addEventListener("touchstart", () => (isSeeking = true), {
+        passive: true,
+      });
+
+      ytSeekEl.addEventListener("input", (e) => {
+        // Update fill visually while dragging
+        const pct = parseFloat(e.target.value);
+        e.target.style.background = `linear-gradient(to right, var(--accent) ${pct}%, var(--progress-track) ${pct}%)`;
+        // Update time label while dragging
+        const duration = ytPlayer ? ytPlayer.getDuration() || 0 : 0;
+        if (duration > 0) {
+          document.getElementById("ytCurrentTime").textContent = fmtTime(
+            (pct / 100) * duration,
+          );
+        }
+      });
+
+      ytSeekEl.addEventListener("change", (e) => {
+        const duration = ytPlayer ? ytPlayer.getDuration() || 0 : 0;
+        if (duration > 0 && ytPlayer) {
+          ytPlayer.seekTo((parseFloat(e.target.value) / 100) * duration, true);
+        }
+        isSeeking = false;
+      });
+
+      // ═══════════════════════════════════════════════════════
+      // YOUTUBE PLAYER
+      // ═══════════════════════════════════════════════════════
       let ytPlayer = null;
       let ytReady = false;
       let ytActive = false;
-      let ytPendingId = null;
+      let ytPendingId = null; // used before the IFrame API is ready
+      let ytPendingCueId = null; // queued while audio is actively playing
+      let currentYTId = null;
 
       window.onYouTubeIframeAPIReady = function () {
         ytReady = true;
-
-        // We get the current website origin to pass to YouTube for security
-        const currentOrigin =
+        const origin =
           window.location.origin !== "null"
             ? window.location.origin
             : "http://localhost";
@@ -1247,11 +1643,7 @@
         ytPlayer = new YT.Player("yt-player", {
           height: "300",
           width: "300",
-          playerVars: {
-            autoplay: 0,
-            controls: 0,
-            origin: currentOrigin, // <--- This new line helps bypass CORS security blocks
-          },
+          playerVars: { autoplay: 0, controls: 0, origin },
           events: {
             onReady: () => {
               setYTVolume(parseInt(document.getElementById("volSlider").value));
@@ -1260,24 +1652,78 @@
                 ytPendingId = null;
               }
             },
-            onError: (event) => {
-              // Grab the status text element
-              const statusText = document.getElementById("ytStatus");
+            onStateChange: (event) => {
+              // YT.PlayerState: UNSTARTED=-1, ENDED=0, PLAYING=1, PAUSED=2, BUFFERING=3, CUED=5
 
-              // Codes 101 and 150 mean the video owner disabled embedding
+              // ── Grab title + save to history ──────────────────────────
+              // Fires on CUED (normal load) AND on PLAYING (queued-while-playing
+              // path uses loadVideoById which skips CUED and goes straight to PLAYING).
+              if (event.data === 5 || event.data === 1) {
+                setTimeout(() => {
+                  const data = ytPlayer.getVideoData && ytPlayer.getVideoData();
+                  if (data && data.video_id) {
+                    const title = data.title || data.video_id;
+                    document.getElementById("ytTitle").textContent = title;
+                    saveToHistory(data.video_id, title);
+                    if (event.data === 5) {
+                      // Reset seek bar only on fresh cue (not mid-play)
+                      const seek = document.getElementById("ytSeek");
+                      seek.value = 0;
+                      seek.style.background = `linear-gradient(to right, var(--accent) 0%, var(--progress-track) 0%)`;
+                      document.getElementById("ytCurrentTime").textContent =
+                        "0:00";
+                      const dur = ytPlayer.getDuration
+                        ? ytPlayer.getDuration()
+                        : 0;
+                      document.getElementById("ytDuration").textContent =
+                        fmtTime(dur);
+                    }
+                  }
+                }, 800);
+              }
+
+              if (event.data === 1) {
+                // Playing — start seek polling
+                startSeekPolling();
+              } else if (event.data === 2) {
+                // Paused
+                stopSeekPolling();
+                updateSeekBar();
+              } else if (event.data === 0) {
+                // ── Ended: auto-play next in chronological order ──────────
+                // History is stored newest-first [s3,s2,s1]. Reverse it so
+                // we walk in the order the user originally played them: s1→s2→s3→s1…
+                stopSeekPolling();
+                updateSeekBar();
+                const hist = getHistory();
+                if (hist.length > 1) {
+                  const curData =
+                    ytPlayer.getVideoData && ytPlayer.getVideoData();
+                  const curId = (curData && curData.video_id) || currentYTId;
+                  const chronological = [...hist].reverse(); // oldest first
+                  const idx = chronological.findIndex((h) => h.id === curId);
+                  const nextIdx =
+                    idx === -1 ? 0 : (idx + 1) % chronological.length;
+                  const next = chronological[nextIdx];
+                  if (next) {
+                    currentYTId = next.id;
+                    ytPlayer.loadVideoById(next.id);
+                    document.getElementById("ytStatus").textContent =
+                      `▶ auto-playing: ${next.title || next.id}`;
+                  }
+                }
+              }
+            },
+            onError: (event) => {
+              const statusText = document.getElementById("ytStatus");
               if (event.data === 150 || event.data === 101) {
                 statusText.textContent =
-                  "Embedding disabled by video owner — try another link";
+                  "Embedding disabled by video creator or YouTube — try another link";
               } else {
-                // Fallback for any other type of error (e.g., video deleted)
                 statusText.textContent =
                   "Could not load video — try another URL";
               }
-
-              // If the play button is currently active, turn it off
-              if (ytActive) {
-                toggleYT(false);
-              }
+              if (ytActive) toggleYT(false);
             },
           },
         });
@@ -1303,6 +1749,41 @@
           ytPlayer.setVolume(v);
       }
 
+      function loadYTById(id) {
+        currentYTId = id;
+        document.getElementById("ytControls").classList.add("visible");
+        document.getElementById("ytTitle").textContent = "";
+
+        // ✦ Never interrupt actively playing audio.
+        // If YT is live, hold the ID and apply it when the user presses ▶ YT.
+        if (ytActive) {
+          ytPendingCueId = id;
+          document.getElementById("ytStatus").textContent =
+            "queued — press ▶ YT to switch";
+          return;
+        }
+
+        // If ambient is playing, also don't touch the YT player —
+        // just store so ▶ YT can load + play it later.
+        if (currentAmbient !== "none") {
+          ytPendingCueId = id;
+          document.getElementById("ytStatus").textContent =
+            "queued — press ▶ YT to play";
+          return;
+        }
+
+        // Nothing playing — safe to cue silently.
+        if (ytReady && ytPlayer) {
+          ytPlayer.cueVideoById(id);
+          document.getElementById("ytStatus").textContent =
+            "✓ loaded — press ▶ YT to play";
+          // No toggleYT(false) — don't touch ambient or player state.
+        } else {
+          ytPendingId = id;
+          document.getElementById("ytStatus").textContent = "player loading…";
+        }
+      }
+
       function toggleYT(force) {
         ytActive = force !== undefined ? force : !ytActive;
         const btn = document.getElementById("ytToggleBtn");
@@ -1312,11 +1793,17 @@
           btn.querySelector("span").textContent = "⏸ YT";
 
           if (ytPlayer && typeof ytPlayer.playVideo === "function") {
-            ytPlayer.unMute(); // Ensures the browser doesn't force mute the audio
-            ytPlayer.playVideo();
+            // ✦ If a new video was queued while audio was playing, load it now.
+            if (ytPendingCueId) {
+              ytPlayer.loadVideoById(ytPendingCueId); // loads + plays automatically
+              ytPendingCueId = null;
+            } else {
+              ytPlayer.unMute();
+              ytPlayer.playVideo();
+            }
           }
 
-          // stop ambient
+          // Stop ambient when YT starts
           if (currentAmbient !== "none") {
             stopAmbient();
             currentAmbient = "none";
@@ -1330,6 +1817,8 @@
           if (ytPlayer && typeof ytPlayer.pauseVideo === "function") {
             ytPlayer.pauseVideo();
           }
+          stopSeekPolling();
+          updateSeekBar();
         }
       }
 
@@ -1341,18 +1830,12 @@
             "invalid URL — paste a YouTube link";
           return;
         }
-        document.getElementById("ytStatus").textContent = "loading…";
+        loadYTById(id);
+      });
 
-        if (ytReady && ytPlayer) {
-          ytPlayer.cueVideoById(id); // Use cueVideoById instead of loadVideoById
-          document.getElementById("ytStatus").textContent =
-            "✓ loaded — press ▶ YT to play";
-          toggleYT(false);
-        } else {
-          ytPendingId = id;
-          document.getElementById("ytStatus").textContent =
-            "player loading, will auto-start…";
-        }
+      // Allow pressing Enter in the input to load
+      document.getElementById("ytInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") document.getElementById("ytLoadBtn").click();
       });
 
       document
@@ -1364,42 +1847,37 @@
       ytScript.src = "https://www.youtube.com/iframe_api";
       document.head.appendChild(ytScript);
 
-      // ── FULLSCREEN TOGGLE ──
+      // ═══════════════════════════════════════════════════════
+      // FULLSCREEN
+      // ═══════════════════════════════════════════════════════
       const fullscreenBtn = document.getElementById("fullscreenBtn");
-
       function toggleFullscreen() {
-        // Check if we are currently in fullscreen mode
         if (!document.fullscreenElement) {
-          // If not, request fullscreen on the entire HTML document
-          document.documentElement.requestFullscreen().catch((err) => {
-            console.error("Error attempting to enable fullscreen:", err);
-          });
+          document.documentElement
+            .requestFullscreen()
+            .catch((err) => console.error(err));
         } else {
-          // If we are, exit fullscreen
-          if (document.exitFullscreen) {
-            document.exitFullscreen();
-          }
+          if (document.exitFullscreen) document.exitFullscreen();
         }
       }
-
-      // Listen for the button click
       fullscreenBtn.addEventListener("click", toggleFullscreen);
-
-      // Listen for fullscreen changes (e.g., if the user presses the 'Esc' key to exit)
       document.addEventListener("fullscreenchange", () => {
         if (document.fullscreenElement) {
-          fullscreenBtn.textContent = "⤧"; // Change to 'contract' icon
+          fullscreenBtn.textContent = "⤧";
           fullscreenBtn.title = "Exit Fullscreen";
         } else {
-          fullscreenBtn.textContent = "⤢"; // Change back to 'expand' icon
+          fullscreenBtn.textContent = "⤢";
           fullscreenBtn.title = "Toggle Fullscreen";
         }
       });
 
-      // ── INIT ──
+      // ═══════════════════════════════════════════════════════
+      // INIT
+      // ═══════════════════════════════════════════════════════
       setTheme();
       updateDisplay();
       renderDots();
+      renderHistory(); // load cached history on start
     </script>
   </body>
 </html>
