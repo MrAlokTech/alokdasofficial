@@ -1680,29 +1680,41 @@
         provider.addScope(DRIVE_SCOPE);
 
         try {
-          const result = await auth.signInWithPopup(provider);
-          const credential =
-            firebase.auth.GoogleAuthProvider.credentialFromResult(result);
-
-          // 2. Added a safety check: Only read accessToken if 'credential' is not null
-          if (credential && credential.accessToken) {
-            driveToken = credential.accessToken;
-            tokenExpiry = Date.now() + 3540 * 1000; // ~59 min
-            setDriveStatus("connected");
-          }
+          // Changed from popup to redirect to bypass strict hosting COOP headers
+          await auth.signInWithRedirect(provider);
         } catch (err) {
-          console.error("Sign-in error:", err);
-
-          // 3. Provide a more helpful error message based on the issue
-          if (err.code === "auth/popup-closed-by-user") {
-            console.log("Sign-in popup was closed before finishing.");
-          } else {
-            alert(
-              "Sign-in failed. If using a local dev server, it might be blocking popups. Check your console for details.",
-            );
-          }
+          console.error("Sign-in redirect error:", err);
+          alert("Sign-in failed. Please try again.");
         }
       }
+      // async function signIn() {
+      //   const provider = new firebase.auth.GoogleAuthProvider();
+      //   provider.addScope(DRIVE_SCOPE);
+
+      //   try {
+      //     const result = await auth.signInWithPopup(provider);
+      //     const credential =
+      //       firebase.auth.GoogleAuthProvider.credentialFromResult(result);
+
+      //     // 2. Added a safety check: Only read accessToken if 'credential' is not null
+      //     if (credential && credential.accessToken) {
+      //       driveToken = credential.accessToken;
+      //       tokenExpiry = Date.now() + 3540 * 1000; // ~59 min
+      //       setDriveStatus("connected");
+      //     }
+      //   } catch (err) {
+      //     console.error("Sign-in error:", err);
+
+      //     // 3. Provide a more helpful error message based on the issue
+      //     if (err.code === "auth/popup-closed-by-user") {
+      //       console.log("Sign-in popup was closed before finishing.");
+      //     } else {
+      //       alert(
+      //         "Sign-in failed. If using a local dev server, it might be blocking popups. Check your console for details.",
+      //       );
+      //     }
+      //   }
+      // }
 
       async function signOut() {
         if (!confirm("Sign out of Life Calendar?")) return;
@@ -1716,6 +1728,24 @@
       document.getElementById("signInBtn").addEventListener("click", signIn);
       document.getElementById("signOutBtn").addEventListener("click", signOut);
 
+      // Catch the token when Google redirects the user back to the website
+      auth
+        .getRedirectResult()
+        .then((result) => {
+          if (result && result.credential) {
+            const credential =
+              firebase.auth.GoogleAuthProvider.credentialFromResult(result);
+            if (credential && credential.accessToken) {
+              driveToken = credential.accessToken;
+              tokenExpiry = Date.now() + 3540 * 1000; // ~59 min
+              setDriveStatus("connected");
+            }
+          }
+        })
+        .catch((error) => {
+          console.error("Redirect Auth Error:", error);
+        });
+
       // ── Auth state listener — the main entry point
       auth.onAuthStateChanged(async (user) => {
         currentUser = user;
@@ -1724,7 +1754,12 @@
           return;
         }
         updateUserChip(user);
-        if (gisReady) requestDriveToken(true); // silent refresh
+
+        // Prevent popup loop: Only request token if we didn't just get it from the redirect
+        if (gisReady && !isDriveTokenValid()) {
+          requestDriveToken(true);
+        }
+
         await loadAndRender();
       });
 
