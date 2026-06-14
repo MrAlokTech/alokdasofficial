@@ -1620,56 +1620,52 @@
           }[s] || "";
       }
       function setDriveStatus(s) {
-        // 'disconnected' | 'connected' | 'error'
         const b = document.getElementById("driveBadge");
         b.className = "drive-badge " + s;
-        b.textContent =
-          s === "connected" ? "◈ Drive" : s === "error" ? "⚠ Drive" : "◇ Drive";
+        b.textContent = s === "connected" ? "◈ Drive" : "◇ Drive";
         b.title =
           s === "connected"
             ? "Photos syncing to Google Drive"
-            : s === "error"
-              ? "Drive disconnected — click to reconnect"
-              : "Google Drive not connected";
-        if (s === "error") b.onclick = () => requestDriveToken(false);
-        else b.onclick = null;
+            : "Drive disconnected — click to reconnect";
+
+        // If disconnected, clicking it will trigger the Firebase redirect
+        b.onclick = s !== "connected" ? signIn : null;
       }
+      // function setDriveStatus(s) {
+      //   // 'disconnected' | 'connected' | 'error'
+      //   const b = document.getElementById("driveBadge");
+      //   b.className = "drive-badge " + s;
+      //   b.textContent =
+      //     s === "connected" ? "◈ Drive" : s === "error" ? "⚠ Drive" : "◇ Drive";
+      //   b.title =
+      //     s === "connected"
+      //       ? "Photos syncing to Google Drive"
+      //       : s === "error"
+      //         ? "Drive disconnected — click to reconnect"
+      //         : "Google Drive not connected";
+      //   if (s === "error") b.onclick = () => requestDriveToken(false);
+      //   else b.onclick = null;
+      // }
 
       // ═══════════════════════════════════════════════════════════════
-      //  GOOGLE IDENTITY SERVICES — DRIVE TOKEN
+      //  DRIVE TOKEN MANAGEMENT
       // ═══════════════════════════════════════════════════════════════
-      // Called by GIS script onload attribute
-      window.initGIS = function () {
-        tokenClient = google.accounts.oauth2.initTokenClient({
-          client_id: GOOGLE_CLIENT_ID,
-          scope: DRIVE_SCOPE,
-          callback: (resp) => {
-            if (resp.error) {
-              console.warn("Drive token error:", resp.error);
-              setDriveStatus("error");
-              return;
-            }
-            driveToken = resp.access_token;
-            tokenExpiry = Date.now() + (resp.expires_in - 60) * 1000; // 60s buffer
-            setDriveStatus("connected");
-            // Store folder ID in profile if we don't have it yet
-            if (profileCache && !profileCache.driveFolderId)
-              ensureDriveFolder();
-          },
-          error_callback: () => setDriveStatus("error"),
-        });
-        gisReady = true;
-        // If user already signed in, get Drive token silently
-        if (currentUser) requestDriveToken(true);
-      };
-
       function isDriveTokenValid() {
-        return driveToken && Date.now() < tokenExpiry;
+        return driveToken && tokenExpiry && Date.now() < tokenExpiry;
       }
 
-      function requestDriveToken(silent = true) {
-        if (!gisReady || !tokenClient) return;
-        tokenClient.requestAccessToken({ prompt: silent ? "" : "consent" });
+      function restoreDriveToken() {
+        const savedToken = sessionStorage.getItem("driveToken");
+        const savedExpiry = sessionStorage.getItem("driveTokenExpiry");
+        if (savedToken && savedExpiry && Date.now() < parseInt(savedExpiry)) {
+          driveToken = savedToken;
+          tokenExpiry = parseInt(savedExpiry);
+          setDriveStatus("connected");
+        } else {
+          driveToken = null;
+          tokenExpiry = 0;
+          setDriveStatus("disconnected");
+        }
       }
 
       // ═══════════════════════════════════════════════════════════════
@@ -1680,46 +1676,19 @@
         provider.addScope(DRIVE_SCOPE);
 
         try {
-          // Changed from popup to redirect to bypass strict hosting COOP headers
           await auth.signInWithRedirect(provider);
         } catch (err) {
           console.error("Sign-in redirect error:", err);
           alert("Sign-in failed. Please try again.");
         }
       }
-      // async function signIn() {
-      //   const provider = new firebase.auth.GoogleAuthProvider();
-      //   provider.addScope(DRIVE_SCOPE);
-
-      //   try {
-      //     const result = await auth.signInWithPopup(provider);
-      //     const credential =
-      //       firebase.auth.GoogleAuthProvider.credentialFromResult(result);
-
-      //     // 2. Added a safety check: Only read accessToken if 'credential' is not null
-      //     if (credential && credential.accessToken) {
-      //       driveToken = credential.accessToken;
-      //       tokenExpiry = Date.now() + 3540 * 1000; // ~59 min
-      //       setDriveStatus("connected");
-      //     }
-      //   } catch (err) {
-      //     console.error("Sign-in error:", err);
-
-      //     // 3. Provide a more helpful error message based on the issue
-      //     if (err.code === "auth/popup-closed-by-user") {
-      //       console.log("Sign-in popup was closed before finishing.");
-      //     } else {
-      //       alert(
-      //         "Sign-in failed. If using a local dev server, it might be blocking popups. Check your console for details.",
-      //       );
-      //     }
-      //   }
-      // }
 
       async function signOut() {
         if (!confirm("Sign out of Life Calendar?")) return;
         driveToken = null;
         tokenExpiry = 0;
+        sessionStorage.removeItem("driveToken");
+        sessionStorage.removeItem("driveTokenExpiry");
         profileCache = null;
         weeksCache = {};
         await auth.signOut();
@@ -1736,9 +1705,13 @@
             const credential =
               firebase.auth.GoogleAuthProvider.credentialFromResult(result);
             if (credential && credential.accessToken) {
-              driveToken = credential.accessToken;
-              tokenExpiry = Date.now() + 3540 * 1000; // ~59 min
-              setDriveStatus("connected");
+              // Save token to session storage so it survives page refreshes
+              sessionStorage.setItem("driveToken", credential.accessToken);
+              sessionStorage.setItem(
+                "driveTokenExpiry",
+                Date.now() + 3540 * 1000,
+              ); // ~59 min
+              restoreDriveToken();
             }
           }
         })
@@ -1753,36 +1726,13 @@
           showSignInOverlay();
           return;
         }
+
+        restoreDriveToken();
         updateUserChip(user);
 
-        // Prevent popup loop: Only request token if we didn't just get it from the redirect
-        if (gisReady && !isDriveTokenValid()) {
-          requestDriveToken(true);
-        }
-
+        // Load data and hide the sign-in screen
         await loadAndRender();
       });
-
-      function updateUserChip(user) {
-        const chip = document.getElementById("userChip");
-        const avatar = document.getElementById("userAvatar");
-        const name = document.getElementById("userName");
-        chip.style.display = "flex";
-        if (user.photoURL) {
-          const img = document.createElement("img");
-          img.src = user.photoURL;
-          img.className = "user-avatar";
-          img.alt = "";
-          avatar.replaceWith(img);
-        } else {
-          avatar.textContent = (user.displayName ||
-            user.email ||
-            "?")[0].toUpperCase();
-        }
-        name.textContent = user.displayName
-          ? user.displayName.split(" ")[0]
-          : user.email;
-      }
 
       // ═══════════════════════════════════════════════════════════════
       //  OVERLAY MANAGEMENT
@@ -2571,10 +2521,10 @@
       setDriveStatus("disconnected");
       // Auth state listener above handles the rest
     </script>
-    <script
+    <!-- <script
       src="https://accounts.google.com/gsi/client"
       async
       onload="initGIS()"
-    ></script>
+    ></script> -->
   </body>
 </html>
