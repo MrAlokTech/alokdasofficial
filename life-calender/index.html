@@ -15,11 +15,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <!-- Google Identity Services — Drive token (onload wires it up) -->
-    <script
-      src="https://accounts.google.com/gsi/client"
-      async
-      onload="initGIS()"
-    ></script>
 
     <style>
       *,
@@ -1683,19 +1678,29 @@
       async function signIn() {
         const provider = new firebase.auth.GoogleAuthProvider();
         provider.addScope(DRIVE_SCOPE);
+
         try {
           const result = await auth.signInWithPopup(provider);
           const credential =
             firebase.auth.GoogleAuthProvider.credentialFromResult(result);
-          // Grab initial Drive token from the sign-in credential
-          if (credential.accessToken) {
+
+          // 2. Added a safety check: Only read accessToken if 'credential' is not null
+          if (credential && credential.accessToken) {
             driveToken = credential.accessToken;
             tokenExpiry = Date.now() + 3540 * 1000; // ~59 min
             setDriveStatus("connected");
           }
         } catch (err) {
           console.error("Sign-in error:", err);
-          alert("Sign-in failed. Please try again.");
+
+          // 3. Provide a more helpful error message based on the issue
+          if (err.code === "auth/popup-closed-by-user") {
+            console.log("Sign-in popup was closed before finishing.");
+          } else {
+            alert(
+              "Sign-in failed. If using a local dev server, it might be blocking popups. Check your console for details.",
+            );
+          }
         }
       }
 
@@ -2531,5 +2536,10 @@
       setDriveStatus("disconnected");
       // Auth state listener above handles the rest
     </script>
+    <script
+      src="https://accounts.google.com/gsi/client"
+      async
+      onload="initGIS()"
+    ></script>
   </body>
 </html>
