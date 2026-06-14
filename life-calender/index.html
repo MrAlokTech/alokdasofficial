@@ -1971,17 +1971,29 @@
       //  LOAD & RENDER (called on auth state change)
       // ═══════════════════════════════════════════════════════════════
       async function loadAndRender() {
-        const profile = await loadProfile();
-        if (!profile || !profile.dob) {
-          showSetupOverlay();
-          return;
+        try {
+          const profile = await loadProfile();
+
+          // If no profile exists, show the Date of Birth setup screen
+          if (!profile || !profile.dob) {
+            showSetupOverlay();
+            return;
+          }
+
+          // Otherwise, load the app
+          profileCache = profile;
+          showApp();
+          renderStats();
+          renderGrid();
+
+          // Try to get Drive folder after rendering
+          if (isDriveTokenValid()) ensureDriveFolder().catch(() => {});
+        } catch (error) {
+          console.error("Firestore Error:", error);
+          alert(
+            "Could not load profile. Check your internet connection or Firestore rules.",
+          );
         }
-        profileCache = profile;
-        showApp();
-        renderStats();
-        renderGrid();
-        // Try to get Drive folder after rendering
-        if (isDriveTokenValid()) ensureDriveFolder().catch(() => {});
       }
 
       // ═══════════════════════════════════════════════════════════════
