@@ -1719,6 +1719,23 @@
           console.error("Redirect Auth Error:", error);
         });
 
+      function updateUserChip(user) {
+        const chip = document.getElementById("userChip");
+        const avatar = document.getElementById("userAvatar");
+        const nameEl = document.getElementById("userName");
+
+        if (user) {
+          chip.style.display = "flex";
+          // Use the Google Display Name, fallback to email, or "User"
+          const name = user.displayName || user.email || "User";
+          nameEl.textContent = name;
+          // Set the avatar to the first letter of their name
+          avatar.textContent = name.charAt(0).toUpperCase();
+        } else {
+          chip.style.display = "none";
+        }
+      }
+
       // ── Auth state listener — the main entry point
       auth.onAuthStateChanged(async (user) => {
         currentUser = user;
