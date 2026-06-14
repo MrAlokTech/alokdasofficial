@@ -1672,15 +1672,9 @@
         return driveToken && Date.now() < tokenExpiry;
       }
 
-      async function requestDriveToken() {
+      function requestDriveToken(silent = true) {
         if (!gisReady || !tokenClient) return;
-
-        // Already have a valid token
-        if (isDriveTokenValid()) return;
-
-        tokenClient.requestAccessToken({
-          prompt: "consent",
-        });
+        tokenClient.requestAccessToken({ prompt: silent ? "" : "consent" });
       }
 
       // ═══════════════════════════════════════════════════════════════
@@ -1688,28 +1682,22 @@
       // ═══════════════════════════════════════════════════════════════
       async function signIn() {
         const provider = new firebase.auth.GoogleAuthProvider();
-        await auth.signInWithPopup(provider);
+        provider.addScope(DRIVE_SCOPE);
+        try {
+          const result = await auth.signInWithPopup(provider);
+          const credential =
+            firebase.auth.GoogleAuthProvider.credentialFromResult(result);
+          // Grab initial Drive token from the sign-in credential
+          if (credential.accessToken) {
+            driveToken = credential.accessToken;
+            tokenExpiry = Date.now() + 3540 * 1000; // ~59 min
+            setDriveStatus("connected");
+          }
+        } catch (err) {
+          console.error("Sign-in error:", err);
+          alert("Sign-in failed. Please try again.");
+        }
       }
-      // async function signIn() {
-      //   const provider = new firebase.auth.GoogleAuthProvider();
-      //   // provider.addScope(DRIVE_SCOPE);
-      //   try {
-      //     const result = await auth.signInWithPopup(provider);
-      //     const credential =
-      //       firebase.auth.GoogleAuthProvider.credentialFromResult(result);
-
-      //     const accessToken = credential?.accessToken;
-
-      //     if (accessToken) {
-      //       driveToken = accessToken;
-      //       tokenExpiry = Date.now() + 3540 * 1000;
-      //       setDriveStatus("connected");
-      //     }
-      //   } catch (err) {
-      //     console.error("Sign-in error:", err);
-      //     alert("Sign-in failed. Please try again.");
-      //   }
-      // }
 
       async function signOut() {
         if (!confirm("Sign out of Life Calendar?")) return;
@@ -1726,32 +1714,14 @@
       // ── Auth state listener — the main entry point
       auth.onAuthStateChanged(async (user) => {
         currentUser = user;
-
         if (!user) {
           showSignInOverlay();
           return;
         }
-
         updateUserChip(user);
+        if (gisReady) requestDriveToken(true); // silent refresh
         await loadAndRender();
       });
-      // auth.onAuthStateChanged(async (user) => {
-      //   currentUser = user;
-      //   if (!user) {
-      //     showSignInOverlay();
-      //     return;
-      //   }
-      //   updateUserChip(user);
-      //   await loadAndRender();
-
-      //   // Only request Drive token when needed.
-      //   // Or at least:
-      //   setTimeout(() => {
-      //     if (gisReady) {
-      //       requestDriveToken(false);
-      //     }
-      //   }, 1000);
-      // });
 
       function updateUserChip(user) {
         const chip = document.getElementById("userChip");
@@ -1879,11 +1849,8 @@
       // ═══════════════════════════════════════════════════════════════
       async function ensureDriveFolder() {
         if (!isDriveTokenValid()) {
-          await requestDriveToken();
-
-          if (!isDriveTokenValid()) {
-            throw new Error("Drive authorization failed.");
-          }
+          requestDriveToken(true);
+          return null;
         }
         // Return cached folder ID
         if (profileCache && profileCache.driveFolderId)
@@ -1922,18 +1889,10 @@
       }
 
       async function uploadPhotoToDrive(base64DataUrl, filename, folderId) {
-        await requestDriveToken();
-
         if (!isDriveTokenValid()) {
-          alert("Google Drive authorization is required.");
-          return;
+          requestDriveToken(true);
+          throw new Error("Drive token expired — retrying");
         }
-
-        const folderId = await ensureDriveFolder();
-        // if (!isDriveTokenValid()) {
-        //   requestDriveToken(true);
-        //   throw new Error("Drive token expired — retrying");
-        // }
         // Convert base64 to blob
         const res = await fetch(base64DataUrl);
         const blob = await res.blob();
