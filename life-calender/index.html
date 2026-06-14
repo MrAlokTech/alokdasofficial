@@ -1,0 +1,2537 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Life Calendar — alokdasofficial.in</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Firebase compat SDKs (no bundler needed) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <!-- Google Identity Services — Drive token (onload wires it up) -->
+    <script
+      src="https://accounts.google.com/gsi/client"
+      async
+      onload="initGIS()"
+    ></script>
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #f5f4f0;
+        --surface: #ffffff;
+        --surface2: #f0eeea;
+        --border: rgba(0, 0, 0, 0.08);
+        --text: #1a1917;
+        --text2: #6b6860;
+        --text3: #a09d98;
+        --accent: #1a1917;
+        --modal-bg: rgba(0, 0, 0, 0.32);
+        --break-fill: #4a8c8c;
+        --dot-past: #d4d1cc;
+        --dot-entry: #1a1917;
+        --dot-future: rgba(0, 0, 0, 0.09);
+        --dot-current: #1a1917;
+        --dot-size: 7px;
+        --dot-gap: 3px;
+      }
+      [data-theme="dark"] {
+        --bg: #111110;
+        --surface: #1c1c1a;
+        --surface2: #242422;
+        --border: rgba(255, 255, 255, 0.07);
+        --text: #f0eeea;
+        --text2: #8a8880;
+        --text3: #555350;
+        --accent: #f0eeea;
+        --modal-bg: rgba(0, 0, 0, 0.58);
+        --dot-past: #2c2b28;
+        --dot-entry: #c8c5bf;
+        --dot-future: rgba(255, 255, 255, 0.05);
+        --dot-current: #f0eeea;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        transition:
+          background 0.3s,
+          color 0.3s;
+        overflow-x: hidden;
+      }
+
+      /* ── SIGN-IN OVERLAY ── */
+      .signin-overlay {
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 400;
+        transition: opacity 0.35s;
+      }
+      .signin-overlay.gone {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .signin-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 2.75rem;
+        width: min(440px, 93vw);
+        display: flex;
+        flex-direction: column;
+        gap: 1.75rem;
+        align-items: center;
+        text-align: center;
+      }
+      .signin-eyebrow {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--text3);
+      }
+      .signin-title {
+        font-size: 26px;
+        font-weight: 500;
+        line-height: 1.2;
+      }
+      .signin-title em {
+        font-style: normal;
+        color: var(--text3);
+      }
+      .signin-sub {
+        font-size: 14px;
+        color: var(--text2);
+        line-height: 1.6;
+        max-width: 300px;
+      }
+      .google-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 22px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        color: var(--text);
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          box-shadow 0.2s;
+        width: 100%;
+        justify-content: center;
+      }
+      .google-btn:hover {
+        background: var(--surface);
+        box-shadow: 0 2px 8px var(--border);
+      }
+      .google-btn svg {
+        flex-shrink: 0;
+      }
+      .signin-note {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        color: var(--text3);
+        letter-spacing: 0.04em;
+        line-height: 1.6;
+      }
+
+      /* ── SETUP OVERLAY ── */
+      .setup-overlay {
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 350;
+        transition: opacity 0.35s;
+      }
+      .setup-overlay.gone {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .setup-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 2.75rem;
+        width: min(460px, 93vw);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .setup-eyebrow {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text3);
+      }
+      .setup-title {
+        font-size: 24px;
+        font-weight: 500;
+        line-height: 1.25;
+        margin-top: -0.5rem;
+      }
+      .setup-title em {
+        font-style: normal;
+        color: var(--text3);
+      }
+      .setup-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .setup-label {
+        font-size: 13px;
+        color: var(--text2);
+      }
+      .setup-input {
+        padding: 10px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        color: var(--text);
+        font-family: "DM Mono", monospace;
+        font-size: 14px;
+        outline: none;
+        width: 100%;
+        transition: border-color 0.2s;
+      }
+      .setup-input:focus {
+        border-color: var(--accent);
+      }
+      .setup-row {
+        display: flex;
+        gap: 12px;
+      }
+      .setup-row .setup-field {
+        flex: 1;
+      }
+      .setup-btn {
+        width: 100%;
+        padding: 13px;
+        border-radius: 14px;
+        border: none;
+        background: var(--accent);
+        color: var(--bg);
+        font-family: "DM Sans", sans-serif;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        margin-top: 0.25rem;
+      }
+      .setup-btn:hover {
+        opacity: 0.82;
+      }
+
+      /* ── HEADER ── */
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.125rem 2rem;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        background: var(--bg);
+        z-index: 50;
+        transition: background 0.3s;
+        gap: 12px;
+      }
+      .logo {
+        font-family: "DM Mono", monospace;
+        font-size: 13px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text2);
+        flex-shrink: 0;
+      }
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .icon-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text2);
+        font-size: 15px;
+        transition: background 0.2s;
+        flex-shrink: 0;
+      }
+      .icon-btn:hover {
+        background: var(--surface2);
+      }
+      .pill-btn {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 0 13px;
+        height: 34px;
+        border-radius: 17px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        cursor: pointer;
+        color: var(--text2);
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        transition:
+          background 0.18s,
+          color 0.18s;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .pill-btn:hover {
+        background: var(--surface2);
+      }
+      .pill-btn.active {
+        background: var(--accent);
+        color: var(--bg);
+        border-color: transparent;
+      }
+
+      /* User chip */
+      .user-chip {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 3px 10px 3px 4px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        cursor: pointer;
+        transition: background 0.2s;
+        flex-shrink: 0;
+      }
+      .user-chip:hover {
+        background: var(--surface2);
+      }
+      .user-avatar {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: var(--surface2);
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: var(--text3);
+      }
+      .user-name {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--text2);
+        letter-spacing: 0.03em;
+        max-width: 90px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* Sync indicator */
+      .sync-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--text3);
+        flex-shrink: 0;
+        transition: background 0.3s;
+      }
+      .sync-dot.syncing {
+        background: #f5a623;
+        animation: pulse-sync 1s ease-in-out infinite;
+      }
+      .sync-dot.synced {
+        background: #4a8c8c;
+      }
+      .sync-dot.error {
+        background: #e05555;
+      }
+      @keyframes pulse-sync {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      /* Drive badge */
+      .drive-badge {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.04em;
+        color: var(--text3);
+        flex-shrink: 0;
+      }
+      .drive-badge.connected {
+        color: #4a8c8c;
+      }
+      .drive-badge.error {
+        color: #e05555;
+        cursor: pointer;
+      }
+
+      /* ── STATS BAR ── */
+      .stats-bar {
+        display: flex;
+        overflow-x: auto;
+        border-bottom: 1px solid var(--border);
+        scrollbar-width: none;
+      }
+      .stats-bar::-webkit-scrollbar {
+        display: none;
+      }
+      .stat-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        padding: 0.75rem 1.375rem;
+        border-right: 1px solid var(--border);
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .stat-val {
+        font-family: "DM Mono", monospace;
+        font-size: 15px;
+        color: var(--text);
+      }
+      .stat-lbl {
+        font-family: "DM Mono", monospace;
+        font-size: 9px;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--text3);
+      }
+      .stat-cell.with-bar {
+        min-width: 160px;
+      }
+      .mini-bar {
+        width: 100%;
+        height: 2px;
+        background: var(--border);
+        border-radius: 2px;
+        overflow: hidden;
+        margin-top: 2px;
+      }
+      .mini-bar-fill {
+        height: 100%;
+        background: var(--accent);
+        border-radius: 2px;
+        transition: width 0.6s ease;
+      }
+
+      /* ── GRID ── */
+      .grid-area {
+        flex: 1;
+        padding: 1.375rem 1.75rem 2rem;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .grid-inner {
+        width: fit-content;
+        max-width: 100%;
+      }
+      .grid-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.125rem;
+        flex-wrap: wrap;
+        gap: 10px;
+        width: 100%;
+      }
+      .legend {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.05em;
+        color: var(--text3);
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .l-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .l-dot.past {
+        background: var(--dot-past);
+      }
+      .l-dot.memory {
+        background: var(--dot-entry);
+      }
+      .l-dot.now {
+        background: var(--dot-current);
+      }
+      .l-dot.future {
+        background: var(--dot-future);
+        border: 1px solid rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .l-dot.future {
+        border-color: rgba(255, 255, 255, 0.1);
+      }
+
+      /* Loading state */
+      .grid-loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        padding: 4rem 2rem;
+        color: var(--text3);
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+      }
+      .spinner {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 2px solid var(--border);
+        border-top-color: var(--accent);
+        animation: spin 0.7s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ── LIFE GRID ── */
+      .life-grid {
+        display: flex;
+        flex-direction: column;
+        gap: var(--dot-gap);
+      }
+      .decade-sep {
+        height: 8px;
+      }
+      .year-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .yr-lbl {
+        font-family: "DM Mono", monospace;
+        font-size: 9px;
+        color: var(--text3);
+        letter-spacing: 0.03em;
+        width: 34px;
+        text-align: right;
+        flex-shrink: 0;
+        user-select: none;
+      }
+      .week-row {
+        display: flex;
+        gap: var(--dot-gap);
+      }
+
+      /* ── DOTS ── */
+      .dot {
+        width: var(--dot-size);
+        height: var(--dot-size);
+        border-radius: 50%;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: transform 0.12s;
+        position: relative;
+      }
+      .dot:hover {
+        transform: scale(1.9);
+        z-index: 5;
+      }
+      .dot.past {
+        background: var(--dot-past);
+      }
+      .dot.memory {
+        background: var(--dot-entry);
+      }
+      .dot.now {
+        background: var(--dot-current);
+        box-shadow:
+          0 0 0 2px var(--bg),
+          0 0 0 3.5px var(--dot-current);
+      }
+      .dot.future {
+        background: var(--dot-future);
+      }
+
+      /* ── WEEK PANEL ── */
+      .backdrop {
+        position: fixed;
+        inset: 0;
+        background: var(--modal-bg);
+        backdrop-filter: blur(3px);
+        z-index: 120;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.28s;
+      }
+      .backdrop.open {
+        opacity: 1;
+        pointer-events: all;
+      }
+      .week-panel {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: min(430px, 100vw);
+        background: var(--surface);
+        border-left: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 130;
+      }
+      .week-panel.open {
+        transform: translateX(0);
+      }
+
+      .panel-head {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .p-date {
+        font-size: 15px;
+        font-weight: 500;
+      }
+      .p-meta {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.06em;
+        color: var(--text3);
+        margin-top: 4px;
+      }
+      .panel-close {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        cursor: pointer;
+        font-size: 16px;
+        color: var(--text2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .panel-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.375rem;
+      }
+      .section-lbl {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text3);
+        margin-bottom: 7px;
+      }
+
+      .mood-row {
+        display: flex;
+        gap: 8px;
+      }
+      .mood-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        font-size: 18px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          transform 0.14s,
+          background 0.14s;
+      }
+      .mood-btn:hover {
+        transform: scale(1.18);
+      }
+      .mood-btn.on {
+        background: var(--accent);
+        border-color: transparent;
+        transform: scale(1.1);
+      }
+
+      .journal {
+        width: 100%;
+        min-height: 110px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        color: var(--text);
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        line-height: 1.65;
+        resize: vertical;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .journal:focus {
+        border-color: var(--accent);
+      }
+      .journal::placeholder {
+        color: var(--text3);
+      }
+
+      /* Photos — multi-image strip */
+      .photo-strip {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .photo-thumb {
+        position: relative;
+        flex-shrink: 0;
+        width: 88px;
+        height: 88px;
+        border-radius: 10px;
+        overflow: hidden;
+        background: var(--surface2);
+      }
+      .photo-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .photo-thumb-del {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.55);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.15s;
+        line-height: 1;
+      }
+      .photo-thumb-del:hover {
+        background: rgba(200, 40, 40, 0.85);
+      }
+      /* Drive upload progress overlay on thumb */
+      .photo-thumb-progress {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+      }
+      .photo-thumb-progress .spinner {
+        width: 16px;
+        height: 16px;
+        border-width: 2px;
+      }
+      .photo-add-btn {
+        width: 88px;
+        height: 88px;
+        border-radius: 10px;
+        border: 1px dashed var(--border);
+        background: none;
+        color: var(--text3);
+        font-size: 22px;
+        cursor: pointer;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+        position: relative;
+      }
+      .photo-add-btn:hover {
+        border-color: var(--text3);
+        background: var(--surface2);
+      }
+      .photo-add-btn input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+      .photo-count {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        color: var(--text3);
+        letter-spacing: 0.04em;
+        margin-top: 4px;
+      }
+      .drive-photo-note {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        color: var(--break-fill);
+        letter-spacing: 0.04em;
+        margin-top: 2px;
+      }
+
+      /* Habits */
+      .habit-list {
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+      }
+      .habit-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        user-select: none;
+      }
+      .h-box {
+        width: 18px;
+        height: 18px;
+        border-radius: 5px;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 11px;
+        transition: background 0.14s;
+      }
+      .h-box.on {
+        background: var(--accent);
+        border-color: transparent;
+        color: var(--bg);
+      }
+      .h-lbl {
+        font-size: 13px;
+        color: var(--text2);
+      }
+      .no-habits-hint {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        color: var(--text3);
+        letter-spacing: 0.04em;
+      }
+
+      .panel-foot {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .p-save {
+        flex: 1;
+        padding: 10px;
+        border-radius: 12px;
+        border: none;
+        background: var(--accent);
+        color: var(--bg);
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      .p-save:hover {
+        opacity: 0.82;
+      }
+      .p-save:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+      .p-discard {
+        padding: 10px 16px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        color: var(--text2);
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .p-discard:hover {
+        background: var(--surface);
+      }
+
+      /* ── MODALS ── */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: var(--modal-bg);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 200;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s;
+      }
+      .modal-overlay.open {
+        opacity: 1;
+        pointer-events: all;
+      }
+      .modal {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 2rem;
+        width: min(460px, 93vw);
+        max-height: 86vh;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1.125rem;
+      }
+      .modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .modal-title {
+        font-size: 15px;
+        font-weight: 500;
+      }
+      .modal-close {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        cursor: pointer;
+        font-size: 16px;
+        color: var(--text2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .m-lbl {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text3);
+      }
+      .m-divider {
+        height: 1px;
+        background: var(--border);
+      }
+      .m-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .m-row-lbl {
+        font-size: 14px;
+        color: var(--text2);
+      }
+      .m-input {
+        padding: 7px 11px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        color: var(--text);
+        font-family: "DM Mono", monospace;
+        font-size: 13px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .m-input:focus {
+        border-color: var(--accent);
+      }
+      .m-save {
+        width: 100%;
+        padding: 10px;
+        border-radius: 12px;
+        border: none;
+        background: var(--accent);
+        color: var(--bg);
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      .m-save:hover {
+        opacity: 0.82;
+      }
+      .hm-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .hm-row {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .hm-swatch {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .hm-name {
+        flex: 1;
+        font-size: 13px;
+        color: var(--text2);
+      }
+      .hm-del {
+        background: none;
+        border: none;
+        color: var(--text3);
+        font-size: 17px;
+        cursor: pointer;
+        padding: 0 3px;
+        transition: color 0.15s;
+        line-height: 1;
+      }
+      .hm-del:hover {
+        color: #e05555;
+      }
+      .hm-add-row {
+        display: flex;
+        gap: 8px;
+      }
+      .hm-add-input {
+        flex: 1;
+        padding: 7px 11px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        color: var(--text);
+        font-family: "DM Sans", sans-serif;
+        font-size: 13px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .hm-add-input:focus {
+        border-color: var(--accent);
+      }
+      .hm-add-btn {
+        padding: 7px 14px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text2);
+        font-size: 13px;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      .hm-add-btn:hover {
+        background: var(--surface2);
+      }
+      .danger-btn {
+        width: 100%;
+        padding: 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(192, 57, 43, 0.25);
+        background: none;
+        color: #c0392b;
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      [data-theme="dark"] .danger-btn {
+        color: #e05555;
+        border-color: rgba(224, 85, 85, 0.22);
+      }
+      .danger-btn:hover {
+        background: rgba(192, 57, 43, 0.06);
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        padding: 1rem 2rem;
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .footer-l {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        color: var(--text3);
+      }
+      .footer-l a {
+        color: var(--text2);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .footer-l a:hover {
+        color: var(--text);
+      }
+      .f-dot {
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: var(--text3);
+      }
+      .footer-r {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        color: var(--text3);
+      }
+
+      /* ── TOOLTIP ── */
+      .tip {
+        position: fixed;
+        z-index: 500;
+        background: var(--text);
+        color: var(--bg);
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        padding: 4px 8px;
+        border-radius: 6px;
+        pointer-events: none;
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.12s;
+        transform: translate(-50%, -100%) translateY(-6px);
+      }
+      .tip.show {
+        opacity: 1;
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 620px) {
+        :root {
+          --dot-size: 5px;
+          --dot-gap: 2px;
+        }
+        .grid-area {
+          padding: 1rem;
+        }
+        header {
+          padding: 1rem;
+        }
+        .yr-lbl {
+          width: 28px;
+          font-size: 8px;
+        }
+      }
+      @media (max-width: 400px) {
+        :root {
+          --dot-size: 4px;
+          --dot-gap: 2px;
+        }
+      }
+
+      /* ── PRINT ── */
+      @media print {
+        *,
+        *::before,
+        *::after {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+        header,
+        footer,
+        .stats-bar,
+        .grid-header,
+        .backdrop,
+        .week-panel,
+        .modal-overlay,
+        .setup-overlay,
+        .signin-overlay {
+          display: none !important;
+        }
+        .grid-area {
+          padding: 0.5cm;
+          justify-content: flex-start;
+        }
+        .dot:hover {
+          transform: none !important;
+        }
+        body {
+          background: white !important;
+          color: black !important;
+        }
+        .dot.past {
+          background: #c8c5c0 !important;
+        }
+        .dot.memory {
+          background: #1a1917 !important;
+        }
+        .dot.now {
+          background: #1a1917 !important;
+          box-shadow:
+            0 0 0 1.5px white,
+            0 0 0 3px #1a1917 !important;
+        }
+        .dot.future {
+          background: none !important;
+          border: 1px solid #c8c5c0 !important;
+        }
+        .yr-lbl {
+          color: #a09d98 !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ── SIGN-IN OVERLAY ── -->
+    <div class="signin-overlay" id="signinOverlay">
+      <div class="signin-card">
+        <div>
+          <p class="signin-eyebrow">Life Calendar</p>
+          <h1 class="signin-title">
+            Every dot is one week<br /><em>of your one life.</em>
+          </h1>
+        </div>
+        <p class="signin-sub">
+          Sign in to keep your memories, habits, and photos synced across
+          devices — securely in your own Google Drive.
+        </p>
+        <button class="google-btn" id="signInBtn">
+          <svg width="18" height="18" viewBox="0 0 18 18">
+            <path
+              fill="#4285F4"
+              d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"
+            />
+            <path
+              fill="#34A853"
+              d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.826.957 4.039l3.007-2.332z"
+            />
+            <path
+              fill="#EA4335"
+              d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"
+            />
+          </svg>
+          Continue with Google
+        </button>
+        <p class="signin-note">
+          Your data is stored in your own Google account.<br />We never see or
+          sell your information.
+        </p>
+      </div>
+    </div>
+
+    <!-- ── SETUP OVERLAY ── -->
+    <div class="setup-overlay gone" id="setupOverlay">
+      <div class="setup-card">
+        <div>
+          <p class="setup-eyebrow">One-time setup</p>
+          <h1 class="setup-title">Tell us a little<br /><em>about you.</em></h1>
+        </div>
+        <div class="setup-field">
+          <label class="setup-label" for="setupDob">Date of birth</label>
+          <input type="date" class="setup-input" id="setupDob" />
+        </div>
+        <div class="setup-row">
+          <div class="setup-field">
+            <label class="setup-label" for="setupLifespan"
+              >Lifespan (years)</label
+            >
+            <input
+              type="number"
+              class="setup-input"
+              id="setupLifespan"
+              value="80"
+              min="1"
+              max="120"
+            />
+          </div>
+          <div class="setup-field">
+            <label class="setup-label" for="setupName">Your name</label>
+            <input
+              type="text"
+              class="setup-input"
+              id="setupName"
+              placeholder="e.g. Alok"
+            />
+          </div>
+        </div>
+        <button class="setup-btn" id="setupSubmit">Generate my life →</button>
+      </div>
+    </div>
+
+    <!-- ── HEADER ── -->
+    <header>
+      <div class="logo">Life Calendar</div>
+      <div class="header-right">
+        <div class="sync-dot" id="syncDot" title="Sync status"></div>
+        <div class="drive-badge" id="driveBadge">◈ Drive</div>
+        <button class="pill-btn" id="habitToggle">◎ &nbsp;Habits</button>
+        <button class="icon-btn" id="exportBtn" title="Print / Save as PDF">
+          ⎙
+        </button>
+        <button class="icon-btn" id="settingsBtn" title="Settings">⚙</button>
+        <button class="icon-btn" id="themeBtn" title="Toggle theme">☀</button>
+        <div class="user-chip" id="userChip" style="display: none">
+          <div class="user-avatar" id="userAvatar">?</div>
+          <span class="user-name" id="userName"></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── STATS BAR ── -->
+    <div class="stats-bar" id="statsBar"></div>
+
+    <!-- ── GRID ── -->
+    <div class="grid-area" id="gridArea">
+      <div class="grid-inner">
+        <div class="grid-header">
+          <div class="legend">
+            <div class="legend-item">
+              <div class="l-dot past"></div>
+              lived
+            </div>
+            <div class="legend-item">
+              <div class="l-dot memory"></div>
+              memory
+            </div>
+            <div class="legend-item">
+              <div class="l-dot now"></div>
+              this week
+            </div>
+            <div class="legend-item">
+              <div class="l-dot future"></div>
+              ahead
+            </div>
+          </div>
+        </div>
+        <div class="life-grid" id="lifeGrid">
+          <div class="grid-loading">
+            <div class="spinner"></div>
+            Loading your calendar…
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TOOLTIP ── -->
+    <div class="tip" id="tooltip"></div>
+
+    <!-- ── WEEK PANEL ── -->
+    <div class="backdrop" id="backdrop"></div>
+    <div class="week-panel" id="weekPanel">
+      <div class="panel-head">
+        <div>
+          <div class="p-date" id="pDate"></div>
+          <div class="p-meta" id="pMeta"></div>
+        </div>
+        <button class="panel-close" id="panelClose">×</button>
+      </div>
+      <div class="panel-body">
+        <div>
+          <div class="section-lbl">How was this week?</div>
+          <div class="mood-row" id="moodRow">
+            <button class="mood-btn" data-mood="😔">😔</button>
+            <button class="mood-btn" data-mood="😐">😐</button>
+            <button class="mood-btn" data-mood="🙂">🙂</button>
+            <button class="mood-btn" data-mood="😊">😊</button>
+            <button class="mood-btn" data-mood="🎉">🎉</button>
+          </div>
+        </div>
+        <div>
+          <div class="section-lbl">Journal</div>
+          <textarea
+            class="journal"
+            id="journalEl"
+            placeholder="A memory, a goal, a thought…"
+          ></textarea>
+        </div>
+        <div>
+          <div class="section-lbl">
+            Photos
+            <span style="font-size: 9px; color: var(--break-fill)"
+              >→ Google Drive</span
+            >
+          </div>
+          <div class="photo-strip" id="photoStrip"></div>
+          <p class="photo-count" id="photoCount"></p>
+          <p
+            class="drive-photo-note"
+            id="drivePhotoNote"
+            style="display: none"
+          ></p>
+        </div>
+        <div>
+          <div class="section-lbl">Habits</div>
+          <div class="habit-list" id="habitChecklist"></div>
+          <p class="no-habits-hint" id="noHabitsHint" style="display: none">
+            Add habits in Settings → Manage habits
+          </p>
+        </div>
+      </div>
+      <div class="panel-foot">
+        <button class="p-save" id="panelSave">Save week</button>
+        <button class="p-discard" id="panelDiscard">Discard</button>
+      </div>
+    </div>
+
+    <!-- ── SETTINGS MODAL ── -->
+    <div class="modal-overlay" id="settingsModal">
+      <div class="modal">
+        <div class="modal-head">
+          <span class="modal-title">Settings</span>
+          <button class="modal-close" id="closeSettings">×</button>
+        </div>
+        <div class="m-lbl">Profile</div>
+        <div class="m-row">
+          <span class="m-row-lbl">Date of birth</span>
+          <input type="date" class="m-input" id="sDob" />
+        </div>
+        <div class="m-row">
+          <span class="m-row-lbl">Lifespan (years)</span>
+          <input
+            type="number"
+            class="m-input"
+            id="sLifespan"
+            min="1"
+            max="120"
+            style="width: 80px"
+          />
+        </div>
+        <div class="m-row">
+          <span class="m-row-lbl">Your name</span>
+          <input type="text" class="m-input" id="sName" style="width: 140px" />
+        </div>
+        <div class="m-divider"></div>
+        <div class="m-lbl">Manage habits</div>
+        <div class="hm-list" id="hmList"></div>
+        <div class="hm-add-row">
+          <input
+            type="text"
+            class="hm-add-input"
+            id="hmInput"
+            placeholder="New habit…"
+          />
+          <button class="hm-add-btn" id="hmAdd">Add</button>
+        </div>
+        <div class="m-divider"></div>
+        <button class="m-save" id="saveSettings">Save changes</button>
+        <div class="m-divider"></div>
+        <div class="m-lbl">Account</div>
+        <button class="danger-btn" id="signOutBtn">Sign out</button>
+        <button class="danger-btn" id="clearAll" style="margin-top: 6px">
+          Delete all my data
+        </button>
+      </div>
+    </div>
+
+    <!-- ── FOOTER ── -->
+    <footer>
+      <div class="footer-l">
+        <span>built &amp; hosted by</span>
+        <div class="f-dot"></div>
+        <a href="https://alokdasofficial.in" target="_blank" rel="noopener"
+          >Alok Das</a
+        >
+      </div>
+      <div class="footer-r" id="footerWeeks"></div>
+    </footer>
+
+    <script>
+      // ═══════════════════════════════════════════════════════════════
+      //  CONFIG
+      // ═══════════════════════════════════════════════════════════════
+      const FIREBASE_CONFIG = {
+        apiKey: "AIzaSyBTKylcUfo2R0gLr8MAA0K_5i4Ua2Ck8So",
+        authDomain: "life-calenders.firebaseapp.com",
+        projectId: "life-calenders",
+        storageBucket: "life-calenders.firebasestorage.app",
+        messagingSenderId: "642922604178",
+        appId: "1:642922604178:web:5872e2a3a5c89c81b3684b",
+        measurementId: "G-EKE7THJWNY",
+      };
+      const GOOGLE_CLIENT_ID =
+        "941293252986-3d4ktd87jrlrh118kdepc769rrp71jde.apps.googleusercontent.com";
+      const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";
+      const DRIVE_FOLDER_NAME = "Life Calendar";
+      const MAX_PHOTOS = 10;
+      const SWATCH = [
+        "#4a8c8c",
+        "#8c7a4a",
+        "#7a4a8c",
+        "#4a6f8c",
+        "#8c4a4a",
+        "#5a8c4a",
+        "#8c5a4a",
+        "#4a8c6a",
+      ];
+
+      // ═══════════════════════════════════════════════════════════════
+      //  FIREBASE INIT
+      // ═══════════════════════════════════════════════════════════════
+      firebase.initializeApp(FIREBASE_CONFIG);
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+
+      // ═══════════════════════════════════════════════════════════════
+      //  STATE
+      // ═══════════════════════════════════════════════════════════════
+      let currentUser = null;
+      let profileCache = null; // { dob, lifespan, name, driveFolderId, weekIndicesWithData, habits }
+      let weeksCache = {}; // { [weekIdx]: weekDoc }
+      let habitMode = false;
+      let activeIdx = null;
+      let draft = {};
+      let dark = localStorage.getItem("lifecal-dark") === "true";
+
+      // Drive token state
+      let driveToken = null;
+      let tokenExpiry = 0;
+      let tokenClient = null;
+      let gisReady = false;
+
+      // ═══════════════════════════════════════════════════════════════
+      //  THEME
+      // ═══════════════════════════════════════════════════════════════
+      function applyTheme() {
+        document.documentElement.setAttribute(
+          "data-theme",
+          dark ? "dark" : "light",
+        );
+        document.getElementById("themeBtn").textContent = dark ? "☀" : "☾";
+        localStorage.setItem("lifecal-dark", dark);
+      }
+      document.getElementById("themeBtn").addEventListener("click", () => {
+        dark = !dark;
+        applyTheme();
+        if (profileCache) renderGrid();
+      });
+
+      // ═══════════════════════════════════════════════════════════════
+      //  DATE UTILS
+      // ═══════════════════════════════════════════════════════════════
+      const MS_WEEK = 7 * 24 * 60 * 60 * 1000;
+      function parseDate(s) {
+        const [y, m, d] = s.split("-").map(Number);
+        return new Date(y, m - 1, d);
+      }
+      function weekStart(dob, idx) {
+        return new Date(dob.getTime() + idx * MS_WEEK);
+      }
+      function currentWeekIdx(dob) {
+        const t = new Date();
+        t.setHours(0, 0, 0, 0);
+        return Math.floor((t - dob) / MS_WEEK);
+      }
+      function fmtShort(d) {
+        return d.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+      }
+      function fmtFull(d) {
+        return d.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      //  SYNC STATUS UI
+      // ═══════════════════════════════════════════════════════════════
+      function setSyncStatus(s) {
+        // 'idle' | 'syncing' | 'synced' | 'error'
+        const dot = document.getElementById("syncDot");
+        dot.className = "sync-dot " + (s === "idle" ? "" : s);
+        dot.title =
+          {
+            idle: "",
+            syncing: "Saving…",
+            synced: "Saved to cloud",
+            error: "Sync error",
+          }[s] || "";
+      }
+      function setDriveStatus(s) {
+        // 'disconnected' | 'connected' | 'error'
+        const b = document.getElementById("driveBadge");
+        b.className = "drive-badge " + s;
+        b.textContent =
+          s === "connected" ? "◈ Drive" : s === "error" ? "⚠ Drive" : "◇ Drive";
+        b.title =
+          s === "connected"
+            ? "Photos syncing to Google Drive"
+            : s === "error"
+              ? "Drive disconnected — click to reconnect"
+              : "Google Drive not connected";
+        if (s === "error") b.onclick = () => requestDriveToken(false);
+        else b.onclick = null;
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      //  GOOGLE IDENTITY SERVICES — DRIVE TOKEN
+      // ═══════════════════════════════════════════════════════════════
+      // Called by GIS script onload attribute
+      window.initGIS = function () {
+        tokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: GOOGLE_CLIENT_ID,
+          scope: DRIVE_SCOPE,
+          callback: (resp) => {
+            if (resp.error) {
+              console.warn("Drive token error:", resp.error);
+              setDriveStatus("error");
+              return;
+            }
+            driveToken = resp.access_token;
+            tokenExpiry = Date.now() + (resp.expires_in - 60) * 1000; // 60s buffer
+            setDriveStatus("connected");
+            // Store folder ID in profile if we don't have it yet
+            if (profileCache && !profileCache.driveFolderId)
+              ensureDriveFolder();
+          },
+          error_callback: () => setDriveStatus("error"),
+        });
+        gisReady = true;
+        // If user already signed in, get Drive token silently
+        if (currentUser) requestDriveToken(true);
+      };
+
+      function isDriveTokenValid() {
+        return driveToken && Date.now() < tokenExpiry;
+      }
+
+      function requestDriveToken(silent = true) {
+        if (!gisReady || !tokenClient) return;
+        tokenClient.requestAccessToken({ prompt: silent ? "" : "consent" });
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      //  GOOGLE SIGN-IN via FIREBASE
+      // ═══════════════════════════════════════════════════════════════
+      async function signIn() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope(DRIVE_SCOPE);
+        try {
+          const result = await auth.signInWithPopup(provider);
+          const credential =
+            firebase.auth.GoogleAuthProvider.credentialFromResult(result);
+
+          const accessToken = credential?.accessToken;
+
+          if (accessToken) {
+            driveToken = accessToken;
+            tokenExpiry = Date.now() + 3540 * 1000;
+            setDriveStatus("connected");
+          }
+        } catch (err) {
+          console.error("Sign-in error:", err);
+          alert("Sign-in failed. Please try again.");
+        }
+      }
+
+      async function signOut() {
+        if (!confirm("Sign out of Life Calendar?")) return;
+        driveToken = null;
+        tokenExpiry = 0;
+        profileCache = null;
+        weeksCache = {};
+        await auth.signOut();
+      }
+
+      document.getElementById("signInBtn").addEventListener("click", signIn);
+      document.getElementById("signOutBtn").addEventListener("click", signOut);
+
+      // ── Auth state listener — the main entry point
+      auth.onAuthStateChanged(async (user) => {
+        currentUser = user;
+        if (!user) {
+          showSignInOverlay();
+          return;
+        }
+        updateUserChip(user);
+        if (gisReady) requestDriveToken(true); // silent refresh
+        await loadAndRender();
+      });
+
+      function updateUserChip(user) {
+        const chip = document.getElementById("userChip");
+        const avatar = document.getElementById("userAvatar");
+        const name = document.getElementById("userName");
+        chip.style.display = "flex";
+        if (user.photoURL) {
+          const img = document.createElement("img");
+          img.src = user.photoURL;
+          img.className = "user-avatar";
+          img.alt = "";
+          avatar.replaceWith(img);
+        } else {
+          avatar.textContent = (user.displayName ||
+            user.email ||
+            "?")[0].toUpperCase();
+        }
+        name.textContent = user.displayName
+          ? user.displayName.split(" ")[0]
+          : user.email;
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      //  OVERLAY MANAGEMENT
+      // ═══════════════════════════════════════════════════════════════
+      function showSignInOverlay() {
+        document.getElementById("signinOverlay").classList.remove("gone");
+        document.getElementById("setupOverlay").classList.add("gone");
+        document.getElementById("statsBar").innerHTML = "";
+        document.getElementById("lifeGrid").innerHTML = "";
+        document.getElementById("userChip").style.display = "none";
+      }
+      function showSetupOverlay() {
+        document.getElementById("signinOverlay").classList.add("gone");
+        document.getElementById("setupOverlay").classList.remove("gone");
+      }
+      function showApp() {
+        document.getElementById("signinOverlay").classList.add("gone");
+        document.getElementById("setupOverlay").classList.add("gone");
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      //  FIRESTORE — USER DOCUMENT
+      //  Path: users/{uid}
+      //  Fields: dob, lifespan, name, driveFolderId, weekIndicesWithData[], habits[]
+      // ═══════════════════════════════════════════════════════════════
+      function userDoc() {
+        return db.collection("users").doc(currentUser.uid);
+      }
+      function weekDoc(idx) {
+        return userDoc().collection("weeks").doc(String(idx));
+      }
+
+      async function loadProfile() {
+        const snap = await userDoc().get();
+        return snap.exists ? snap.data() : null;
+      }
+
+      async function saveProfile(data) {
+        setSyncStatus("syncing");
+        try {
+          await userDoc().set(data, { merge: true });
+          profileCache = { ...profileCache, ...data };
+          setSyncStatus("synced");
+        } catch (e) {
+          setSyncStatus("error");
+          throw e;
+        }
+      }
+
+      async function loadWeek(idx) {
+        if (weeksCache[idx]) return weeksCache[idx];
+        const snap = await weekDoc(idx).get();
+        const data = snap.exists ? snap.data() : null;
+        if (data) weeksCache[idx] = data;
+        return data;
+      }
+
+      async function saveWeek(idx, data) {
+        setSyncStatus("syncing");
+        try {
+          const hasContent =
+            data.note ||
+            data.mood ||
+            (data.photos && data.photos.length) ||
+            Object.values(data.habits || {}).some(Boolean);
+
+          if (hasContent) {
+            await weekDoc(idx).set({
+              ...data,
+              updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            });
+            weeksCache[idx] = data;
+            // Track in profile's index
+            if (!(profileCache.weekIndicesWithData || []).includes(idx)) {
+              await userDoc().update({
+                weekIndicesWithData:
+                  firebase.firestore.FieldValue.arrayUnion(idx),
+              });
+              if (!profileCache.weekIndicesWithData)
+                profileCache.weekIndicesWithData = [];
+              profileCache.weekIndicesWithData.push(idx);
+            }
+          } else {
+            await weekDoc(idx).delete();
+            delete weeksCache[idx];
+            await userDoc().update({
+              weekIndicesWithData:
+                firebase.firestore.FieldValue.arrayRemove(idx),
+            });
+            if (profileCache.weekIndicesWithData) {
+              profileCache.weekIndicesWithData =
+                profileCache.weekIndicesWithData.filter((i) => i !== idx);
+            }
+          }
+          setSyncStatus("synced");
+        } catch (e) {
+          setSyncStatus("error");
+          throw e;
+        }
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      //  GOOGLE DRIVE — PHOTO STORAGE
+      // ═══════════════════════════════════════════════════════════════
+      async function ensureDriveFolder() {
+        if (!isDriveTokenValid()) {
+          requestDriveToken(true);
+          return null;
+        }
+        // Return cached folder ID
+        if (profileCache && profileCache.driveFolderId)
+          return profileCache.driveFolderId;
+
+        // Search for existing folder
+        const q = await fetch(
+          `https://www.googleapis.com/drive/v3/files?q=name='${DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false&spaces=drive&fields=files(id,name)`,
+          { headers: { Authorization: `Bearer ${driveToken}` } },
+        );
+        const res = await q.json();
+        let folderId;
+
+        if (res.files && res.files.length > 0) {
+          folderId = res.files[0].id;
+        } else {
+          // Create the folder
+          const c = await fetch("https://www.googleapis.com/drive/v3/files", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${driveToken}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: DRIVE_FOLDER_NAME,
+              mimeType: "application/vnd.google-apps.folder",
+            }),
+          });
+          const folder = await c.json();
+          folderId = folder.id;
+        }
+
+        // Cache it in Firestore profile
+        await saveProfile({ driveFolderId: folderId });
+        return folderId;
+      }
+
+      async function uploadPhotoToDrive(base64DataUrl, filename, folderId) {
+        if (!isDriveTokenValid()) {
+          requestDriveToken(true);
+          throw new Error("Drive token expired — retrying");
+        }
+        // Convert base64 to blob
+        const res = await fetch(base64DataUrl);
+        const blob = await res.blob();
+        const meta = JSON.stringify({ name: filename, parents: [folderId] });
+        const form = new FormData();
+        form.append("metadata", new Blob([meta], { type: "application/json" }));
+        form.append("file", blob);
+
+        const r = await fetch(
+          "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name",
+          {
+            method: "POST",
+            headers: { Authorization: `Bearer ${driveToken}` },
+            body: form,
+          },
+        );
+        if (!r.ok) throw new Error(`Drive upload failed: ${r.status}`);
+        return await r.json(); // { id, name }
+      }
+
+      async function deletePhotoFromDrive(fileId) {
+        if (!fileId || !isDriveTokenValid()) return;
+        await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${driveToken}` },
+        });
+      }
+
+      // Fetch photo from Drive as an object URL for display
+      async function getDrivePhotoUrl(fileId) {
+        if (!isDriveTokenValid()) return null;
+        const r = await fetch(
+          `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
+          { headers: { Authorization: `Bearer ${driveToken}` } },
+        );
+        if (!r.ok) return null;
+        const blob = await r.blob();
+        return URL.createObjectURL(blob);
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      //  IMAGE COMPRESSION
+      // ═══════════════════════════════════════════════════════════════
+      function compressImage(file, maxPx, quality) {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              const scale = Math.min(
+                1,
+                maxPx / Math.max(img.width, img.height),
+              );
+              const canvas = document.createElement("canvas");
+              canvas.width = Math.round(img.width * scale);
+              canvas.height = Math.round(img.height * scale);
+              canvas
+                .getContext("2d")
+                .drawImage(img, 0, 0, canvas.width, canvas.height);
+              resolve(canvas.toDataURL("image/jpeg", quality));
+            };
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      //  LOAD & RENDER (called on auth state change)
+      // ═══════════════════════════════════════════════════════════════
+      async function loadAndRender() {
+        const profile = await loadProfile();
+        if (!profile || !profile.dob) {
+          showSetupOverlay();
+          return;
+        }
+        profileCache = profile;
+        showApp();
+        renderStats();
+        renderGrid();
+        // Try to get Drive folder after rendering
+        if (isDriveTokenValid()) ensureDriveFolder().catch(() => {});
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      //  SETUP
+      // ═══════════════════════════════════════════════════════════════
+      document
+        .getElementById("setupSubmit")
+        .addEventListener("click", async () => {
+          const dob = document.getElementById("setupDob").value;
+          const lifespan =
+            parseInt(document.getElementById("setupLifespan").value) || 80;
+          const name =
+            document.getElementById("setupName").value.trim() ||
+            (currentUser ? (currentUser.displayName || "").split(" ")[0] : "");
+          if (!dob) {
+            alert("Please enter your date of birth.");
+            return;
+          }
+
+          await saveProfile({
+            dob,
+            lifespan,
+            name,
+            weekIndicesWithData: [],
+            habits: [],
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          });
+          showApp();
+          renderStats();
+          renderGrid();
+        });
+
+      // ═══════════════════════════════════════════════════════════════
+      //  STATS
+      // ═══════════════════════════════════════════════════════════════
+      function renderStats() {
+        if (!profileCache) return;
+        const dob = parseDate(profileCache.dob);
+        const totalWeeks = profileCache.lifespan * 52;
+        const curIdx = currentWeekIdx(dob);
+        const lived = Math.max(0, Math.min(curIdx, totalWeeks));
+        const remaining = Math.max(0, totalWeeks - lived);
+        const pct = ((lived / totalWeeks) * 100).toFixed(1);
+        const yearsLeft = Math.floor(remaining / 52);
+        const memories = (profileCache.weekIndicesWithData || []).length;
+
+        document.getElementById("statsBar").innerHTML = `
+    <div class="stat-cell with-bar">
+      <span class="stat-lbl">life lived</span>
+      <span class="stat-val">${pct}%</span>
+      <div class="mini-bar"><div class="mini-bar-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="stat-cell"><span class="stat-val">${lived.toLocaleString()}</span><span class="stat-lbl">weeks lived</span></div>
+    <div class="stat-cell"><span class="stat-val">${remaining.toLocaleString()}</span><span class="stat-lbl">weeks left</span></div>
+    <div class="stat-cell"><span class="stat-val">${yearsLeft}</span><span class="stat-lbl">years left</span></div>
+    <div class="stat-cell"><span class="stat-val">~${remaining.toLocaleString()}</span><span class="stat-lbl">weekends left</span></div>
+    <div class="stat-cell"><span class="stat-val">${yearsLeft}</span><span class="stat-lbl">birthdays left</span></div>
+    <div class="stat-cell"><span class="stat-val">${memories}</span><span class="stat-lbl">memories logged</span></div>`;
+
+        document.getElementById("footerWeeks").textContent =
+          `${profileCache.name ? profileCache.name + " · " : ""}week ${(lived + 1).toLocaleString()} of ${totalWeeks.toLocaleString()}`;
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      //  HABIT OVERLAY
+      // ═══════════════════════════════════════════════════════════════
+      function lerpHex(a, b, t) {
+        const ah = parseInt(a.slice(1), 16),
+          bh = parseInt(b.slice(1), 16);
+        const ar = (ah >> 16) & 255,
+          ag = (ah >> 8) & 255,
+          ab = ah & 255;
+        const br = (bh >> 16) & 255,
+          bg = (bh >> 8) & 255,
+          bb = bh & 255;
+        return `rgb(${Math.round(ar + (br - ar) * t)},${Math.round(ag + (bg - ag) * t)},${Math.round(ab + (bb - ab) * t)})`;
+      }
+      function habitColor(pct) {
+        return lerpHex(dark ? "#2c2b28" : "#d4d1cc", "#4a8c8c", pct);
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      //  TOOLTIP
+      // ═══════════════════════════════════════════════════════════════
+      const tipEl = document.getElementById("tooltip");
+      function showTip(e, t) {
+        tipEl.textContent = t;
+        tipEl.classList.add("show");
+        moveTip(e);
+      }
+      function moveTip(e) {
+        tipEl.style.left = e.clientX + "px";
+        tipEl.style.top = e.clientY - 6 + "px";
+      }
+      function hideTip() {
+        tipEl.classList.remove("show");
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      //  GRID
+      // ═══════════════════════════════════════════════════════════════
+      function renderGrid() {
+        if (!profileCache) return;
+        const dob = parseDate(profileCache.dob);
+        const lifespan = profileCache.lifespan;
+        const curIdx = currentWeekIdx(dob);
+        const withData = new Set(profileCache.weekIndicesWithData || []);
+        const habits = profileCache.habits || [];
+        const birthYr = dob.getFullYear();
+        const grid = document.getElementById("lifeGrid");
+        const frag = document.createDocumentFragment();
+
+        for (let yr = 0; yr < lifespan; yr++) {
+          if (yr > 0 && yr % 10 === 0) {
+            const sep = document.createElement("div");
+            sep.className = "decade-sep";
+            frag.appendChild(sep);
+          }
+          const row = document.createElement("div");
+          row.className = "year-row";
+          const lbl = document.createElement("span");
+          lbl.className = "yr-lbl";
+          lbl.textContent = birthYr + yr;
+          row.appendChild(lbl);
+          const dotsWrap = document.createElement("div");
+          dotsWrap.className = "week-row";
+
+          for (let wk = 0; wk < 52; wk++) {
+            const idx = yr * 52 + wk;
+            const ws = weekStart(dob, idx);
+            const we = new Date(ws.getTime() + 6 * 24 * 60 * 60 * 1000);
+            const tipTxt = `${fmtShort(ws)} – ${fmtShort(we)}`;
+            const dot = document.createElement("button");
+            dot.className = "dot";
+            dot.setAttribute("aria-label", tipTxt);
+
+            if (idx < curIdx)
+              dot.classList.add(withData.has(idx) ? "memory" : "past");
+            else if (idx === curIdx) dot.classList.add("now");
+            else dot.classList.add("future");
+
+            // Habit overlay (uses cached week data)
+            if (habitMode && idx <= curIdx && habits.length > 0) {
+              const data = weeksCache[idx];
+              const done = habits.filter(
+                (h) => data && data.habits && data.habits[h.id],
+              ).length;
+              dot.style.background = habitColor(done / habits.length);
+            }
+
+            dot.addEventListener("mouseenter", (e) => showTip(e, tipTxt));
+            dot.addEventListener("mousemove", (e) => moveTip(e));
+            dot.addEventListener("mouseleave", hideTip);
+            dot.addEventListener("click", () => {
+              hideTip();
+              openPanel(idx);
+            });
+            dotsWrap.appendChild(dot);
+          }
+          row.appendChild(dotsWrap);
+          frag.appendChild(row);
+        }
+        grid.innerHTML = "";
+        grid.appendChild(frag);
+      }
+
+      // Habit toggle — lazy-loads all week data for overlay
+      document
+        .getElementById("habitToggle")
+        .addEventListener("click", async () => {
+          const habits = (profileCache && profileCache.habits) || [];
+          if (!habits.length) {
+            alert("Add habits in Settings first.");
+            return;
+          }
+          habitMode = !habitMode;
+          document
+            .getElementById("habitToggle")
+            .classList.toggle("active", habitMode);
+
+          if (habitMode) {
+            // Load all weeks with data for habit calculations
+            const indices = profileCache.weekIndicesWithData || [];
+            const missing = indices.filter((i) => !weeksCache[i]);
+            if (missing.length) {
+              setSyncStatus("syncing");
+              await Promise.all(missing.map((i) => loadWeek(i)));
+              setSyncStatus("synced");
+            }
+          }
+          renderGrid();
+        });
+
+      // ═══════════════════════════════════════════════════════════════
+      //  WEEK PANEL
+      // ═══════════════════════════════════════════════════════════════
+      async function openPanel(idx) {
+        const dob = parseDate(profileCache.dob);
+        const ws = weekStart(dob, idx);
+        const we = new Date(ws.getTime() + 6 * 24 * 60 * 60 * 1000);
+        const ageYr = Math.floor(idx / 52);
+        const totalW = profileCache.lifespan * 52;
+
+        document.getElementById("pDate").textContent =
+          `${fmtFull(ws)} – ${fmtShort(we)}`;
+        document.getElementById("pMeta").textContent =
+          `Age ${ageYr} · Week ${(idx + 1).toLocaleString()} of ${totalW.toLocaleString()}` +
+          (idx === currentWeekIdx(dob) ? " · this week" : "");
+
+        // Load week from Firestore (or cache)
+        const stored = (await loadWeek(idx)) || {};
+        // Backward-compat: old photoData single string → photos array
+        let photos = Array.isArray(stored.photos)
+          ? [...stored.photos]
+          : stored.photoData
+            ? [{ thumb: stored.photoData }]
+            : [];
+
+        draft = {
+          note: stored.note || "",
+          mood: stored.mood || null,
+          habits: { ...(stored.habits || {}) },
+          photos, // [{thumb, fileId?, uploading?}]
+          deletedFileIds: [], // Drive file IDs to delete on save
+        };
+        activeIdx = idx;
+
+        document.getElementById("journalEl").value = draft.note;
+        document
+          .querySelectorAll(".mood-btn")
+          .forEach((b) =>
+            b.classList.toggle("on", b.dataset.mood === draft.mood),
+          );
+        renderPhotoStrip();
+        renderChecklist();
+
+        document.getElementById("weekPanel").classList.add("open");
+        document.getElementById("backdrop").classList.add("open");
+      }
+
+      function closePanel() {
+        document.getElementById("weekPanel").classList.remove("open");
+        document.getElementById("backdrop").classList.remove("open");
+        activeIdx = null;
+      }
+
+      document
+        .getElementById("panelClose")
+        .addEventListener("click", closePanel);
+      document.getElementById("backdrop").addEventListener("click", closePanel);
+      document
+        .getElementById("panelDiscard")
+        .addEventListener("click", closePanel);
+
+      document
+        .getElementById("panelSave")
+        .addEventListener("click", async () => {
+          if (activeIdx === null) return;
+          draft.note = document.getElementById("journalEl").value;
+          const btn = document.getElementById("panelSave");
+          btn.disabled = true;
+          btn.textContent = "Saving…";
+
+          try {
+            // Delete any removed Drive photos
+            for (const fileId of draft.deletedFileIds || []) {
+              await deletePhotoFromDrive(fileId).catch(() => {});
+            }
+
+            // Strip 'uploading' flags and clean for Firestore
+            const cleanPhotos = (draft.photos || []).map(
+              ({ thumb, fileId }) => {
+                const p = { thumb };
+                if (fileId) p.fileId = fileId;
+                return p;
+              },
+            );
+
+            await saveWeek(activeIdx, {
+              note: draft.note,
+              mood: draft.mood,
+              habits: draft.habits,
+              photos: cleanPhotos,
+            });
+
+            closePanel();
+            renderStats();
+            renderGrid();
+          } catch (e) {
+            alert("Save failed. Please try again.");
+          } finally {
+            btn.disabled = false;
+            btn.textContent = "Save week";
+          }
+        });
+
+      // Mood
+      document.querySelectorAll(".mood-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          draft.mood =
+            draft.mood === btn.dataset.mood ? null : btn.dataset.mood;
+          document
+            .querySelectorAll(".mood-btn")
+            .forEach((b) =>
+              b.classList.toggle("on", b.dataset.mood === draft.mood),
+            );
+        });
+      });
+
+      // ── Photo strip
+      function renderPhotoStrip() {
+        const strip = document.getElementById("photoStrip");
+        const count = document.getElementById("photoCount");
+        const note = document.getElementById("drivePhotoNote");
+        strip.innerHTML = "";
+
+        (draft.photos || []).forEach((p, i) => {
+          const thumb = document.createElement("div");
+          thumb.className = "photo-thumb";
+          const img = document.createElement("img");
+          img.src = p.thumb;
+          img.alt = `Photo ${i + 1}`;
+
+          const del = document.createElement("button");
+          del.className = "photo-thumb-del";
+          del.textContent = "×";
+          del.title = "Remove photo";
+          del.addEventListener("click", (ev) => {
+            ev.stopPropagation();
+            if (p.fileId) draft.deletedFileIds.push(p.fileId);
+            draft.photos.splice(i, 1);
+            renderPhotoStrip();
+          });
+          thumb.append(img, del);
+
+          // Show spinner if still uploading to Drive
+          if (p.uploading) {
+            const prog = document.createElement("div");
+            prog.className = "photo-thumb-progress";
+            prog.innerHTML = '<div class="spinner"></div>';
+            thumb.appendChild(prog);
+          }
+          strip.appendChild(thumb);
+        });
+
+        // Add button
+        if ((draft.photos || []).length < MAX_PHOTOS) {
+          const addBtn = document.createElement("button");
+          addBtn.className = "photo-add-btn";
+          addBtn.title = "Add photo";
+          addBtn.innerHTML = "+";
+          const fileInput = document.createElement("input");
+          fileInput.type = "file";
+          fileInput.accept = "image/*";
+          fileInput.multiple = true;
+          fileInput.addEventListener("change", handlePhotoSelect);
+          addBtn.appendChild(fileInput);
+          strip.appendChild(addBtn);
+        }
+
+        const n = (draft.photos || []).length;
+        count.textContent =
+          n === 0 ? "" : `${n} / ${MAX_PHOTOS} photo${n !== 1 ? "s" : ""}`;
+
+        // Drive note
+        const hasDrive = isDriveTokenValid();
+        note.style.display = n > 0 ? "" : "none";
+        note.textContent = hasDrive
+          ? "✓ photos uploading to your Google Drive"
+          : "⚠ Sign in to sync photos to Drive";
+      }
+
+      async function handlePhotoSelect(e) {
+        const files = Array.from(e.target.files);
+        const remaining = MAX_PHOTOS - (draft.photos || []).length;
+        const toProcess = files.slice(0, remaining);
+        if (!draft.photos) draft.photos = [];
+
+        for (const file of toProcess) {
+          // Generate thumb immediately for display
+          const thumb = await compressImage(file, 160, 0.65);
+          const entry = { thumb, uploading: true };
+          draft.photos.push(entry);
+          renderPhotoStrip();
+
+          // Upload full-size to Drive in background
+          if (isDriveTokenValid()) {
+            try {
+              const folderId = await ensureDriveFolder();
+              if (folderId) {
+                const fullSize = await compressImage(file, 1200, 0.82);
+                const uploaded = await uploadPhotoToDrive(
+                  fullSize,
+                  `lifecal_w${activeIdx}_${Date.now()}.jpg`,
+                  folderId,
+                );
+                entry.fileId = uploaded.id;
+              }
+            } catch (err) {
+              console.warn("Drive upload failed for photo:", err);
+              // Photo is still saved (thumb stored in Firestore)
+            }
+          }
+          delete entry.uploading;
+          renderPhotoStrip();
+        }
+      }
+
+      // Habits checklist
+      function renderChecklist() {
+        const habits = profileCache.habits || [];
+        const list = document.getElementById("habitChecklist");
+        const hint = document.getElementById("noHabitsHint");
+        list.innerHTML = "";
+        if (!habits.length) {
+          hint.style.display = "";
+          return;
+        }
+        hint.style.display = "none";
+        habits.forEach((h) => {
+          const row = document.createElement("div");
+          row.className = "habit-row";
+          const on = !!(draft.habits && draft.habits[h.id]);
+          const box = document.createElement("div");
+          box.className = "h-box" + (on ? " on" : "");
+          box.textContent = on ? "✓" : "";
+          const lbl = document.createElement("span");
+          lbl.className = "h-lbl";
+          lbl.textContent = h.label;
+          row.append(box, lbl);
+          row.addEventListener("click", () => {
+            if (!draft.habits) draft.habits = {};
+            draft.habits[h.id] = !draft.habits[h.id];
+            box.classList.toggle("on", draft.habits[h.id]);
+            box.textContent = draft.habits[h.id] ? "✓" : "";
+          });
+          list.appendChild(row);
+        });
+      }
+
+      // ═══════════════════════════════════════════════════════════════
+      //  SETTINGS MODAL
+      // ═══════════════════════════════════════════════════════════════
+      function openSettings() {
+        const p = profileCache || {};
+        document.getElementById("sDob").value = p.dob || "";
+        document.getElementById("sLifespan").value = p.lifespan || 80;
+        document.getElementById("sName").value = p.name || "";
+        renderHabitManager();
+        document.getElementById("settingsModal").classList.add("open");
+      }
+      function closeSettings() {
+        document.getElementById("settingsModal").classList.remove("open");
+      }
+
+      document
+        .getElementById("settingsBtn")
+        .addEventListener("click", openSettings);
+      document
+        .getElementById("closeSettings")
+        .addEventListener("click", closeSettings);
+      document
+        .getElementById("settingsModal")
+        .addEventListener("click", (e) => {
+          if (e.target === e.currentTarget) closeSettings();
+        });
+
+      document
+        .getElementById("saveSettings")
+        .addEventListener("click", async () => {
+          const dob = document.getElementById("sDob").value;
+          const lifespan =
+            parseInt(document.getElementById("sLifespan").value) || 80;
+          const name = document.getElementById("sName").value.trim();
+          if (!dob) {
+            alert("Please enter a date of birth.");
+            return;
+          }
+          await saveProfile({ dob, lifespan, name });
+          closeSettings();
+          renderStats();
+          renderGrid();
+        });
+
+      document
+        .getElementById("clearAll")
+        .addEventListener("click", async () => {
+          if (
+            !confirm(
+              "This will permanently delete all your data from Firestore. Photos in Google Drive will remain. Are you sure?",
+            )
+          )
+            return;
+          setSyncStatus("syncing");
+          // Delete all weeks subcollection (batch)
+          const weekSnaps = await userDoc().collection("weeks").get();
+          const batch = db.batch();
+          weekSnaps.forEach((d) => batch.delete(d.ref));
+          batch.delete(userDoc());
+          await batch.commit();
+          await auth.signOut();
+        });
+
+      // ═══════════════════════════════════════════════════════════════
+      //  HABIT MANAGER
+      // ═══════════════════════════════════════════════════════════════
+      function renderHabitManager() {
+        const habits = profileCache.habits || [];
+        const list = document.getElementById("hmList");
+        list.innerHTML = "";
+        habits.forEach((h, i) => {
+          const row = document.createElement("div");
+          row.className = "hm-row";
+          row.innerHTML = `<div class="hm-swatch" style="background:${h.color}"></div><span class="hm-name">${h.label}</span><button class="hm-del" data-i="${i}">×</button>`;
+          row.querySelector(".hm-del").addEventListener("click", async () => {
+            profileCache.habits.splice(i, 1);
+            await saveProfile({ habits: profileCache.habits });
+            renderHabitManager();
+          });
+          list.appendChild(row);
+        });
+      }
+
+      document.getElementById("hmAdd").addEventListener("click", async () => {
+        const inp = document.getElementById("hmInput");
+        const label = inp.value.trim();
+        if (!label) return;
+        if (!profileCache.habits) profileCache.habits = [];
+        profileCache.habits.push({
+          id: "h_" + Date.now(),
+          label,
+          color: SWATCH[profileCache.habits.length % SWATCH.length],
+        });
+        await saveProfile({ habits: profileCache.habits });
+        inp.value = "";
+        renderHabitManager();
+      });
+      document.getElementById("hmInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") document.getElementById("hmAdd").click();
+      });
+
+      // ═══════════════════════════════════════════════════════════════
+      //  EXPORT
+      // ═══════════════════════════════════════════════════════════════
+      document
+        .getElementById("exportBtn")
+        .addEventListener("click", () => window.print());
+
+      // ═══════════════════════════════════════════════════════════════
+      //  INIT
+      // ═══════════════════════════════════════════════════════════════
+      applyTheme();
+      setSyncStatus("idle");
+      setDriveStatus("disconnected");
+      // Auth state listener above handles the rest
+    </script>
+  </body>
+</html>
