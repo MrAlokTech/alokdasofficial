@@ -1657,8 +1657,8 @@
           error_callback: () => setDriveStatus("error"),
         });
         gisReady = true;
-        // If user already signed in, get Drive token silently
-        if (currentUser) requestDriveToken(true);
+        // Don't auto-request Drive token — only request when user tries to add a photo.
+        // Silent requests return a profile-scope token (not drive.file), causing 403s.
       };
 
       function isDriveTokenValid() {
@@ -1721,7 +1721,7 @@
           return;
         }
         updateUserChip(user);
-        if (gisReady) requestDriveToken(true); // silent refresh
+        // Drive token requested on-demand when user adds a photo (see handlePhotoSelect)
         await loadAndRender();
       });
 
@@ -1850,50 +1850,82 @@
       //  GOOGLE DRIVE — PHOTO STORAGE
       // ═══════════════════════════════════════════════════════════════
       async function ensureDriveFolder() {
-        if (!isDriveTokenValid()) {
-          requestDriveToken(true);
-          return null;
-        }
-        // Return cached folder ID
+        // Return cached folder ID without any network call
         if (profileCache && profileCache.driveFolderId)
           return profileCache.driveFolderId;
 
-        // Search for existing folder
-        const q = await fetch(
-          `https://www.googleapis.com/drive/v3/files?q=name='${DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false&spaces=drive&fields=files(id,name)`,
-          { headers: { Authorization: `Bearer ${driveToken}` } },
-        );
-        const res = await q.json();
-        let folderId;
-
-        if (res.files && res.files.length > 0) {
-          folderId = res.files[0].id;
-        } else {
-          // Create the folder
-          const c = await fetch("https://www.googleapis.com/drive/v3/files", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${driveToken}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name: DRIVE_FOLDER_NAME,
-              mimeType: "application/vnd.google-apps.folder",
-            }),
-          });
-          const folder = await c.json();
-          folderId = folder.id;
+        // Must have a valid token before touching Drive API
+        if (!isDriveTokenValid()) {
+          // Request user-consent token (non-silent) — Drive scope requires explicit grant
+          requestDriveToken(false);
+          return null;
         }
 
-        // Cache it in Firestore profile
-        await saveProfile({ driveFolderId: folderId });
-        return folderId;
+        try {
+          // Search for existing folder
+          const q = await fetch(
+            `https://www.googleapis.com/drive/v3/files?q=name='${DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false&spaces=drive&fields=files(id,name)`,
+            { headers: { Authorization: `Bearer ${driveToken}` } },
+          );
+          const res = await q.json();
+
+          // 401/403 means the token doesn't carry drive.file scope yet.
+          // Clear it and ask the user to grant Drive access explicitly.
+          if (res.error && (res.error.code === 401 || res.error.code === 403)) {
+            driveToken = null;
+            tokenExpiry = 0;
+            setDriveStatus("error");
+            requestDriveToken(false); // non-silent — shows Drive consent screen
+            return null;
+          }
+
+          let folderId;
+          if (res.files && res.files.length > 0) {
+            folderId = res.files[0].id;
+          } else {
+            // Create the folder
+            const cr = await fetch(
+              "https://www.googleapis.com/drive/v3/files",
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${driveToken}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  name: DRIVE_FOLDER_NAME,
+                  mimeType: "application/vnd.google-apps.folder",
+                }),
+              },
+            );
+            const folder = await cr.json();
+            if (folder.error) {
+              driveToken = null;
+              tokenExpiry = 0;
+              setDriveStatus("error");
+              return null;
+            }
+            folderId = folder.id;
+          }
+
+          // Only save to Firestore if we actually got a valid folder ID
+          if (folderId) {
+            await saveProfile({ driveFolderId: folderId });
+          }
+          return folderId || null;
+        } catch (err) {
+          console.warn("ensureDriveFolder error:", err);
+          setDriveStatus("error");
+          return null;
+        }
       }
 
       async function uploadPhotoToDrive(base64DataUrl, filename, folderId) {
         if (!isDriveTokenValid()) {
-          requestDriveToken(true);
-          throw new Error("Drive token expired — retrying");
+          requestDriveToken(false); // non-silent — need drive.file scope
+          throw new Error(
+            "Drive token not available — please grant Drive access",
+          );
         }
         // Convert base64 to blob
         const res = await fetch(base64DataUrl);
@@ -1975,8 +2007,7 @@
         showApp();
         renderStats();
         renderGrid();
-        // Try to get Drive folder after rendering
-        if (isDriveTokenValid()) ensureDriveFolder().catch(() => {});
+        // Drive folder is created lazily on first photo upload
       }
 
       // ═══════════════════════════════════════════════════════════════
@@ -2362,7 +2393,11 @@
           draft.photos.push(entry);
           renderPhotoStrip();
 
-          // Upload full-size to Drive in background
+          // Upload full-size to Drive in background.
+          // If we don't have a Drive token yet, request one (shows consent screen).
+          if (!isDriveTokenValid()) {
+            requestDriveToken(false); // non-silent — user must grant drive.file scope
+          }
           if (isDriveTokenValid()) {
             try {
               const folderId = await ensureDriveFolder();
