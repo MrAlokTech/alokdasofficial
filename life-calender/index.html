@@ -14,13 +14,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <!-- Google Identity Services — Drive token (onload wires it up) -->
-    <script
-      src="https://accounts.google.com/gsi/client"
-      async
-      onload="initGIS()"
-    ></script>
-
     <style>
       *,
       *::before,
@@ -1681,23 +1674,32 @@
       //  GOOGLE SIGN-IN via FIREBASE
       // ═══════════════════════════════════════════════════════════════
       async function signIn() {
+        // Use redirect — avoids COOP popup warnings and credential extraction issues.
+        // Drive token is obtained separately via GIS after auth resolves.
         const provider = new firebase.auth.GoogleAuthProvider();
-        provider.addScope(DRIVE_SCOPE);
         try {
-          const result = await auth.signInWithPopup(provider);
-          const credential =
-            firebase.auth.GoogleAuthProvider.credentialFromResult(result);
-          // Grab initial Drive token from the sign-in credential
-          if (credential.accessToken) {
-            driveToken = credential.accessToken;
-            tokenExpiry = Date.now() + 3540 * 1000; // ~59 min
-            setDriveStatus("connected");
-          }
+          await auth.signInWithRedirect(provider);
+          // Page will reload; onAuthStateChanged picks up the session on return.
         } catch (err) {
           console.error("Sign-in error:", err);
           alert("Sign-in failed. Please try again.");
         }
       }
+
+      // Handle redirect result on page load (fires before onAuthStateChanged)
+      auth
+        .getRedirectResult()
+        .then((result) => {
+          if (result && result.user) {
+            // Redirect sign-in just completed — request Drive token via GIS
+            if (gisReady) requestDriveToken(false); // non-silent: first-time consent
+            // onAuthStateChanged will fire next and load the profile
+          }
+        })
+        .catch((err) => {
+          if (err.code !== "auth/no-auth-event")
+            console.error("Redirect result error:", err);
+        });
 
       async function signOut() {
         if (!confirm("Sign out of Life Calendar?")) return;
@@ -2531,5 +2533,12 @@
       setDriveStatus("disconnected");
       // Auth state listener above handles the rest
     </script>
+
+    <!-- Google Identity Services — loads after main script so initGIS is defined -->
+    <script
+      src="https://accounts.google.com/gsi/client"
+      async
+      onload="initGIS()"
+    ></script>
   </body>
 </html>
