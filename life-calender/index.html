@@ -1722,7 +1722,14 @@
         }
         updateUserChip(user);
         // Drive token requested on-demand when user adds a photo (see handlePhotoSelect)
-        await loadAndRender();
+        try {
+          await loadAndRender();
+        } catch (err) {
+          // Last-resort fallback: authenticated but something crashed → show setup
+          console.error("loadAndRender crashed:", err);
+          document.getElementById("signinOverlay").classList.add("gone");
+          showSetupOverlay();
+        }
       });
 
       function updateUserChip(user) {
@@ -1778,17 +1785,29 @@
       }
 
       async function loadProfile() {
-        const snap = await userDoc().get();
-        return snap.exists ? snap.data() : null;
+        try {
+          const snap = await userDoc().get();
+          return snap.exists ? snap.data() : null;
+        } catch (err) {
+          // Firestore unavailable (database deleted, offline, rules block, etc.)
+          console.warn("loadProfile failed:", err.code, err.message);
+          return null;
+        }
       }
 
       async function saveProfile(data) {
+        // Strip undefined values — Firestore rejects them
+        const clean = Object.fromEntries(
+          Object.entries(data).filter(([, v]) => v !== undefined),
+        );
+        if (Object.keys(clean).length === 0) return;
         setSyncStatus("syncing");
         try {
-          await userDoc().set(data, { merge: true });
-          profileCache = { ...profileCache, ...data };
+          await userDoc().set(clean, { merge: true });
+          profileCache = { ...profileCache, ...clean };
           setSyncStatus("synced");
         } catch (e) {
+          console.error("saveProfile error:", e.code, e.message);
           setSyncStatus("error");
           throw e;
         }
@@ -1998,7 +2017,18 @@
       //  LOAD & RENDER (called on auth state change)
       // ═══════════════════════════════════════════════════════════════
       async function loadAndRender() {
-        const profile = await loadProfile();
+        // Always hide the sign-in overlay first — the user IS authenticated at this point.
+        // Any further error should show setup, never leave them stuck on the sign-in screen.
+        document.getElementById("signinOverlay").classList.add("gone");
+
+        let profile = null;
+        try {
+          profile = await loadProfile();
+        } catch (err) {
+          // Firestore down / database missing — fall through to setup overlay
+          console.warn("Could not load profile from Firestore:", err);
+        }
+
         if (!profile || !profile.dob) {
           showSetupOverlay();
           return;
