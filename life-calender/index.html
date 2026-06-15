@@ -319,7 +319,6 @@
         border-color: transparent;
       }
 
-      /* User chip */
       .user-chip {
         display: flex;
         align-items: center;
@@ -359,7 +358,6 @@
         white-space: nowrap;
       }
 
-      /* Sync indicator */
       .sync-dot {
         width: 7px;
         height: 7px;
@@ -388,7 +386,6 @@
         }
       }
 
-      /* Drive badge */
       .drive-badge {
         display: flex;
         align-items: center;
@@ -398,6 +395,7 @@
         letter-spacing: 0.04em;
         color: var(--text3);
         flex-shrink: 0;
+        cursor: default;
       }
       .drive-badge.connected {
         color: #4a8c8c;
@@ -405,6 +403,9 @@
       .drive-badge.error {
         color: #e05555;
         cursor: pointer;
+      }
+      .drive-badge.connecting {
+        color: #f5a623;
       }
 
       /* ── STATS BAR ── */
@@ -515,7 +516,6 @@
         border-color: rgba(255, 255, 255, 0.1);
       }
 
-      /* Loading state */
       .grid-loading {
         display: flex;
         flex-direction: column;
@@ -736,7 +736,6 @@
         color: var(--text3);
       }
 
-      /* Photos — multi-image strip */
       .photo-strip {
         display: flex;
         gap: 8px;
@@ -778,7 +777,6 @@
       .photo-thumb-del:hover {
         background: rgba(200, 40, 40, 0.85);
       }
-      /* Drive upload progress overlay on thumb */
       .photo-thumb-progress {
         position: absolute;
         inset: 0;
@@ -836,7 +834,6 @@
         margin-top: 2px;
       }
 
-      /* Habits */
       .habit-list {
         display: flex;
         flex-direction: column;
@@ -1330,7 +1327,7 @@
       <div class="logo">Life Calendar</div>
       <div class="header-right">
         <div class="sync-dot" id="syncDot" title="Sync status"></div>
-        <div class="drive-badge" id="driveBadge">◈ Drive</div>
+        <div class="drive-badge" id="driveBadge">◇ Drive</div>
         <button class="pill-btn" id="habitToggle">◎ &nbsp;Habits</button>
         <button class="icon-btn" id="exportBtn" title="Print / Save as PDF">
           ⎙
@@ -1542,18 +1539,24 @@
       //  STATE
       // ═══════════════════════════════════════════════════════════════
       let currentUser = null;
-      let profileCache = null; // { dob, lifespan, name, driveFolderId, weekIndicesWithData, habits }
-      let weeksCache = {}; // { [weekIdx]: weekDoc }
+      let profileCache = null;
+      let weeksCache = {};
       let habitMode = false;
       let activeIdx = null;
       let draft = {};
       let dark = localStorage.getItem("lifecal-dark") === "true";
 
-      // Drive token state
+      // ─── Drive token state ───────────────────────────────────────
       let driveToken = null;
       let tokenExpiry = 0;
       let tokenClient = null;
       let gisReady = false;
+
+      // FIX: queue a Drive token request if GIS hasn't loaded yet
+      let pendingDriveRequest = false;
+
+      // FIX: waiters for async Drive token — resolves when token arrives
+      let driveTokenWaiters = [];
 
       // ═══════════════════════════════════════════════════════════════
       //  THEME
@@ -1606,7 +1609,6 @@
       //  SYNC STATUS UI
       // ═══════════════════════════════════════════════════════════════
       function setSyncStatus(s) {
-        // 'idle' | 'syncing' | 'synced' | 'error'
         const dot = document.getElementById("syncDot");
         dot.className = "sync-dot " + (s === "idle" ? "" : s);
         dot.title =
@@ -1618,82 +1620,143 @@
           }[s] || "";
       }
       function setDriveStatus(s) {
-        // 'disconnected' | 'connected' | 'error'
         const b = document.getElementById("driveBadge");
         b.className = "drive-badge " + s;
         b.textContent =
-          s === "connected" ? "◈ Drive" : s === "error" ? "⚠ Drive" : "◇ Drive";
-        b.title =
           s === "connected"
-            ? "Photos syncing to Google Drive"
+            ? "◈ Drive"
             : s === "error"
-              ? "Drive disconnected — click to reconnect"
-              : "Google Drive not connected";
-        if (s === "error") b.onclick = () => requestDriveToken(false);
-        else b.onclick = null;
+              ? "⚠ Drive"
+              : s === "connecting"
+                ? "◌ Drive"
+                : "◇ Drive";
+        b.title =
+          {
+            connected: "Photos syncing to Google Drive",
+            error: "Drive error — click to reconnect",
+            connecting: "Connecting to Google Drive…",
+            disconnected: "Google Drive not connected",
+          }[s] || "";
+        b.onclick = s === "error" ? () => requestDriveToken(false) : null;
       }
 
       // ═══════════════════════════════════════════════════════════════
       //  GOOGLE IDENTITY SERVICES — DRIVE TOKEN
+      //
+      //  FIX: initGIS now resolves any queued waiters and handles
+      //       the pendingDriveRequest flag set before GIS was ready.
       // ═══════════════════════════════════════════════════════════════
-      // Called by GIS script onload attribute
       window.initGIS = function () {
         tokenClient = google.accounts.oauth2.initTokenClient({
           client_id: GOOGLE_CLIENT_ID,
           scope: DRIVE_SCOPE,
+
+          // FIX: callback now resolves ALL waiting promises
           callback: (resp) => {
             if (resp.error) {
               console.warn("Drive token error:", resp.error);
               setDriveStatus("error");
+              // Reject any callers waiting for a token
+              const waiters = driveTokenWaiters.splice(0);
+              waiters.forEach(({ reject }) =>
+                reject(new Error("Drive auth failed: " + resp.error)),
+              );
               return;
             }
             driveToken = resp.access_token;
-            tokenExpiry = Date.now() + (resp.expires_in - 60) * 1000; // 60s buffer
+            tokenExpiry = Date.now() + (resp.expires_in - 60) * 1000;
             setDriveStatus("connected");
-            // Store folder ID in profile if we don't have it yet
             if (profileCache && !profileCache.driveFolderId)
               ensureDriveFolder();
+            // Resolve all callers that were waiting for a token
+            const waiters = driveTokenWaiters.splice(0);
+            waiters.forEach(({ resolve }) => resolve(driveToken));
           },
-          error_callback: () => setDriveStatus("error"),
+
+          error_callback: (err) => {
+            setDriveStatus("error");
+            const waiters = driveTokenWaiters.splice(0);
+            waiters.forEach(({ reject }) => reject(err));
+          },
         });
+
         gisReady = true;
-        // Don't auto-request Drive token — only request when user tries to add a photo.
-        // Silent requests return a profile-scope token (not drive.file), causing 403s.
+
+        // FIX: if a Drive token was requested before GIS was ready, fire it now
+        if (pendingDriveRequest) {
+          pendingDriveRequest = false;
+          tokenClient.requestAccessToken({ prompt: "consent" });
+          setDriveStatus("connecting");
+        }
       };
 
       function isDriveTokenValid() {
-        return driveToken && Date.now() < tokenExpiry;
+        return !!(driveToken && Date.now() < tokenExpiry);
       }
 
+      // Low-level token request (fire-and-forget). Use waitForDriveToken() for async flows.
       function requestDriveToken(silent = true) {
-        if (!gisReady || !tokenClient) return;
+        if (!gisReady || !tokenClient) {
+          // GIS not loaded yet — remember to request once it is
+          if (!silent) {
+            pendingDriveRequest = true;
+            setDriveStatus("connecting");
+          }
+          return;
+        }
         tokenClient.requestAccessToken({ prompt: silent ? "" : "consent" });
+        setDriveStatus("connecting");
+      }
+
+      // FIX: Returns a Promise that resolves to the access token.
+      //      Safe to call concurrently — all callers share one pending request.
+      function waitForDriveToken() {
+        if (isDriveTokenValid()) return Promise.resolve(driveToken);
+
+        return new Promise((resolve, reject) => {
+          driveTokenWaiters.push({ resolve, reject });
+
+          // Only open the consent popup if nobody else already opened it
+          if (driveTokenWaiters.length === 1) {
+            if (gisReady && tokenClient) {
+              tokenClient.requestAccessToken({ prompt: "" }); // silent first
+              setDriveStatus("connecting");
+            } else {
+              // GIS not ready — queue for initGIS
+              pendingDriveRequest = true;
+              setDriveStatus("connecting");
+            }
+          }
+        });
       }
 
       // ═══════════════════════════════════════════════════════════════
       //  GOOGLE SIGN-IN via FIREBASE
       // ═══════════════════════════════════════════════════════════════
       async function signIn() {
-        // Use redirect — avoids COOP popup warnings and credential extraction issues.
-        // Drive token is obtained separately via GIS after auth resolves.
         const provider = new firebase.auth.GoogleAuthProvider();
         try {
           await auth.signInWithRedirect(provider);
-          // Page will reload; onAuthStateChanged picks up the session on return.
         } catch (err) {
           console.error("Sign-in error:", err);
           alert("Sign-in failed. Please try again.");
         }
       }
 
-      // Handle redirect result on page load (fires before onAuthStateChanged)
+      // Handle redirect result on page load
+      // FIX: properly handles case where GIS isn't ready yet
       auth
         .getRedirectResult()
         .then((result) => {
           if (result && result.user) {
-            // Redirect sign-in just completed — request Drive token via GIS
-            if (gisReady) requestDriveToken(false); // non-silent: first-time consent
-            // onAuthStateChanged will fire next and load the profile
+            // Redirect just completed — request Drive token.
+            // Use pendingDriveRequest flag so initGIS picks it up if GIS isn't ready.
+            if (gisReady && tokenClient) {
+              tokenClient.requestAccessToken({ prompt: "consent" });
+              setDriveStatus("connecting");
+            } else {
+              pendingDriveRequest = true; // initGIS will fire it
+            }
           }
         })
         .catch((err) => {
@@ -1707,13 +1770,15 @@
         tokenExpiry = 0;
         profileCache = null;
         weeksCache = {};
+        driveTokenWaiters = [];
+        pendingDriveRequest = false;
         await auth.signOut();
       }
 
       document.getElementById("signInBtn").addEventListener("click", signIn);
       document.getElementById("signOutBtn").addEventListener("click", signOut);
 
-      // ── Auth state listener — the main entry point
+      // ── Auth state listener
       auth.onAuthStateChanged(async (user) => {
         currentUser = user;
         if (!user) {
@@ -1721,11 +1786,9 @@
           return;
         }
         updateUserChip(user);
-        // Drive token requested on-demand when user adds a photo (see handlePhotoSelect)
         try {
           await loadAndRender();
         } catch (err) {
-          // Last-resort fallback: authenticated but something crashed → show setup
           console.error("loadAndRender crashed:", err);
           document.getElementById("signinOverlay").classList.add("gone");
           showSetupOverlay();
@@ -1774,8 +1837,6 @@
 
       // ═══════════════════════════════════════════════════════════════
       //  FIRESTORE — USER DOCUMENT
-      //  Path: users/{uid}
-      //  Fields: dob, lifespan, name, driveFolderId, weekIndicesWithData[], habits[]
       // ═══════════════════════════════════════════════════════════════
       function userDoc() {
         return db.collection("users").doc(currentUser.uid);
@@ -1789,14 +1850,12 @@
           const snap = await userDoc().get();
           return snap.exists ? snap.data() : null;
         } catch (err) {
-          // Firestore unavailable (database deleted, offline, rules block, etc.)
           console.warn("loadProfile failed:", err.code, err.message);
           return null;
         }
       }
 
       async function saveProfile(data) {
-        // Strip undefined values — Firestore rejects them
         const clean = Object.fromEntries(
           Object.entries(data).filter(([, v]) => v !== undefined),
         );
@@ -1836,7 +1895,6 @@
               updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
             });
             weeksCache[idx] = data;
-            // Track in profile's index
             if (!(profileCache.weekIndicesWithData || []).includes(idx)) {
               await userDoc().update({
                 weekIndicesWithData:
@@ -1867,34 +1925,33 @@
 
       // ═══════════════════════════════════════════════════════════════
       //  GOOGLE DRIVE — PHOTO STORAGE
+      //
+      //  FIX: ensureDriveFolder no longer calls requestDriveToken
+      //       internally — callers must have a valid token first
+      //       (obtained via waitForDriveToken()).
       // ═══════════════════════════════════════════════════════════════
       async function ensureDriveFolder() {
-        // Return cached folder ID without any network call
         if (profileCache && profileCache.driveFolderId)
           return profileCache.driveFolderId;
 
-        // Must have a valid token before touching Drive API
-        if (!isDriveTokenValid()) {
-          // Request user-consent token (non-silent) — Drive scope requires explicit grant
-          requestDriveToken(false);
-          return null;
-        }
+        // Caller must ensure a valid token exists before calling this
+        if (!isDriveTokenValid()) return null;
 
         try {
-          // Search for existing folder
+          // Search for an existing folder created by this app
           const q = await fetch(
             `https://www.googleapis.com/drive/v3/files?q=name='${DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false&spaces=drive&fields=files(id,name)`,
             { headers: { Authorization: `Bearer ${driveToken}` } },
           );
           const res = await q.json();
 
-          // 401/403 means the token doesn't carry drive.file scope yet.
-          // Clear it and ask the user to grant Drive access explicitly.
-          if (res.error && (res.error.code === 401 || res.error.code === 403)) {
-            driveToken = null;
-            tokenExpiry = 0;
-            setDriveStatus("error");
-            requestDriveToken(false); // non-silent — shows Drive consent screen
+          if (res.error) {
+            // 401/403 means the token doesn't carry drive.file scope
+            if (res.error.code === 401 || res.error.code === 403) {
+              driveToken = null;
+              tokenExpiry = 0;
+              setDriveStatus("error");
+            }
             return null;
           }
 
@@ -1919,18 +1976,14 @@
             );
             const folder = await cr.json();
             if (folder.error) {
-              driveToken = null;
-              tokenExpiry = 0;
+              console.warn("Drive folder create error:", folder.error);
               setDriveStatus("error");
               return null;
             }
             folderId = folder.id;
           }
 
-          // Only save to Firestore if we actually got a valid folder ID
-          if (folderId) {
-            await saveProfile({ driveFolderId: folderId });
-          }
+          if (folderId) await saveProfile({ driveFolderId: folderId });
           return folderId || null;
         } catch (err) {
           console.warn("ensureDriveFolder error:", err);
@@ -1940,20 +1993,13 @@
       }
 
       async function uploadPhotoToDrive(base64DataUrl, filename, folderId) {
-        if (!isDriveTokenValid()) {
-          requestDriveToken(false); // non-silent — need drive.file scope
-          throw new Error(
-            "Drive token not available — please grant Drive access",
-          );
-        }
-        // Convert base64 to blob
+        if (!isDriveTokenValid()) throw new Error("No valid Drive token");
         const res = await fetch(base64DataUrl);
         const blob = await res.blob();
         const meta = JSON.stringify({ name: filename, parents: [folderId] });
         const form = new FormData();
         form.append("metadata", new Blob([meta], { type: "application/json" }));
         form.append("file", blob);
-
         const r = await fetch(
           "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name",
           {
@@ -1963,7 +2009,7 @@
           },
         );
         if (!r.ok) throw new Error(`Drive upload failed: ${r.status}`);
-        return await r.json(); // { id, name }
+        return await r.json();
       }
 
       async function deletePhotoFromDrive(fileId) {
@@ -1972,18 +2018,6 @@
           method: "DELETE",
           headers: { Authorization: `Bearer ${driveToken}` },
         });
-      }
-
-      // Fetch photo from Drive as an object URL for display
-      async function getDrivePhotoUrl(fileId) {
-        if (!isDriveTokenValid()) return null;
-        const r = await fetch(
-          `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
-          { headers: { Authorization: `Bearer ${driveToken}` } },
-        );
-        if (!r.ok) return null;
-        const blob = await r.blob();
-        return URL.createObjectURL(blob);
       }
 
       // ═══════════════════════════════════════════════════════════════
@@ -2014,19 +2048,15 @@
       }
 
       // ═══════════════════════════════════════════════════════════════
-      //  LOAD & RENDER (called on auth state change)
+      //  LOAD & RENDER
       // ═══════════════════════════════════════════════════════════════
       async function loadAndRender() {
-        // Always hide the sign-in overlay first — the user IS authenticated at this point.
-        // Any further error should show setup, never leave them stuck on the sign-in screen.
         document.getElementById("signinOverlay").classList.add("gone");
-
         let profile = null;
         try {
           profile = await loadProfile();
         } catch (err) {
-          // Firestore down / database missing — fall through to setup overlay
-          console.warn("Could not load profile from Firestore:", err);
+          console.warn("Could not load profile:", err);
         }
 
         if (!profile || !profile.dob) {
@@ -2037,7 +2067,6 @@
         showApp();
         renderStats();
         renderGrid();
-        // Drive folder is created lazily on first photo upload
       }
 
       // ═══════════════════════════════════════════════════════════════
@@ -2056,7 +2085,6 @@
             alert("Please enter your date of birth.");
             return;
           }
-
           await saveProfile({
             dob,
             lifespan,
@@ -2083,20 +2111,18 @@
         const pct = ((lived / totalWeeks) * 100).toFixed(1);
         const yearsLeft = Math.floor(remaining / 52);
         const memories = (profileCache.weekIndicesWithData || []).length;
-
         document.getElementById("statsBar").innerHTML = `
-    <div class="stat-cell with-bar">
-      <span class="stat-lbl">life lived</span>
-      <span class="stat-val">${pct}%</span>
-      <div class="mini-bar"><div class="mini-bar-fill" style="width:${pct}%"></div></div>
-    </div>
-    <div class="stat-cell"><span class="stat-val">${lived.toLocaleString()}</span><span class="stat-lbl">weeks lived</span></div>
-    <div class="stat-cell"><span class="stat-val">${remaining.toLocaleString()}</span><span class="stat-lbl">weeks left</span></div>
-    <div class="stat-cell"><span class="stat-val">${yearsLeft}</span><span class="stat-lbl">years left</span></div>
-    <div class="stat-cell"><span class="stat-val">~${remaining.toLocaleString()}</span><span class="stat-lbl">weekends left</span></div>
-    <div class="stat-cell"><span class="stat-val">${yearsLeft}</span><span class="stat-lbl">birthdays left</span></div>
-    <div class="stat-cell"><span class="stat-val">${memories}</span><span class="stat-lbl">memories logged</span></div>`;
-
+          <div class="stat-cell with-bar">
+            <span class="stat-lbl">life lived</span>
+            <span class="stat-val">${pct}%</span>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:${pct}%"></div></div>
+          </div>
+          <div class="stat-cell"><span class="stat-val">${lived.toLocaleString()}</span><span class="stat-lbl">weeks lived</span></div>
+          <div class="stat-cell"><span class="stat-val">${remaining.toLocaleString()}</span><span class="stat-lbl">weeks left</span></div>
+          <div class="stat-cell"><span class="stat-val">${yearsLeft}</span><span class="stat-lbl">years left</span></div>
+          <div class="stat-cell"><span class="stat-val">~${remaining.toLocaleString()}</span><span class="stat-lbl">weekends left</span></div>
+          <div class="stat-cell"><span class="stat-val">${yearsLeft}</span><span class="stat-lbl">birthdays left</span></div>
+          <div class="stat-cell"><span class="stat-val">${memories}</span><span class="stat-lbl">memories logged</span></div>`;
         document.getElementById("footerWeeks").textContent =
           `${profileCache.name ? profileCache.name + " · " : ""}week ${(lived + 1).toLocaleString()} of ${totalWeeks.toLocaleString()}`;
       }
@@ -2179,7 +2205,6 @@
             else if (idx === curIdx) dot.classList.add("now");
             else dot.classList.add("future");
 
-            // Habit overlay (uses cached week data)
             if (habitMode && idx <= curIdx && habits.length > 0) {
               const data = weeksCache[idx];
               const done = habits.filter(
@@ -2204,7 +2229,6 @@
         grid.appendChild(frag);
       }
 
-      // Habit toggle — lazy-loads all week data for overlay
       document
         .getElementById("habitToggle")
         .addEventListener("click", async () => {
@@ -2217,9 +2241,7 @@
           document
             .getElementById("habitToggle")
             .classList.toggle("active", habitMode);
-
           if (habitMode) {
-            // Load all weeks with data for habit calculations
             const indices = profileCache.weekIndicesWithData || [];
             const missing = indices.filter((i) => !weeksCache[i]);
             if (missing.length) {
@@ -2247,9 +2269,7 @@
           `Age ${ageYr} · Week ${(idx + 1).toLocaleString()} of ${totalW.toLocaleString()}` +
           (idx === currentWeekIdx(dob) ? " · this week" : "");
 
-        // Load week from Firestore (or cache)
         const stored = (await loadWeek(idx)) || {};
-        // Backward-compat: old photoData single string → photos array
         let photos = Array.isArray(stored.photos)
           ? [...stored.photos]
           : stored.photoData
@@ -2260,8 +2280,8 @@
           note: stored.note || "",
           mood: stored.mood || null,
           habits: { ...(stored.habits || {}) },
-          photos, // [{thumb, fileId?, uploading?}]
-          deletedFileIds: [], // Drive file IDs to delete on save
+          photos,
+          deletedFileIds: [],
         };
         activeIdx = idx;
 
@@ -2273,7 +2293,6 @@
           );
         renderPhotoStrip();
         renderChecklist();
-
         document.getElementById("weekPanel").classList.add("open");
         document.getElementById("backdrop").classList.add("open");
       }
@@ -2300,14 +2319,10 @@
           const btn = document.getElementById("panelSave");
           btn.disabled = true;
           btn.textContent = "Saving…";
-
           try {
-            // Delete any removed Drive photos
             for (const fileId of draft.deletedFileIds || []) {
               await deletePhotoFromDrive(fileId).catch(() => {});
             }
-
-            // Strip 'uploading' flags and clean for Firestore
             const cleanPhotos = (draft.photos || []).map(
               ({ thumb, fileId }) => {
                 const p = { thumb };
@@ -2315,14 +2330,12 @@
                 return p;
               },
             );
-
             await saveWeek(activeIdx, {
               note: draft.note,
               mood: draft.mood,
               habits: draft.habits,
               photos: cleanPhotos,
             });
-
             closePanel();
             renderStats();
             renderGrid();
@@ -2334,7 +2347,6 @@
           }
         });
 
-      // Mood
       document.querySelectorAll(".mood-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
           draft.mood =
@@ -2360,7 +2372,6 @@
           const img = document.createElement("img");
           img.src = p.thumb;
           img.alt = `Photo ${i + 1}`;
-
           const del = document.createElement("button");
           del.className = "photo-thumb-del";
           del.textContent = "×";
@@ -2372,8 +2383,6 @@
             renderPhotoStrip();
           });
           thumb.append(img, del);
-
-          // Show spinner if still uploading to Drive
           if (p.uploading) {
             const prog = document.createElement("div");
             prog.className = "photo-thumb-progress";
@@ -2383,7 +2392,6 @@
           strip.appendChild(thumb);
         });
 
-        // Add button
         if ((draft.photos || []).length < MAX_PHOTOS) {
           const addBtn = document.createElement("button");
           addBtn.className = "photo-add-btn";
@@ -2401,15 +2409,15 @@
         const n = (draft.photos || []).length;
         count.textContent =
           n === 0 ? "" : `${n} / ${MAX_PHOTOS} photo${n !== 1 ? "s" : ""}`;
-
-        // Drive note
-        const hasDrive = isDriveTokenValid();
         note.style.display = n > 0 ? "" : "none";
-        note.textContent = hasDrive
+        note.textContent = isDriveTokenValid()
           ? "✓ photos uploading to your Google Drive"
-          : "⚠ Sign in to sync photos to Drive";
+          : "⟳ connecting to Google Drive for photo backup…";
       }
 
+      // FIX: handlePhotoSelect now properly awaits Drive token before uploading.
+      //      waitForDriveToken() shows the GIS consent screen and resolves when
+      //      the user grants access — no more silent skip.
       async function handlePhotoSelect(e) {
         const files = Array.from(e.target.files);
         const remaining = MAX_PHOTOS - (draft.photos || []).length;
@@ -2417,34 +2425,32 @@
         if (!draft.photos) draft.photos = [];
 
         for (const file of toProcess) {
-          // Generate thumb immediately for display
+          // Show thumb immediately
           const thumb = await compressImage(file, 160, 0.65);
           const entry = { thumb, uploading: true };
           draft.photos.push(entry);
           renderPhotoStrip();
 
-          // Upload full-size to Drive in background.
-          // If we don't have a Drive token yet, request one (shows consent screen).
-          if (!isDriveTokenValid()) {
-            requestDriveToken(false); // non-silent — user must grant drive.file scope
-          }
-          if (isDriveTokenValid()) {
-            try {
-              const folderId = await ensureDriveFolder();
-              if (folderId) {
-                const fullSize = await compressImage(file, 1200, 0.82);
-                const uploaded = await uploadPhotoToDrive(
-                  fullSize,
-                  `lifecal_w${activeIdx}_${Date.now()}.jpg`,
-                  folderId,
-                );
-                entry.fileId = uploaded.id;
-              }
-            } catch (err) {
-              console.warn("Drive upload failed for photo:", err);
-              // Photo is still saved (thumb stored in Firestore)
+          // Attempt Drive upload — properly await token
+          try {
+            // This will show the Google consent popup if needed and wait for it
+            await waitForDriveToken();
+
+            const folderId = await ensureDriveFolder();
+            if (folderId) {
+              const fullSize = await compressImage(file, 1200, 0.82);
+              const uploaded = await uploadPhotoToDrive(
+                fullSize,
+                `lifecal_w${activeIdx}_${Date.now()}.jpg`,
+                folderId,
+              );
+              entry.fileId = uploaded.id;
             }
+          } catch (err) {
+            console.warn("Drive upload failed for photo:", err);
+            // Photo thumb is still saved in Firestore even if Drive upload fails
           }
+
           delete entry.uploading;
           renderPhotoStrip();
         }
@@ -2536,7 +2542,6 @@
           )
             return;
           setSyncStatus("syncing");
-          // Delete all weeks subcollection (batch)
           const weekSnaps = await userDoc().collection("weeks").get();
           const batch = db.batch();
           weekSnaps.forEach((d) => batch.delete(d.ref));
@@ -2596,10 +2601,9 @@
       applyTheme();
       setSyncStatus("idle");
       setDriveStatus("disconnected");
-      // Auth state listener above handles the rest
     </script>
 
-    <!-- Google Identity Services — loads after main script so initGIS is defined -->
+    <!-- Google Identity Services — must load AFTER main script so initGIS is defined -->
     <script
       src="https://accounts.google.com/gsi/client"
       async
