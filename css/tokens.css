@@ -1,36 +1,73 @@
 /* ============================================================
-   tokens.css — Design Tokens
-   Single source of truth for all design values.
-   Add new tokens here; never hardcode values in components.
+   css/tokens.css — Minimalist Design Tokens
+   Single source of truth for all design values across the site.
    ============================================================ */
 
 :root {
-  /* ── Colour Palette ── */
-  --yellow:  #FFE600;
-  --pink:    #FF2D6B;
-  --blue:    #00C2FF;
-  --purple:  #6A0DAD;
-  --dark:    #1A0030;
-  --ink:     #0D0D0D;
-  --cream:   #FFFEF0;
-  --white:   #FFFFFF;
-
-  /* ── Borders ── */
-  --border-thin:  3px solid var(--ink);
-  --border-thick: 5px solid var(--ink);
-
-  /* ── Shadows ── */
-  --shadow-pop:   6px 6px 0px var(--ink);
-  --shadow-big:   10px 10px 0px var(--ink);
-  --shadow-hover: 4px 4px 0px var(--ink);
-
   /* ── Typography ── */
-  --font-comic: 'Bangers', cursive;
-  --font-body:  'Comic Neue', cursive;
+  --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --font-body: var(--font-sans);
+  --font-comic: var(--font-mono);
 
-  /* ── Shape ── */
-  --radius: 12px;
+  /* ── Light Mode Palette (Default) ── */
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --surface2: #f0eeea;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-hover: rgba(0, 0, 0, 0.2);
+  --text: #1a1917;
+  --text2: #6b6860;
+  --text3: #a09d98;
+  --accent: #1a1917;
+  --modal-bg: rgba(0, 0, 0, 0.4);
+  --danger: #c0392b;
 
-  /* ── Layout ── */
-  --nav-height: 62px;
+  /* ── Compatibility Aliases ── */
+  --cream: var(--surface);
+  --white: #ffffff;
+  --ink: var(--text);
+  --dark: var(--bg);
+
+  /* ── Accent Highlights ── */
+  --yellow: #FFE600;
+  --pink: #FF2D6B;
+  --blue: #00C2FF;
+  --purple: #6A0DAD;
+
+  /* ── Shadows & Borders ── */
+  --border-thin: 1px solid var(--border);
+  --border-thick: 1px solid var(--border-hover);
+  --shadow-pop: 0 4px 20px rgba(0, 0, 0, 0.04);
+  --shadow-big: 0 12px 32px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.06);
+
+  /* ── Shape & Layout ── */
+  --radius: 16px;
+  --radius-sm: 10px;
+  --nav-height: 66px;
+  --transition-smooth: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Dark Mode Palette ── */
+[data-theme="dark"] {
+  --bg: #111110;
+  --surface: #1c1c1a;
+  --surface2: #242422;
+  --border: rgba(255, 255, 255, 0.07);
+  --border-hover: rgba(255, 255, 255, 0.18);
+  --text: #f0eeea;
+  --text2: #8a8880;
+  --text3: #555350;
+  --accent: #f0eeea;
+  --modal-bg: rgba(0, 0, 0, 0.65);
+  --shadow-pop: 0 4px 20px rgba(0, 0, 0, 0.25);
+  --shadow-big: 0 12px 32px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.3);
+
+  /* ── Dark Mode Compatibility Aliases ── */
+  --cream: var(--surface);
+  --white: #1c1c1a;
+  --ink: var(--text);
+  --dark: var(--bg);
 }

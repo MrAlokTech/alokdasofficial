@@ -1,7 +1,7 @@
 /* ================================================================
    style.css — Main Stylesheet Entry Point
-   Import order: tokens → base → nav → bursts → preloader
-                 → hero → about → projects → games-section
+   Import order: tokens → base → nav → preloader
+                 → hero → about → projects → tools-section → games-section
                  → contact → footer → responsive
    ================================================================ */
 
@@ -13,6 +13,7 @@
 @import url('css/hero.css');
 @import url('css/about.css');
 @import url('css/projects.css');
+@import url('css/tools-section.css');
 @import url('css/games-section.css');
 @import url('css/contact.css');
 @import url('css/footer.css');

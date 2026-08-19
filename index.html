@@ -3,25 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Alok Das | Chemistry & Code</title>
+    <title>Alok Das | Chemistry &amp; Code</title>
 
     <!-- SEO -->
     <meta
       name="description"
-      content="Portfolio of Alok Das — B.Sc. Chemistry graduate, QC Analyst & self-taught app developer from Hojai, Assam. Built with comic-book flair."
+      content="Portfolio of Alok Das — B.Sc. Chemistry graduate, QC Analyst &amp; self-taught app developer from Hojai, Assam."
     />
     <meta name="author" content="Alok Das" />
-    <meta property="og:title" content="Alok Das — Chemistry & Code" />
+    <meta property="og:title" content="Alok Das — Chemistry &amp; Code" />
     <meta
       property="og:description"
-      content="QC Analyst & App Developer. Comics, Chemistry, and Code."
+      content="QC Analyst &amp; App Developer. Chemistry, Code, and Browser Utilities."
     />
     <meta property="og:url" content="https://alokdasofficial.in" />
-    <meta name="theme-color" content="#FFE600" />
+    <meta name="theme-color" content="#f5f4f0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
@@ -29,55 +29,27 @@
   </head>
   <body>
     <!-- ═══════════════════════════════════════
-         PRELOADER (inline — renders before JS)
+         PRELOADER
          ═══════════════════════════════════════ -->
     <div id="preloader" class="preloader" role="status" aria-label="Loading">
       <div class="preloader-inner">
-        <!-- The Radioactive Code Reactor (Beaker + Code Rain) -->
-        <div class="pl-beaker-container" aria-hidden="true">
-          <div class="pl-code-rain">
-            <span class="pl-code-char">⚗️</span>
-            <span class="pl-code-char">1</span>
-            <span class="pl-code-char">0</span>
-            <span class="pl-code-char">💻</span>
-          </div>
-          <div class="pl-beaker">
-            <div class="pl-beaker-liquid">
-              <div class="pl-beaker-liquid-wave"></div>
-            </div>
-            <div class="pl-bubble pl-bubble-1"></div>
-            <div class="pl-bubble pl-bubble-2"></div>
-            <div class="pl-bubble pl-bubble-3"></div>
-          </div>
-        </div>
-
-        <div class="preloader-title" aria-hidden="true">
-          <span class="pl-letter" style="--i: 0">L</span>
-          <span class="pl-letter" style="--i: 1">O</span>
-          <span class="pl-letter" style="--i: 2">A</span>
-          <span class="pl-letter" style="--i: 3">D</span>
-          <span class="pl-letter" style="--i: 4">I</span>
-          <span class="pl-letter" style="--i: 5">N</span>
-          <span class="pl-letter" style="--i: 6">G</span>
+        <div class="pl-beaker-container" aria-hidden="true"></div>
+        <div class="preloader-title">
+          <span>ALOK</span> <span style="color: var(--text3)">DAS</span>
         </div>
         <div class="preloader-dots" aria-hidden="true">
           <span class="pdot"></span><span class="pdot"></span
           ><span class="pdot"></span>
         </div>
-        <p class="preloader-sub">Fusing chemicals &amp; code…</p>
+        <p class="preloader-sub">Synthesizing chemistry &amp; code…</p>
       </div>
     </div>
 
-    <!-- Global decoratives -->
+    <!-- Background Grid Overlay -->
     <div class="halftone-bg" aria-hidden="true"></div>
-    <div class="burst burst-1" aria-hidden="true">POW!</div>
-    <div class="burst burst-2" aria-hidden="true">ZAP!</div>
-    <div class="burst burst-3" aria-hidden="true">WOW!</div>
-    <div class="burst burst-4" aria-hidden="true">BAM!</div>
 
     <!-- ═══════════════════════════════════════
          NAVIGATION
-         Styles: css/nav.css | Logic: js/nav.js
          ═══════════════════════════════════════ -->
     <nav
       class="comic-nav"
@@ -86,74 +58,99 @@
       aria-label="Main navigation"
     >
       <a href="#home" class="nav-logo" aria-label="Alok Das home">
-        <img src="/assets/logo.png" alt="Alok Das Logo" class="nav-logo-img" />
+        ALOK DAS <span class="nav-logo-tag">/ PORTFOLIO</span>
       </a>
 
-      <ul class="nav-links" role="list">
-        <li>
-          <a href="#home" class="nav-link active" data-section="home">HOME</a>
-        </li>
-        <li>
-          <a href="#about" class="nav-link" data-section="about">ABOUT</a>
-        </li>
-        <li>
-          <a href="#projects" class="nav-link" data-section="projects"
-            >PROJECTS</a
-          >
-        </li>
-        <li><a href="/lab" class="nav-link nav-lab">LAB</a></li>
-        <li>
-          <a href="#contact" class="nav-link" data-section="contact">CONTACT</a>
-        </li>
-        <li><a href="/resume" class="nav-link nav-resume">RESUME</a></li>
-      </ul>
+      <div class="nav-right-group">
+        <ul class="nav-links" role="list">
+          <li>
+            <a href="#home" class="nav-link active" data-section="home">HOME</a>
+          </li>
+          <li>
+            <a href="#about" class="nav-link" data-section="about">ABOUT</a>
+          </li>
+          <li>
+            <a href="#projects" class="nav-link" data-section="projects"
+              >PROJECTS</a
+            >
+          </li>
+          <li>
+            <a href="#tools" class="nav-link" data-section="tools">TOOLS</a>
+          </li>
+          <li><a href="/lab" class="nav-link nav-lab">LAB</a></li>
+          <li>
+            <a href="#games" class="nav-link" data-section="games">GAMES</a>
+          </li>
+          <li>
+            <a href="#contact" class="nav-link" data-section="contact"
+              >CONTACT</a
+            >
+          </li>
+          <li><a href="/resume" class="nav-link nav-resume">RESUME</a></li>
+        </ul>
 
-      <button
-        class="nav-hamburger"
-        id="nav-hamburger"
-        aria-label="Toggle navigation menu"
-        aria-expanded="false"
-      >
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-      </button>
+        <!-- Theme Toggle Button -->
+        <button
+          class="theme-toggle-btn"
+          id="themeBtn"
+          title="Toggle dark/light theme"
+          aria-label="Toggle theme"
+        >
+          ☾
+        </button>
+
+        <button
+          class="nav-hamburger"
+          id="nav-hamburger"
+          aria-label="Toggle navigation menu"
+          aria-expanded="false"
+        >
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
     </nav>
 
-    <!-- Mobile menu (rendered below nav by JS toggle) -->
+    <!-- Mobile menu -->
     <div class="nav-mobile-menu" id="nav-mobile-menu" role="menu">
       <a href="#home" class="nav-link" data-section="home" role="menuitem"
-        >🏠 HOME</a
+        >HOME</a
       >
       <a href="#about" class="nav-link" data-section="about" role="menuitem"
-        >👤 ABOUT</a
+        >ABOUT</a
       >
       <a
         href="#projects"
         class="nav-link"
         data-section="projects"
         role="menuitem"
-        >💼 PROJECTS</a
+        >PROJECTS</a
       >
-      <a href="/lab" class="nav-link nav-lab" role="menuitem">🧪 LAB</a>
+      <a href="#tools" class="nav-link" data-section="tools" role="menuitem"
+        >TOOLS</a
+      >
+      <a href="/lab" class="nav-link nav-lab" role="menuitem">LAB</a>
+      <a href="#games" class="nav-link" data-section="games" role="menuitem"
+        >GAMES</a
+      >
       <a href="#contact" class="nav-link" data-section="contact" role="menuitem"
-        >📡 CONTACT</a
+        >CONTACT</a
       >
-      <a href="/resume" class="nav-link nav-resume" role="menuitem"
-        >📄 RESUME</a
-      >
+      <a href="/resume" class="nav-link nav-resume" role="menuitem">RESUME</a>
     </div>
 
     <!-- ═══════════════════════════════════════
          HOME — Hero Section
-         Styles: css/hero.css
          ═══════════════════════════════════════ -->
     <section class="hero-section" id="home" aria-label="Home">
       <div class="hero-inner">
-        <div class="issue-tag">Issue #001 — Portfolio Edition! 🦸</div>
+        <div class="issue-tag">
+          B.Sc. Chemistry · QC Analyst · App Developer
+        </div>
 
         <h1 class="hero-title">
-          <span class="title-line-1">ALOK</span>
+          <span class="title-line-1">ALOK </span>
           <span class="title-line-2">DAS</span>
         </h1>
 
@@ -162,11 +159,50 @@
           ><span class="cursor" aria-hidden="true">|</span>
         </div>
 
-        <p class="hero-sub">B.Sc. Chemistry · QC Analyst · App Developer</p>
+        <p class="hero-sub">
+          Translating SOP compliance, analytical chemistry, and code into clean
+          digital systems.
+        </p>
 
         <div class="hero-cta-group">
-          <a href="#about" class="hero-primary-btn">EXPLORE MY WORLD ↓</a>
-          <a href="/resume" class="resume-btn">📄 Resume</a>
+          <a href="#projects" class="hero-primary-btn">EXPLORE WORK →</a>
+          <a href="/tools" class="tools-btn">
+            TOOLS
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+            </svg>
+          </a>
+          <a href="/resume" class="resume-btn">
+            RESUME
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+              />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+            </svg>
+          </a>
         </div>
       </div>
 
@@ -182,62 +218,98 @@
 
     <!-- ═══════════════════════════════════════
          ABOUT — Origin Story
-         Styles: css/about.css
          ═══════════════════════════════════════ -->
     <section class="about-section" id="about" aria-label="About Alok">
-      <h2 class="section-heading">⚡ ORIGIN STORY</h2>
-
       <div class="about-grid">
-        <!-- Left: personality -->
+        <!-- Left: Personality card -->
         <div class="about-panel-left">
-          <span class="about-avatar" aria-hidden="true">⚗️</span>
+          <span class="about-avatar" aria-hidden="true">
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+              width="48"
+              height="48"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M10 2v7.5L4.5 18a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L14 9.5V2"
+              />
+              <path d="M8.5 2h7" />
+              <path d="M7 16h10" />
+            </svg>
+          </span>
           <div class="about-name-tag">ALOK DAS</div>
-          <div class="about-role-badge">QC ANALYST + APP DEVELOPER</div>
+          <div class="about-role-badge">QC Analyst &amp; App Developer</div>
           <p class="about-bio">
-            Chemistry grad from Hojai, Assam 🧪 — I analyse substances in the
-            lab
-            <em>and</em> ship apps to the Play Store. I picked up coding while
-            studying chemical equations, built my first app using Flutter, and
-            never looked back. Detail-oriented by nature (QC does that to you),
-            creative by choice.
+            B.Sc. Chemistry graduate from Hojai, Assam. I conduct analytical
+            screening in the lab and develop cross-platform applications with
+            Flutter &amp; Web technologies. Detail-oriented by habit, methodical
+            by discipline.
           </p>
-          <p class="about-location">📍 Hojai, Assam, India</p>
-          <div class="lang-pills" aria-label="Languages I speak">
-            <span class="lang-pill">Bengali Native</span>
+          <div class="about-location">
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+            Hojai, Assam, India
+          </div>
+          <div class="lang-pills" aria-label="Languages">
+            <span class="lang-pill">Assamese</span>
+            <span class="lang-pill">Bengali (Native)</span>
             <span class="lang-pill">English</span>
             <span class="lang-pill">Hindi</span>
-            <span class="lang-pill">Assamese</span>
           </div>
         </div>
 
-        <!-- Right: skills + education -->
+        <!-- Right: Skills & Education -->
         <div class="about-panel-right">
           <div class="about-card">
-            <div class="about-card-title">💪 POWER STATS</div>
+            <div class="about-card-title">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
+              SKILLS &amp; PROFICIENCY
+            </div>
             <div class="skill-bar-list">
               <div class="skill-bar-item">
                 <div class="skill-bar-label">
-                  <span>Analytical Chemistry</span><span>88%</span>
+                  <span>Analytical Chemistry &amp; Assay</span><span>88%</span>
                 </div>
                 <div class="skill-bar-track">
-                  <div
-                    class="skill-bar-fill"
-                    style="background: var(--yellow)"
-                    data-width="88"
-                  ></div>
+                  <div class="skill-bar-fill" data-width="88"></div>
                 </div>
               </div>
 
               <div class="skill-bar-item">
                 <div class="skill-bar-label">
-                  <span>QC Documentation (GLP/SOP)</span><span>85%</span>
+                  <span>QC Documentation (GLP / SOP)</span><span>85%</span>
                 </div>
                 <div class="skill-bar-track">
-                  <div
-                    class="skill-bar-fill"
-                    style="background: var(--pink)"
-                    data-width="85"
-                  ></div>
+                  <div class="skill-bar-fill" data-width="85"></div>
                 </div>
               </div>
 
@@ -246,11 +318,7 @@
                   <span>Flutter / Dart</span><span>80%</span>
                 </div>
                 <div class="skill-bar-track">
-                  <div
-                    class="skill-bar-fill"
-                    style="background: var(--blue)"
-                    data-width="80"
-                  ></div>
+                  <div class="skill-bar-fill" data-width="80"></div>
                 </div>
               </div>
 
@@ -259,11 +327,7 @@
                   <span>MS Excel &amp; Data Analysis</span><span>75%</span>
                 </div>
                 <div class="skill-bar-track">
-                  <div
-                    class="skill-bar-fill"
-                    style="background: var(--purple)"
-                    data-width="75"
-                  ></div>
+                  <div class="skill-bar-fill" data-width="75"></div>
                 </div>
               </div>
 
@@ -272,21 +336,33 @@
                   <span>Kotlin / Android</span><span>65%</span>
                 </div>
                 <div class="skill-bar-track">
-                  <div
-                    class="skill-bar-fill"
-                    style="background: var(--cream)"
-                    data-width="65"
-                  ></div>
+                  <div class="skill-bar-fill" data-width="65"></div>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="about-card">
-            <div class="about-card-title">🎓 EDUCATION ARC</div>
+            <div class="about-card-title">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                <path d="M6 12v5c3 3 9 3 12 0v-5" />
+              </svg>
+              EDUCATION
+            </div>
             <div class="edu-timeline">
               <div class="edu-item">
-                <div class="edu-dot" style="background: var(--yellow)"></div>
+                <div class="edu-dot"></div>
                 <div class="edu-info">
                   <span class="edu-degree">B.Sc. Chemistry</span>
                   <span class="edu-school"
@@ -297,9 +373,9 @@
               </div>
 
               <div class="edu-item">
-                <div class="edu-dot" style="background: var(--blue)"></div>
+                <div class="edu-dot"></div>
                 <div class="edu-info">
-                  <span class="edu-degree">Higher Secondary · Science</span>
+                  <span class="edu-degree">Higher Secondary (Science)</span>
                   <span class="edu-school"
                     >Jawahar Navodaya Vidyalaya, Assam · CBSE</span
                   >
@@ -308,7 +384,7 @@
               </div>
 
               <div class="edu-item">
-                <div class="edu-dot" style="background: var(--pink)"></div>
+                <div class="edu-dot"></div>
                 <div class="edu-info">
                   <span class="edu-degree">Matriculation (Class X)</span>
                   <span class="edu-school"
@@ -324,12 +400,10 @@
     </section>
 
     <!-- ═══════════════════════════════════════
-         PROJECTS — Blog-Style Work Cards
-         Styles: css/projects.css
-         Carousel logic: js/interactions.js → setupCarousels()
+         PROJECTS — Featured Work
          ═══════════════════════════════════════ -->
     <section class="projects-section" id="projects" aria-label="Projects">
-      <h2 class="section-heading">📂 MY WORK</h2>
+      <h2 class="section-heading">FEATURED WORK</h2>
 
       <div class="works-grid" id="works-grid">
         <!-- populated by js/projects-grid.js from js/projects-data.js -->
@@ -337,42 +411,226 @@
     </section>
 
     <!-- ═══════════════════════════════════════
+         TOOLS SHOWCASE
+         ═══════════════════════════════════════ -->
+    <section class="tools-section" id="tools" aria-label="Tools showcase">
+      <div class="tools-section-header">
+        <h2 class="section-heading">BROWSER UTILITIES</h2>
+        <a href="/tools" class="see-all-tools-btn">SEE ALL TOOLS →</a>
+      </div>
+
+      <div class="tools-preview-grid">
+        <!-- World Clock -->
+        <a href="/tools/clocks/" class="tool-preview-card">
+          <div>
+            <div class="tool-preview-icon">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                width="22"
+                height="22"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+            </div>
+            <h3 class="tool-preview-title">World Clock</h3>
+            <p class="tool-preview-desc">
+              Minimalist world clock &amp; timezone tracker across global
+              cities.
+            </p>
+          </div>
+          <span class="tool-preview-link">Launch <span>→</span></span>
+        </a>
+
+        <!-- Focus -->
+        <a href="/tools/focus/" class="tool-preview-card">
+          <div>
+            <div class="tool-preview-icon">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                width="22"
+                height="22"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 22h14" />
+                <path d="M5 2h14" />
+                <path
+                  d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"
+                />
+                <path
+                  d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"
+                />
+              </svg>
+            </div>
+            <h3 class="tool-preview-title">Focus</h3>
+            <p class="tool-preview-desc">
+              Pomodoro deep work timer featuring ambient audio &amp; YouTube
+              sync.
+            </p>
+          </div>
+          <span class="tool-preview-link">Launch <span>→</span></span>
+        </a>
+
+        <!-- GATE CY 2028 -->
+        <a href="/tools/gate-cy-2028/" class="tool-preview-card">
+          <div>
+            <div class="tool-preview-icon">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                width="22"
+                height="22"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M10 2v7.5L4.5 18a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L14 9.5V2"
+                />
+                <path d="M8.5 2h7" />
+                <path d="M7 16h10" />
+              </svg>
+            </div>
+            <h3 class="tool-preview-title">GATE CY 2028</h3>
+            <p class="tool-preview-desc">
+              Daily chemistry revision capsule &amp; syllabus prep tracker.
+            </p>
+          </div>
+          <span class="tool-preview-link">Launch <span>→</span></span>
+        </a>
+
+        <!-- SpeedCheck -->
+        <a href="/tools/speedchecker/" class="tool-preview-card">
+          <div>
+            <div class="tool-preview-icon">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                width="22"
+                height="22"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
+            </div>
+            <h3 class="tool-preview-title">SpeedCheck</h3>
+            <p class="tool-preview-desc">
+              Browser-based internet connection bandwidth &amp; latency test.
+            </p>
+          </div>
+          <span class="tool-preview-link">Launch <span>→</span></span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
          GAMES HUB
-         Styles: css/games-section.css
-         Game pages: games/
          ═══════════════════════════════════════ -->
     <section class="games-hub-section" id="games" aria-label="Games">
-      <h2 class="section-heading">🕹️ GAME ZONE</h2>
+      <h2 class="section-heading">GAME ZONE</h2>
       <p class="games-hub-desc">
-        Take a break — all games run offline, no internet needed.
+        Lightweight, offline games built with pure HTML and Vanilla JS.
       </p>
 
       <div class="games-grid">
         <div class="game-card">
-          <span class="game-card-icon" aria-hidden="true">🐍</span>
-          <h3 class="game-card-title">SNAKE</h3>
-          <p class="game-card-desc">
-            Classic snake. Eat, grow, don't crash. Keyboard + touch controls.
-          </p>
+          <div>
+            <div class="game-card-icon" aria-hidden="true">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                width="32"
+                height="32"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M4 12h8a4 4 0 0 1 4 4v0a4 4 0 0 1-4 4H4" />
+                <path d="M20 12H12a4 4 0 0 1-4-4v0a4 4 0 0 1 4-4h8" />
+              </svg>
+            </div>
+            <h3 class="game-card-title">SNAKE</h3>
+            <p class="game-card-desc">
+              Classic snake game. Eat food, grow longer, save high scores.
+            </p>
+          </div>
           <a href="games/snake.html" class="game-play-btn">PLAY NOW →</a>
         </div>
 
         <div class="game-card">
-          <span class="game-card-icon" aria-hidden="true">🧪</span>
-          <h3 class="game-card-title">ELEMENT MATCH</h3>
-          <p class="game-card-desc">
-            Flip cards to match chemical element pairs. Test your periodic
-            table!
-          </p>
+          <div>
+            <div class="game-card-icon" aria-hidden="true">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                width="32"
+                height="32"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M10 2v7.5L4.5 18a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L14 9.5V2"
+                />
+                <path d="M8.5 2h7" />
+                <path d="M7 16h10" />
+              </svg>
+            </div>
+            <h3 class="game-card-title">ELEMENT MATCH</h3>
+            <p class="game-card-desc">
+              Chemistry memory match! Flip cards to pair chemical elements.
+            </p>
+          </div>
           <a href="games/memory.html" class="game-play-btn">PLAY NOW →</a>
         </div>
 
         <div class="game-card">
-          <span class="game-card-icon" aria-hidden="true">⭕</span>
-          <h3 class="game-card-title">TIC-TAC-TOE</h3>
-          <p class="game-card-desc">
-            Classic XO vs a smart computer opponent. First to 3 in a row wins!
-          </p>
+          <div>
+            <div class="game-card-icon" aria-hidden="true">
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                width="32"
+                height="32"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <path d="M9 3v18" />
+                <path d="M15 3v18" />
+                <path d="M3 9h18" />
+                <path d="M3 15h18" />
+              </svg>
+            </div>
+            <h3 class="game-card-title">TIC-TAC-TOE</h3>
+            <p class="game-card-desc">
+              XO vs a smart computer opponent. Track score per session.
+            </p>
+          </div>
           <a href="games/tictactoe.html" class="game-play-btn">PLAY NOW →</a>
         </div>
       </div>
@@ -382,24 +640,40 @@
 
     <!-- ═══════════════════════════════════════
          CONTACT
-         Styles: css/contact.css
-         !! Replace YOUR_FORM_ID in the form action !!
          ═══════════════════════════════════════ -->
     <section class="contact-section" id="contact" aria-label="Contact">
-      <h2 class="section-heading">Let's Connect!</h2>
+      <h2 class="section-heading">CONNECT</h2>
 
       <div class="contact-layout">
         <!-- Info panel -->
         <div class="contact-info-panel">
           <div class="contact-speech">
-            Hey! I'm actively looking for <strong>QC Analyst</strong> roles and
-            exciting dev projects. Whether you've got a job, a collab, or just
-            want to talk chemistry — reach out! 🧪
+            Actively seeking <strong>QC Analyst</strong> positions, biotech/lab
+            projects, and software collaborations. Feel free to reach out
+            directly.
           </div>
 
           <div class="contact-chips">
             <a href="mailto:alok@alokdasofficial.in" class="contact-chip-link">
-              <span class="contact-chip-icon">📧</span>alok@alokdasofficial.in
+              <span class="contact-chip-icon">
+                <svg
+                  class="icon"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                  />
+                  <polyline points="22,6 12,13 2,6" />
+                </svg>
+              </span>
+              alok@alokdasofficial.in
             </a>
             <div class="safe-phone-container" id="phone-container">
               <button
@@ -408,8 +682,23 @@
                 id="phone-reveal-btn"
                 aria-label="Reveal phone number"
               >
-                <span class="contact-chip-icon">📱</span
-                ><span class="phone-masked-text">+91 91••• •••••</span>
+                <span class="contact-chip-icon">
+                  <svg
+                    class="icon"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                    <line x1="12" y1="18" x2="12.01" y2="18" />
+                  </svg>
+                </span>
+                <span class="phone-masked-text">+91 91••• •••••</span>
               </button>
             </div>
             <a
@@ -418,7 +707,23 @@
               rel="noopener"
               class="contact-chip-link"
             >
-              <span class="contact-chip-icon">📍</span>Hojai, Assam, India
+              <span class="contact-chip-icon">
+                <svg
+                  class="icon"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+              </span>
+              Hojai, Assam, India
             </a>
             <a
               href="https://github.com/MrAlokTech"
@@ -426,17 +731,33 @@
               rel="noopener"
               class="contact-chip-link"
             >
-              <span class="contact-chip-icon">💻</span>github.com/MrAlokTech
+              <span class="contact-chip-icon">
+                <svg
+                  class="icon"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="16 18 22 12 16 6" />
+                  <polyline points="8 6 2 12 8 18" />
+                </svg>
+              </span>
+              github.com/MrAlokTech
             </a>
           </div>
         </div>
 
         <!-- Formspree form -->
         <div class="contact-form-panel">
-          <div class="contact-form-title">DROP A MESSAGE!</div>
+          <div class="contact-form-title">SEND A MESSAGE</div>
 
           <div class="form-success" id="form-success">
-            ✅ MESSAGE RECEIVED! I'll get back to you soon 🚀
+            Message received! Thank you for reaching out.
           </div>
 
           <form
@@ -473,11 +794,11 @@
                 class="form-textarea"
                 id="c-message"
                 name="message"
-                placeholder="Hey Alok, I've got a lab job / app idea / chemistry question…"
+                placeholder="Hello Alok..."
                 required
               ></textarea>
             </div>
-            <button type="submit" class="form-submit">⚡ SEND MESSAGE</button>
+            <button type="submit" class="form-submit">SEND MESSAGE</button>
           </form>
         </div>
       </div>
@@ -485,11 +806,10 @@
 
     <!-- ═══════════════════════════════════════
          FOOTER
-         Styles: css/footer.css
          ═══════════════════════════════════════ -->
     <footer class="comic-footer" role="contentinfo">
       <div class="footer-inner">
-        <!-- Left: Brand -->
+        <!-- Brand -->
         <div class="footer-brand">
           <span class="footer-logo">ALOK DAS</span>
           <span class="footer-tagline"
@@ -497,13 +817,15 @@
           >
         </div>
 
-        <!-- Center: Nav -->
+        <!-- Nav -->
         <nav class="footer-nav" aria-label="Footer navigation">
           <a href="#home" class="footer-nav-link">Home</a>
           <span class="footer-nav-sep" aria-hidden="true">·</span>
           <a href="#about" class="footer-nav-link">About</a>
           <span class="footer-nav-sep" aria-hidden="true">·</span>
           <a href="#projects" class="footer-nav-link">Projects</a>
+          <span class="footer-nav-sep" aria-hidden="true">·</span>
+          <a href="/tools" class="footer-nav-link">Tools</a>
           <span class="footer-nav-sep" aria-hidden="true">·</span>
           <a href="/lab" class="footer-nav-link">Lab</a>
           <span class="footer-nav-sep" aria-hidden="true">·</span>
@@ -512,11 +834,9 @@
           <a href="#contact" class="footer-nav-link">Contact</a>
           <span class="footer-nav-sep" aria-hidden="true">·</span>
           <a href="/resume" class="footer-nav-link">Resume</a>
-          <span class="footer-nav-sep" aria-hidden="true">·</span>
-          <a href="/feedback" class="footer-nav-link">Feedback</a>
         </nav>
 
-        <!-- Right: Socials + Back to top -->
+        <!-- Right -->
         <div class="footer-right">
           <div class="footer-socials">
             <a
@@ -524,8 +844,24 @@
               class="footer-social-link"
               aria-label="Email Alok"
               title="Email"
-              >✉</a
             >
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
+            </a>
             <a
               href="https://github.com/MrAlokTech/"
               target="_blank"
@@ -533,8 +869,22 @@
               class="footer-social-link"
               aria-label="GitHub"
               title="GitHub"
-              >⌥</a
             >
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="16 18 22 12 16 6" />
+                <polyline points="8 6 2 12 8 18" />
+              </svg>
+            </a>
             <a
               href="https://wa.me/message/PLW3AG4MQZNUI1"
               target="_blank"
@@ -542,26 +892,31 @@
               class="footer-social-link"
               aria-label="WhatsApp"
               title="WhatsApp"
-              >📞</a
             >
+              <svg
+                class="icon"
+                viewBox="0 0 24 24"
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                <line x1="12" y1="18" x2="12.01" y2="18" />
+              </svg>
+            </a>
           </div>
           <a href="#home" class="footer-back-top" aria-label="Back to top"
-            >↑ Back to top</a
+            >↑ Top</a
           >
         </div>
       </div>
-
-      <div class="footer-bottom">
-        <p class="footer-copy">
-          © <span id="footer-year"></span> Alok Das · Built with 💝
-        </p>
-      </div>
     </footer>
 
-    <!-- ═══════════════════════════════════════
-         SCRIPTS — classic (non-module)
-         !! Do NOT add type="module" !!
-         ═══════════════════════════════════════ -->
+    <!-- SCRIPTS -->
     <script src="js/config.js"></script>
     <script src="js/typewriter.js"></script>
     <script src="js/preloader.js"></script>
@@ -569,7 +924,6 @@
     <script src="js/nav.js"></script>
     <script src="js/projects-data.js"></script>
     <script src="js/projects-grid.js"></script>
-    <!-- Firebase analytics tracker (loads SDK dynamically, non-blocking) -->
     <script src="js/firebase-tracker.js"></script>
     <script src="script.js"></script>
   </body>

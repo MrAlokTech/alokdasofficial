@@ -10,6 +10,13 @@
   padding: 0;
 }
 
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  stroke: currentColor;
+}
+
 /* ── THEME VARIABLES ── */
 :root {
   --bg: #f5f4f0;

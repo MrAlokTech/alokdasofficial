@@ -29,7 +29,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
 
@@ -44,12 +44,8 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
   </head>
   <body>
-    <!-- Global Halftone Background and Comic Bursts (hidden on print) -->
+    <!-- Background Grid Overlay -->
     <div class="halftone-bg no-print" aria-hidden="true"></div>
-    <div class="burst burst-1 no-print" aria-hidden="true">POW!</div>
-    <div class="burst burst-2 no-print" aria-hidden="true">ZAP!</div>
-    <div class="burst burst-3 no-print" aria-hidden="true">WOW!</div>
-    <div class="burst burst-4 no-print" aria-hidden="true">BAM!</div>
 
     <!-- Navigation Header (hidden on print) -->
     <nav
@@ -57,10 +53,15 @@
       role="navigation"
       aria-label="Main navigation"
     >
-      <a href="/" class="nav-logo" aria-label="Alok Das home">
-        <img src="/assets/logo.png" alt="Alok Das Logo" class="nav-logo-img" />
+      <a href="/lab" class="nav-logo" aria-label="Alok Das Lab">
+        ALOK DAS <span class="nav-logo-tag">/ LAB</span>
       </a>
-      <a href="/" class="nav-back-btn">← BACK TO BASE</a>
+      <div class="nav-right-group">
+        <a href="/" class="header-back" title="Back to Portfolio">← <span>Portfolio</span></a>
+        <button class="theme-toggle-btn" id="themeBtn" title="Toggle dark/light theme" aria-label="Toggle theme">
+          ☾
+        </button>
+      </div>
     </nav>
 
     <!-- Main Container -->
@@ -1277,6 +1278,22 @@
       /* Dynamic year in footer */
       var yearEl = document.getElementById("footer-year");
       if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+      /* Universal Theme Setup */
+      let darkMode = localStorage.getItem('alok-theme-dark') === 'true';
+      const themeBtn = document.getElementById('themeBtn');
+      function setTheme() {
+        document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+        if (themeBtn) themeBtn.textContent = darkMode ? '☀' : '☾';
+        localStorage.setItem('alok-theme-dark', darkMode);
+      }
+      if (themeBtn) {
+        themeBtn.addEventListener('click', () => {
+          darkMode = !darkMode;
+          setTheme();
+        });
+      }
+      setTheme();
     </script>
   </body>
 </html>

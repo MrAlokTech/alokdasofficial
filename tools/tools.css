@@ -1,0 +1,367 @@
+/* ── TOOLS HUB SPECIFIC STYLES ── */
+
+.tools-main {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── HERO SECTION ── */
+.tools-hero {
+  text-align: center;
+  max-width: 680px;
+  margin-bottom: 3rem;
+}
+
+.hero-pill {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text2);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1.25rem;
+}
+
+.pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.tools-hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+  line-height: 1.15;
+}
+
+.tools-hero p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--text2);
+}
+
+/* ── SEARCH & FILTER CONTROLS ── */
+.controls-section {
+  width: 100%;
+  max-width: 720px;
+  margin-bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.search-box {
+  width: 100%;
+  position: relative;
+}
+
+.search-box input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0.85rem 1.25rem 0.85rem 2.85rem;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.95rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-box input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .search-box input:focus {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text3);
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.filter-btn {
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+.filter-btn.active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+/* ── TOOLS GRID ── */
+.tools-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ── TOOL CARD ── */
+.tool-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s,
+              box-shadow 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.tool-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .tool-card:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  transition: transform 0.25s;
+}
+
+.tool-card:hover .icon-box {
+  transform: scale(1.08);
+}
+
+.category-tag {
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  background: var(--surface2);
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.card-body {
+  flex: 1;
+  margin-bottom: 1.5rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.card-desc {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text2);
+  margin-bottom: 1.25rem;
+}
+
+.card-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.feature-pill {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  color: var(--text2);
+  background: var(--surface2);
+  padding: 3px 9px;
+  border-radius: 6px;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.launch-btn-text {
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.arrow-icon {
+  transition: transform 0.2s;
+  display: inline-block;
+}
+
+.tool-card:hover .arrow-icon {
+  transform: translateX(4px);
+}
+
+/* ── NO RESULTS STATE ── */
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 1rem;
+  display: none;
+}
+
+.no-results.visible {
+  display: block;
+}
+
+.no-results-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--text3);
+}
+
+.no-results h3 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+
+.no-results p {
+  font-size: 0.9rem;
+  color: var(--text2);
+  margin-bottom: 1.5rem;
+}
+
+.clear-search-btn {
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.clear-search-btn:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* ── BACK LINK IN HEADER ── */
+.header-back {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text2);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+  margin-right: 8px;
+}
+
+.header-back:hover {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .tools-main {
+    padding: 2rem 1rem 4rem;
+  }
+
+  .tools-hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .tools-hero p {
+    font-size: 0.95rem;
+  }
+
+  .tools-grid {
+    grid-template-columns: 1fr;
+  }
+
+  header {
+    padding: 1.25rem 1.25rem;
+  }
+
+  .header-back span {
+    display: none;
+  }
+}

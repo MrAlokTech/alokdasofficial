@@ -13,6 +13,7 @@
     "rewrites": [
       { "source": "/resume",                    "destination": "/resume/index.html" },
       { "source": "/lab",                       "destination": "/lab/index.html" },
+      { "source": "/tools",                     "destination": "/tools/index.html" },
       { "source": "/projects/phytochemical",    "destination": "/projects/phytochemical/index.html" },
       { "source": "/projects/alomole",          "destination": "/projects/alomole/index.html" },
       { "source": "/projects/mileage-tracker",  "destination": "/projects/mileage-tracker/index.html" },

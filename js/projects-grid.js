@@ -127,7 +127,7 @@
     var primaryBtn = document.createElement('a');
     primaryBtn.href = p.detailLink;
     primaryBtn.className = 'work-btn work-btn-primary';
-    primaryBtn.textContent = '📖 View Details';
+    primaryBtn.textContent = 'View Details →';
     /* Track project card details click */
     (function (title, link) {
       primaryBtn.addEventListener('click', function () {
