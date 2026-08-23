@@ -70,21 +70,16 @@
             <a href="#about" class="nav-link" data-section="about">ABOUT</a>
           </li>
           <li>
-            <a href="#projects" class="nav-link" data-section="projects"
-              >PROJECTS</a
-            >
+            <a href="#projects" class="nav-link" data-section="projects">PROJECTS</a>
           </li>
           <li>
             <a href="#tools" class="nav-link" data-section="tools">TOOLS</a>
           </li>
-          <li><a href="/lab" class="nav-link nav-lab">LAB</a></li>
           <li>
             <a href="#games" class="nav-link" data-section="games">GAMES</a>
           </li>
           <li>
-            <a href="#contact" class="nav-link" data-section="contact"
-              >CONTACT</a
-            >
+            <a href="#contact" class="nav-link" data-section="contact">CONTACT</a>
           </li>
           <li><a href="/resume" class="nav-link nav-resume">RESUME</a></li>
         </ul>
@@ -114,26 +109,14 @@
 
     <!-- Mobile menu -->
     <div class="nav-mobile-menu" id="nav-mobile-menu" role="menu">
-      <a href="#home" class="nav-link" data-section="home" role="menuitem"
-        >HOME</a
-      >
-      <a href="#about" class="nav-link" data-section="about" role="menuitem"
-        >ABOUT</a
-      >
-      <a
-        href="#projects"
-        class="nav-link"
-        data-section="projects"
-        role="menuitem"
-        >PROJECTS</a
-      >
-      <a href="#tools" class="nav-link" data-section="tools" role="menuitem"
-        >TOOLS</a
-      >
-      <a href="/lab" class="nav-link nav-lab" role="menuitem">LAB</a>
-      <a href="#games" class="nav-link" data-section="games" role="menuitem"
-        >GAMES</a
-      >
+      <a href="#home" class="nav-link" data-section="home" role="menuitem">HOME</a>
+      <a href="#about" class="nav-link" data-section="about" role="menuitem">ABOUT</a>
+      <a href="#projects" class="nav-link" data-section="projects" role="menuitem">PROJECTS</a>
+      <a href="#tools" class="nav-link" data-section="tools" role="menuitem">TOOLS</a>
+      <a href="#games" class="nav-link" data-section="games" role="menuitem">GAMES</a>
+      <a href="#contact" class="nav-link" data-section="contact" role="menuitem">CONTACT</a>
+      <a href="/resume" class="nav-link nav-resume" role="menuitem">RESUME</a>
+    </div>
       <a href="#contact" class="nav-link" data-section="contact" role="menuitem"
         >CONTACT</a
       >
@@ -408,6 +391,12 @@
       <div class="works-grid" id="works-grid">
         <!-- populated by js/projects-grid.js from js/projects-data.js -->
       </div>
+
+      <div style="text-align: center; margin-top: 2.5rem;">
+        <a href="/projects" class="work-btn work-btn-primary" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; font-size: 0.95rem; text-decoration: none;">
+          View All Projects <span>→</span>
+        </a>
+      </div>
     </section>
 
     <!-- ═══════════════════════════════════════
@@ -420,35 +409,7 @@
       </div>
 
       <div class="tools-preview-grid">
-        <!-- World Clock -->
-        <a href="/tools/clocks/" class="tool-preview-card">
-          <div>
-            <div class="tool-preview-icon">
-              <svg
-                class="icon"
-                viewBox="0 0 24 24"
-                width="22"
-                height="22"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-            </div>
-            <h3 class="tool-preview-title">World Clock</h3>
-            <p class="tool-preview-desc">
-              Minimalist world clock &amp; timezone tracker across global
-              cities.
-            </p>
-          </div>
-          <span class="tool-preview-link">Launch <span>→</span></span>
-        </a>
-
-        <!-- Focus -->
+        <!-- 1. Focus -->
         <a href="/tools/focus/" class="tool-preview-card">
           <div>
             <div class="tool-preview-icon">
@@ -482,37 +443,25 @@
           <span class="tool-preview-link">Launch <span>→</span></span>
         </a>
 
-        <!-- GATE CY 2028 -->
-        <a href="/tools/gate-cy-2028/" class="tool-preview-card">
+        <!-- 2. Virtual QC Lab -->
+        <a href="/lab" class="tool-preview-card">
           <div>
             <div class="tool-preview-icon">
-              <svg
-                class="icon"
-                viewBox="0 0 24 24"
-                width="22"
-                height="22"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M10 2v7.5L4.5 18a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L14 9.5V2"
-                />
-                <path d="M8.5 2h7" />
-                <path d="M7 16h10" />
+              <svg class="icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 2v7.5L4.5 18a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L14 9.5V2"/>
+                <path d="M8.5 2h7"/>
+                <path d="M7 16h10"/>
               </svg>
             </div>
-            <h3 class="tool-preview-title">GATE CY 2028</h3>
+            <h3 class="tool-preview-title">Virtual QC Lab</h3>
             <p class="tool-preview-desc">
-              Daily chemistry revision capsule &amp; syllabus prep tracker.
+              Interactive Quality Control lab workbench for molarities &amp; GLP records.
             </p>
           </div>
           <span class="tool-preview-link">Launch <span>→</span></span>
         </a>
 
-        <!-- SpeedCheck -->
+        <!-- 3. SpeedCheck -->
         <a href="/tools/speedchecker/" class="tool-preview-card">
           <div>
             <div class="tool-preview-icon">

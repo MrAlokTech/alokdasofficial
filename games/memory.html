@@ -4,111 +4,145 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <title>Element Match — Alok Das Game Zone</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="/css/tokens.css" />
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/nav.css" />
+    
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@700&display=swap");
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
       body {
-        background: #0d0d0d;
-        font-family: "Comic Neue", cursive;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font-sans);
         min-height: 100vh;
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 1rem 1rem 2rem;
-        color: #fffef0;
+        padding-bottom: 2.5rem;
       }
-      .back {
-        position: fixed;
-        top: 1rem;
-        left: 1rem;
-        background: #ffe600;
-        color: #0d0d0d;
-        font-weight: 700;
-        padding: 0.4rem 1rem;
-        border-radius: 8px;
-        border: 3px solid #0d0d0d;
-        text-decoration: none;
-        font-size: 0.9rem;
-        box-shadow: 3px 3px 0 #0d0d0d;
-        z-index: 10;
-      }
-      h1 {
-        font-family: "Bangers", cursive;
-        font-size: 3rem;
-        color: #ffe600;
-        letter-spacing: 4px;
-        text-shadow: 3px 3px 0 #ff2d6b;
-        margin: 0.5rem 0;
-        text-align: center;
-      }
-      .meta {
-        font-size: 0.85rem;
-        color: #aaa;
-        margin-bottom: 0.8rem;
-        text-align: center;
-      }
-      .hud {
+      .game-nav {
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        height: var(--nav-height);
+        padding: 0 1.5rem;
         display: flex;
-        gap: 2rem;
-        justify-content: center;
-        margin-bottom: 1rem;
+        align-items: center;
+        justify-content: space-between;
+        box-sizing: border-box;
+        margin-bottom: 2rem;
       }
-      .hud-item {
-        text-align: center;
+      .game-wrapper {
+        max-width: 460px;
+        width: 100%;
+        padding: 0 1rem;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
-      .hud-label {
-        font-size: 0.7rem;
-        letter-spacing: 2px;
-        color: #aaa;
+      .arcade-card {
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-pop);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-sizing: border-box;
+        position: relative;
+      }
+      .game-header {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--border);
+      }
+      .game-title-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .game-title-text {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text);
+      }
+      .score-badge-group {
+        display: flex;
+        gap: 8px;
+      }
+      .score-pill {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        padding: 4px 8px;
+        border-radius: 12px;
+        color: var(--text2);
       }
-      .hud-val {
-        font-family: "Bangers", cursive;
-        font-size: 2rem;
-        color: #ffe600;
+      .score-pill span {
+        color: var(--text);
+        font-weight: 600;
+        margin-left: 4px;
       }
+
+      /* Memory Grid */
       .grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 0.6rem;
-        max-width: 460px;
         width: 100%;
-        margin: 0 auto;
+        margin-bottom: 1.25rem;
       }
       .card {
         aspect-ratio: 1;
-        background: #1a0030;
-        border: 3px solid #6a0dad;
-        border-radius: 10px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
         cursor: pointer;
         position: relative;
         perspective: 600px;
-        transition: transform 0.35s;
+        transition: transform 0.25s ease, border-color 0.25s ease;
+      }
+      .card:hover:not(.flipped):not(.matched) {
+        border-color: var(--border-hover);
+        transform: translateY(-2px);
       }
       .card.flipped .inner,
       .card.matched .inner {
         transform: rotateY(180deg);
       }
       .card.matched {
-        border-color: #00c2ff;
+        border-color: var(--text3);
         cursor: default;
+        opacity: 0.85;
       }
       .inner {
         width: 100%;
         height: 100%;
         position: relative;
         transform-style: preserve-3d;
-        transition: transform 0.35s;
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       }
       .front,
       .back {
         position: absolute;
         inset: 0;
-        border-radius: 8px;
+        border-radius: 10px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -116,94 +150,121 @@
         backface-visibility: hidden;
       }
       .front {
-        background: #1a0030;
-        font-size: 1.8rem;
-        color: #6a0dad;
-        font-family: "Bangers", cursive;
-        letter-spacing: 2px;
-      }
-      .front span.q {
-        font-size: 2rem;
+        background: var(--surface2);
+        font-family: var(--font-mono);
+        font-size: 1.2rem;
+        color: var(--text3);
       }
       .back {
-        background: #fffef0;
+        background: var(--surface);
+        border: 1px solid var(--border);
         transform: rotateY(180deg);
-        gap: 0.15rem;
+        gap: 2px;
       }
       .back .sym {
-        font-family: "Bangers", cursive;
-        font-size: 2rem;
-        color: #0d0d0d;
+        font-family: var(--font-mono);
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text);
         line-height: 1;
       }
       .back .num {
-        font-size: 0.6rem;
-        font-weight: 700;
-        color: #6a0dad;
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        color: var(--text3);
       }
       .back .name {
-        font-size: 0.55rem;
-        font-weight: 700;
-        color: #333;
+        font-size: 0.65rem;
+        color: var(--text2);
         text-align: center;
-        padding: 0 4px;
+        padding: 0 2px;
+        line-height: 1.1;
       }
-      .card.matched .back {
-        background: #00c2ff;
-      }
-      #msg {
-        font-family: "Bangers", cursive;
-        font-size: 1.4rem;
-        color: #ff2d6b;
-        text-align: center;
-        min-height: 1.8rem;
-        margin: 0.6rem 0;
-        letter-spacing: 2px;
-      }
-      button.restart {
-        background: #ffe600;
-        color: #0d0d0d;
-        font-family: "Bangers", cursive;
-        font-size: 1.3rem;
-        letter-spacing: 2px;
-        border: 3px solid #0d0d0d;
-        border-radius: 10px;
-        padding: 0.5rem 1.8rem;
+
+      .btn-action {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-weight: 500;
+        background: var(--accent);
+        color: var(--bg);
+        padding: 10px 22px;
+        border-radius: 20px;
+        border: none;
         cursor: pointer;
-        box-shadow: 4px 4px 0 #0d0d0d;
-        margin-top: 0.5rem;
-        transition: transform 0.1s;
+        transition: opacity 0.2s ease;
       }
-      button.restart:hover {
-        transform: translate(-2px, -2px);
+      .btn-action:hover { opacity: 0.9; }
+
+      /* Win Overlay */
+      .win-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(4px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        text-align: center;
+      }
+      .win-title {
+        font-size: 1.6rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      .win-sub {
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        color: rgba(255,255,255,0.8);
+        margin-bottom: 1.25rem;
       }
     </style>
   </head>
   <body>
-    <a href="../index.html#games" class="back">← BACK</a>
-    <h1>🧪 ELEMENT MATCH</h1>
-    <p class="meta">
-      Match the chemical element pairs! Flip two cards at a time.
-    </p>
+    <nav class="game-nav">
+      <a href="/games" class="nav-logo">
+        ALOK DAS <span class="nav-logo-tag">/ ELEMENT MATCH</span>
+      </a>
+      <div class="nav-right-group">
+        <a href="/games" class="header-back" title="Back to Games">← <span>Games</span></a>
+        <button class="theme-toggle-btn" id="themeBtn" title="Toggle theme">☾</button>
+      </div>
+    </nav>
 
-    <div class="hud">
-      <div class="hud-item">
-        <div class="hud-label">Moves</div>
-        <div class="hud-val" id="moves">0</div>
-      </div>
-      <div class="hud-item">
-        <div class="hud-label">Pairs</div>
-        <div class="hud-val" id="pairs">0 / 8</div>
-      </div>
-      <div class="hud-item">
-        <div class="hud-label">Time</div>
-        <div class="hud-val" id="timer">0s</div>
+    <div class="game-wrapper">
+      <div class="arcade-card">
+        <div class="game-header">
+          <div class="game-title-group">
+            <svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10 2v7.5L4.5 18a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L14 9.5V2"/>
+              <path d="M8.5 2h7"/>
+              <path d="M7 16h10"/>
+            </svg>
+            <span class="game-title-text">Element Match</span>
+          </div>
+          <div class="score-badge-group">
+            <div class="score-pill">Moves<span id="moves">0</span></div>
+            <div class="score-pill">Pairs<span id="pairs">0/8</span></div>
+            <div class="score-pill">Time<span id="timer">0s</span></div>
+          </div>
+        </div>
+
+        <div class="grid" id="grid"></div>
+        <button class="btn-action" id="restart">↺ Reset Game</button>
+
+        <!-- Win Overlay -->
+        <div class="win-overlay" id="winOverlay" style="display:none;">
+          <div class="win-title">🎉 All Matched!</div>
+          <div class="win-sub" id="winStatsText">Completed in 0 moves &amp; 0s!</div>
+          <button class="btn-action" id="winRestartBtn" style="background:#ffffff;color:#111110;">Play Again ↺</button>
+        </div>
       </div>
     </div>
-
-    <div id="msg">Flip a card to begin!</div>
-    <div class="grid" id="grid"></div>
-    <button class="restart" id="restart">↺ NEW GAME</button>
 
     <script>
       var ELEMENTS = [
@@ -220,8 +281,11 @@
       var movesEl = document.getElementById("moves"),
         pairsEl = document.getElementById("pairs"),
         timerEl = document.getElementById("timer"),
-        msgEl = document.getElementById("msg"),
-        grid = document.getElementById("grid");
+        grid = document.getElementById("grid"),
+        winOverlay = document.getElementById("winOverlay"),
+        winStatsText = document.getElementById("winStatsText"),
+        winRestartBtn = document.getElementById("winRestartBtn");
+      
       var first = null,
         busy = false,
         matched = 0,
@@ -249,18 +313,19 @@
         seconds = 0;
         started = false;
         movesEl.textContent = 0;
-        pairsEl.textContent = "0 / 8";
+        pairsEl.textContent = "0/8";
         timerEl.textContent = "0s";
-        msgEl.textContent = "Flip a card to begin!";
+        winOverlay.style.display = "none";
         grid.innerHTML = "";
+        
         var cards = shuffle(ELEMENTS.concat(ELEMENTS));
-        cards.forEach(function (el, idx) {
+        cards.forEach(function (el) {
           var card = document.createElement("div");
           card.className = "card";
           card.innerHTML =
-            '<div class="inner"><div class="front"><span class="q">?</span></div><div class="back"><div class="sym">' +
+            '<div class="inner"><div class="front">🧪</div><div class="back"><div class="sym">' +
             el.sym +
-            '</div><div class="num">' +
+            '</div><div class="num">#' +
             el.num +
             '</div><div class="name">' +
             el.name +
@@ -286,6 +351,9 @@
             seconds++;
             timerEl.textContent = seconds + "s";
           }, 1000);
+          if (typeof window.trackEvent === 'function') {
+            window.trackEvent('game_start', 'Element Match', null);
+          }
         }
         card.classList.add("flipped");
         if (!first) {
@@ -298,12 +366,15 @@
           first.classList.add("matched");
           card.classList.add("matched");
           matched++;
-          pairsEl.textContent = matched + " / 8";
+          pairsEl.textContent = matched + "/8";
           first = null;
           if (matched === 8) {
             clearInterval(tick);
-            msgEl.textContent =
-              "🎉 YOU WIN! " + moves + " moves in " + seconds + "s!";
+            winStatsText.textContent = "Solved in " + moves + " moves and " + seconds + " seconds!";
+            winOverlay.style.display = "flex";
+            if (typeof window.trackEvent === 'function') {
+              window.trackEvent('game_win', 'Element Match', { moves: moves, seconds: seconds });
+            }
           }
         } else {
           busy = true;
@@ -313,35 +384,30 @@
             f.classList.remove("flipped");
             card.classList.remove("flipped");
             busy = false;
-          }, 900);
+          }, 800);
         }
       }
 
       document.getElementById("restart").addEventListener("click", build);
+      winRestartBtn.addEventListener("click", build);
+
+      /* Theme Setup */
+      let darkMode = localStorage.getItem('alok-theme-dark') === 'true';
+      const themeBtn = document.getElementById('themeBtn');
+      function setTheme() {
+        document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+        if (themeBtn) themeBtn.textContent = darkMode ? '☀' : '☾';
+        localStorage.setItem('alok-theme-dark', darkMode);
+      }
+      if (themeBtn) {
+        themeBtn.addEventListener('click', function () {
+          darkMode = !darkMode;
+          setTheme();
+        });
+      }
+      setTheme();
       build();
-
-      /* ── Tracking patches ── */
-      var _memoryStarted = false;
-      /* Wrap flip() to detect game start */
-      var _origFlip = flip;
-      flip = function (card) {
-        if (!_memoryStarted) {
-          _memoryStarted = true;
-          if (typeof window.trackEvent === 'function') {
-            window.trackEvent('game_start', 'Element Match', null);
-          }
-        }
-        _origFlip(card);
-        /* Detect win: matched === 8 after this flip */
-        if (matched === 8) {
-          if (typeof window.trackEvent === 'function') {
-            window.trackEvent('game_win', 'Element Match', { moves: moves, seconds: seconds });
-          }
-        }
-      };
     </script>
-
-    <!-- Firebase analytics tracker -->
     <script src="/js/firebase-tracker.js"></script>
   </body>
 </html>

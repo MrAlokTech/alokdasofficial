@@ -1,0 +1,23 @@
+name: Deploy ICE Cloudflare Worker
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'workers/ice/**'
+      - '.github/workflows/deploy-ice.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy ICE Worker to Cloudflare
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: 'workers/ice'

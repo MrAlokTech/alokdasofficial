@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Projects — Alok Das | Portfolio</title>
+  <meta name="description" content="Explore all software engineering and analytical chemistry projects by Alok Das — Phytochemical Analysis, Mileage Tracker, Alomole, Virtual QC Lab, and more." />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/nav.css" />
+  <link rel="stylesheet" href="/css/footer.css" />
+  <style>
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .projects-header-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      height: var(--nav-height);
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .projects-hero {
+      text-align: center;
+      padding: 3.5rem 1.5rem 2rem;
+      max-width: 750px;
+      margin: 0 auto;
+    }
+    .projects-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--surface2);
+      color: var(--text2);
+      border: 1px solid var(--border);
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 1rem;
+    }
+    .projects-hero-title {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .projects-hero-sub {
+      font-size: 1.05rem;
+      color: var(--text2);
+      line-height: 1.5;
+    }
+    
+    /* Filters */
+    .filter-bar {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin: 1rem auto 2.5rem;
+      padding: 0 1.5rem;
+      max-width: 800px;
+    }
+    .filter-tab {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 7px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text2);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .filter-tab:hover, .filter-tab.active {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    
+    /* Grid */
+    .all-projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.75rem;
+      max-width: 1100px;
+      margin: 0 auto 4rem;
+      padding: 0 1.5rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+    .proj-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-pop);
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .proj-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-hover);
+    }
+    .proj-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .proj-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+    }
+    .proj-num-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text3);
+      letter-spacing: 0.08em;
+    }
+    .proj-card-title {
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+      letter-spacing: -0.01em;
+    }
+    .proj-card-subtitle {
+      font-size: 0.88rem;
+      color: var(--text3);
+      font-family: var(--font-mono);
+      margin-bottom: 1rem;
+    }
+    .proj-card-desc {
+      font-size: 0.9rem;
+      color: var(--text2);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
+    }
+    .proj-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 1.5rem;
+    }
+    .proj-chip {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 3px 9px;
+      border-radius: 6px;
+      background: var(--surface2);
+      color: var(--text2);
+    }
+    .proj-actions-row {
+      display: flex;
+      gap: 0.6rem;
+    }
+    .proj-btn {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      text-decoration: none;
+      background: var(--surface2);
+      color: var(--text);
+      transition: all 0.2s ease;
+    }
+    .proj-btn:hover {
+      background: var(--surface);
+      border-color: var(--border-hover);
+    }
+    .proj-btn.primary {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    .proj-btn.primary:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Top Nav -->
+  <nav class="projects-header-nav">
+    <a href="/projects" class="nav-logo">
+      ALOK DAS <span class="nav-logo-tag">/ PROJECTS</span>
+    </a>
+    <div class="nav-right-group">
+      <a href="/" class="header-back" title="Back to Portfolio">← <span>Portfolio</span></a>
+      <button class="theme-toggle-btn" id="themeBtn" title="Toggle theme">☾</button>
+    </div>
+  </nav>
+
+  <!-- Hero Header -->
+  <section class="projects-hero">
+    <span class="projects-badge">Portfolio Archive</span>
+    <h1 class="projects-hero-title">All Works &amp; Projects</h1>
+    <p class="projects-hero-sub">Complete index of software engineering applications, analytical chemistry dissertations, and interactive laboratory tools.</p>
+  </section>
+
+  <!-- Category Filter Tabs -->
+  <div class="filter-bar">
+    <button class="filter-tab active" data-cat="all">All Projects</button>
+    <button class="filter-tab" data-cat="chemistry">Chemistry &amp; Lab</button>
+    <button class="filter-tab" data-cat="mobile">Mobile Apps</button>
+    <button class="filter-tab" data-cat="web">Web Tools</button>
+  </div>
+
+  <!-- Projects Grid -->
+  <div class="all-projects-grid" id="projectsGrid">
+    <!-- 1. Phytochemical Analysis -->
+    <div class="proj-card" data-cat="chemistry">
+      <div class="proj-card-top">
+        <div class="proj-icon-box">
+          <svg class="icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+          </svg>
+        </div>
+        <span class="proj-num-tag">PROJECT #001</span>
+      </div>
+      <h2 class="proj-card-title">Phytochemical Analysis</h2>
+      <div class="proj-card-subtitle">Medicinal Plant Screening · Dissertation</div>
+      <p class="proj-card-desc">Final-year B.Sc. dissertation — systematic phytochemical screening of local medicinal plants. Formulated solvent extraction protocols for alkaloids, flavonoids, tannins &amp; saponins.</p>
+      <div class="proj-chip-row">
+        <span class="proj-chip">Analytical Chemistry</span>
+        <span class="proj-chip">TLC</span>
+        <span class="proj-chip">GLP / SOP</span>
+      </div>
+      <div class="proj-actions-row">
+        <a href="/projects/phytochemical/" class="proj-btn primary">View Details →</a>
+      </div>
+    </div>
+
+    <!-- 2. Mileage Tracker -->
+    <div class="proj-card" data-cat="mobile">
+      <div class="proj-card-top">
+        <div class="proj-icon-box">
+          <svg class="icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="3" y="11" width="18" height="8" rx="2"/>
+            <path d="M5 11l2.5-6h9L19 11"/>
+            <circle cx="7.5" cy="16.5" r="1.5"/>
+            <circle cx="16.5" cy="16.5" r="1.5"/>
+          </svg>
+        </div>
+        <span class="proj-num-tag">PROJECT #002</span>
+      </div>
+      <h2 class="proj-card-title">Mileage Tracker — Fuel &amp; Cost</h2>
+      <div class="proj-card-subtitle">Vehicle Management · Flutter &amp; Dart</div>
+      <p class="proj-card-desc">Android utility application to track vehicle mileage, fuel expenses, and running costs. Built with SQLite for offline data storage and interactive efficiency charts.</p>
+      <div class="proj-chip-row">
+        <span class="proj-chip">Flutter</span>
+        <span class="proj-chip">Dart</span>
+        <span class="proj-chip">Android</span>
+        <span class="proj-chip">SQLite</span>
+      </div>
+      <div class="proj-actions-row">
+        <a href="/projects/mileage-tracker/" class="proj-btn primary">View Details →</a>
+        <a href="https://play.google.com/store/apps/details?id=in.alokdasofficial.mileage" target="_blank" rel="noopener" class="proj-btn">Play Store →</a>
+      </div>
+    </div>
+
+    <!-- 3. Alomole -->
+    <div class="proj-card" data-cat="chemistry mobile web">
+      <div class="proj-card-top">
+        <div class="proj-icon-box">
+          <svg class="icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="12" cy="12" r="3"/>
+            <circle cx="19" cy="5" r="2"/>
+            <circle cx="5" cy="19" r="2"/>
+            <line x1="14.2" y1="9.8" x2="17.5" y2="6.5"/>
+            <line x1="9.8" y1="14.2" x2="6.5" y2="17.5"/>
+          </svg>
+        </div>
+        <span class="proj-num-tag">PROJECT #003</span>
+      </div>
+      <h2 class="proj-card-title">Alomole</h2>
+      <div class="proj-card-subtitle">Chemistry Companion · Flutter Web</div>
+      <p class="proj-card-desc">Comprehensive chemistry toolkit app featuring a chemical equation balancer, molarity/normality calculator, and organic reaction explorer published live on the web.</p>
+      <div class="proj-chip-row">
+        <span class="proj-chip">Flutter</span>
+        <span class="proj-chip">Dart</span>
+        <span class="proj-chip">Web</span>
+        <span class="proj-chip">Firebase</span>
+      </div>
+      <div class="proj-actions-row">
+        <a href="/projects/alomole/" class="proj-btn primary">View Details →</a>
+        <a href="https://alomolecule.web.app" target="_blank" rel="noopener" class="proj-btn">Open App →</a>
+      </div>
+    </div>
+
+    <!-- 4. Virtual QC Lab Assistant -->
+    <div class="proj-card" data-cat="chemistry web">
+      <div class="proj-card-top">
+        <div class="proj-icon-box">
+          <svg class="icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M10 2v7.5L4.5 18a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L14 9.5V2"/>
+            <path d="M8.5 2h7"/>
+            <path d="M7 16h10"/>
+          </svg>
+        </div>
+        <span class="proj-num-tag">PROJECT #004</span>
+      </div>
+      <h2 class="proj-card-title">Virtual QC Lab Assistant</h2>
+      <div class="proj-card-subtitle">QC Laboratory Workbench · Pure JS</div>
+      <p class="proj-card-desc">Interactive laboratory dashboard to calculate molarities, simulate serial dilutions, plot titration curves, and print GLP compliance SOP worksheets directly.</p>
+      <div class="proj-chip-row">
+        <span class="proj-chip">Analytical Chemistry</span>
+        <span class="proj-chip">SOP / GLP</span>
+        <span class="proj-chip">Pure JS</span>
+      </div>
+      <div class="proj-actions-row">
+        <a href="/lab" class="proj-btn primary">Launch Lab →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="comic-footer" role="contentinfo" style="margin-top: auto;">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="footer-logo">ALOK DAS</span>
+        <span class="footer-tagline">Chemistry &amp; Code · Assam, India</span>
+      </div>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <a href="/" class="footer-nav-link">Home</a>
+        <span class="footer-nav-sep" aria-hidden="true">·</span>
+        <a href="/projects" class="footer-nav-link">Projects</a>
+        <span class="footer-nav-sep" aria-hidden="true">·</span>
+        <a href="/tools" class="footer-nav-link">Tools</a>
+        <span class="footer-nav-sep" aria-hidden="true">·</span>
+        <a href="/games" class="footer-nav-link">Games</a>
+        <span class="footer-nav-sep" aria-hidden="true">·</span>
+        <a href="/resume" class="footer-nav-link">Resume</a>
+      </nav>
+      <div class="footer-right">
+        <a href="#" class="footer-back-top">↑ Back to top</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© <span id="footer-year"></span> Alok Das · All rights reserved</p>
+    </div>
+  </footer>
+
+  <!-- Filter & Theme Script -->
+  <script src="/js/firebase-tracker.js"></script>
+  <script>
+    window.addEventListener('load', function () {
+      var yearEl = document.getElementById('footer-year');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+      /* Tab Filtering */
+      var tabs = document.querySelectorAll('.filter-tab');
+      var cards = document.querySelectorAll('.proj-card');
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          tabs.forEach(function (t) { t.classList.remove('active'); });
+          tab.classList.add('active');
+
+          var cat = tab.getAttribute('data-cat');
+          cards.forEach(function (c) {
+            if (cat === 'all' || (c.getAttribute('data-cat') || '').includes(cat)) {
+              c.style.display = 'flex';
+            } else {
+              c.style.display = 'none';
+            }
+          });
+        });
+      });
+
+      /* Theme Toggle Setup */
+      let darkMode = localStorage.getItem('alok-theme-dark') === 'true';
+      const themeBtn = document.getElementById('themeBtn');
+      function setTheme() {
+        document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+        if (themeBtn) themeBtn.textContent = darkMode ? '☀' : '☾';
+        localStorage.setItem('alok-theme-dark', darkMode);
+      }
+      if (themeBtn) {
+        themeBtn.addEventListener('click', function () {
+          darkMode = !darkMode;
+          setTheme();
+        });
+      }
+      setTheme();
+    });
+  </script>
+</body>
+</html>

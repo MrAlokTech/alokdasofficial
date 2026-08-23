@@ -19,7 +19,7 @@
       { "source": "/projects/mileage-tracker",  "destination": "/projects/mileage-tracker/index.html" },
       { "source": "/projects/portfolio",        "destination": "/projects/portfolio/index.html" },
       { "source": "/projects/virtual-lab",      "destination": "/projects/virtual-lab/index.html" },
-      { "source": "/projects",                  "destination": "/index.html" }
+      { "source": "/projects",                  "destination": "/projects/index.html" }
     ],
     "headers": [
       {

@@ -1,5 +1,7 @@
 User-agent: *
+Disallow: /ice/
 Allow: /
+
 
 # Global Sitemap for main and subdomains
 Sitemap: https://www.alokdasofficial.in/sitemap.xml

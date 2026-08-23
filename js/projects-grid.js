@@ -179,7 +179,9 @@
     grid.innerHTML = '';
 
     data.forEach(function (p) {
-      grid.appendChild(buildCard(p));
+      if (p.featured) {
+        grid.appendChild(buildCard(p));
+      }
     });
 
     /* Re-run carousel setup if interactions module is loaded */

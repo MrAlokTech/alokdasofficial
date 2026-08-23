@@ -5,7 +5,6 @@
  *
  * Detects slug from window.location.pathname automatically.
  * No ES module syntax — classic <script> tag compatible.
- * Also re-initialises the gallery carousel internally.
  */
 
 (function () {
@@ -13,7 +12,7 @@
   /* ── Helpers ─────────────────────────────────────────────────── */
 
   function esc(str) {
-    return String(str)
+    return String(str || '')
       .replace(/&(?!amp;|lt;|gt;|quot;|#)/g, '&amp;')
       .replace(/</g,  '&lt;')
       .replace(/>/g,  '&gt;');
@@ -47,7 +46,6 @@
   /** Build one feature card HTML */
   function featureCard(f) {
     return '<div class="feature-card">'
-      + '<span class="feature-icon">' + f.icon + '</span>'
       + '<div class="feature-name">' + esc(f.name) + '</div>'
       + '<p class="feature-desc">' + f.desc + '</p>'
       + '</div>';
@@ -67,62 +65,10 @@
       return '<div class="g-slide"><img src="' + s.img + '" alt="' + esc(s.alt || '') + '" style="width:100%;height:100%;object-fit:cover;"></div>';
     }
     return '<div class="g-slide">'
-      + '<div class="g-placeholder" style="background:' + s.bg + ';">'
-      + '<span class="g-ph-icon">' + s.icon + '</span>'
-      + '<span class="g-ph-label">' + esc(s.label) + '</span>'
+      + '<div class="g-placeholder" style="background:' + s.bg + ';display:flex;flex-direction:column;align-items:center;justify-content:center;height:240px;color:var(--text2);">'
+      + '<span class="g-ph-icon" style="margin-bottom:8px;">' + s.icon + '</span>'
+      + '<span class="g-ph-label" style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;">' + esc(s.label) + '</span>'
       + '</div></div>';
-  }
-
-  /* ── Gallery carousel (mirrors projects/project.js logic) ─── */
-  function initGallery(container) {
-    var track    = container.querySelector('.g-track');
-    var slides   = container.querySelectorAll('.g-slide');
-    var prevBtn  = container.querySelector('.g-prev');
-    var nextBtn  = container.querySelector('.g-next');
-    var dotsWrap = container.querySelector('.g-dots');
-
-    if (!track || slides.length === 0) return;
-
-    if (slides.length <= 1) {
-      if (prevBtn) prevBtn.style.display = 'none';
-      if (nextBtn) nextBtn.style.display = 'none';
-      return;
-    }
-
-    var current = 0;
-    var total   = slides.length;
-    var dots    = [];
-
-    if (dotsWrap) {
-      for (var i = 0; i < total; i++) {
-        (function (idx) {
-          var dot = document.createElement('span');
-          dot.className = 'g-dot' + (idx === 0 ? ' active' : '');
-          dot.addEventListener('click', function () { goTo(idx); });
-          dotsWrap.appendChild(dot);
-          dots.push(dot);
-        })(i);
-      }
-    }
-
-    function goTo(idx) {
-      current = (idx + total) % total;
-      track.style.transform = 'translateX(-' + (current * 100) + '%)';
-      dots.forEach(function (d, i) { d.classList.toggle('active', i === current); });
-    }
-
-    if (prevBtn) prevBtn.addEventListener('click', function () { goTo(current - 1); });
-    if (nextBtn) nextBtn.addEventListener('click', function () { goTo(current + 1); });
-
-    /* Touch swipe */
-    var sx = 0;
-    container.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
-    container.addEventListener('touchend', function (e) {
-      var dx = e.changedTouches[0].clientX - sx;
-      if (Math.abs(dx) > 40) goTo(dx < 0 ? current + 1 : current - 1);
-    }, { passive: true });
-
-    setInterval(function () { goTo(current + 1); }, 5000);
   }
 
   /* ── Main render ────────────────────────────────────────────── */
@@ -131,9 +77,10 @@
     var mount = document.getElementById('proj-mount');
     if (!mount) return;
 
-    /* Detect slug from URL: /projects/alomole/ → 'alomole' */
-    var parts = window.location.pathname.replace(/\/+$/, '').split('/');
-    var slug  = parts[parts.length - 1];
+    /* Detect slug robustly from pathname or mount data-slug attribute */
+    var rawPath = window.location.pathname.replace(/[\/\\]index\.html$/i, '').replace(/[\/\\]+$/, '');
+    var parts   = rawPath.split(/[\/\\]/);
+    var slug    = mount.getAttribute('data-slug') || parts[parts.length - 1];
 
     var data = window.PROJECTS_DATA;
     if (!data) {
@@ -146,11 +93,21 @@
       if (data[i].slug === slug) { p = data[i]; break; }
     }
 
+    /* Fallback if slug wasn't matched directly */
+    if (!p && data.length > 0) {
+      for (var j = 0; j < data.length; j++) {
+        if (rawPath.toLowerCase().indexOf(data[j].slug.toLowerCase()) !== -1) {
+          p = data[j];
+          break;
+        }
+      }
+    }
+
     if (!p) {
-      mount.innerHTML = '<div style="padding:3rem 2rem;text-align:center;">'
-        + '<h2 style="font-family:Bangers,cursive;font-size:3rem;">PROJECT NOT FOUND</h2>'
-        + '<p>Slug "<strong>' + esc(slug) + '</strong>" not in projects-data.js.</p>'
-        + '<a href="/#projects" style="color:#FFE600;">← Back to Projects</a>'
+      mount.innerHTML = '<div style="padding:4rem 2rem;text-align:center;">'
+        + '<h2 style="font-family:var(--font-sans);font-size:2rem;margin-bottom:1rem;">PROJECT NOT FOUND</h2>'
+        + '<p style="color:var(--text2);margin-bottom:1.5rem;">Slug "<strong>' + esc(slug) + '</strong>" not found in projects-data.js.</p>'
+        + '<a href="/projects" class="action-btn">← Back to All Projects</a>'
         + '</div>';
       return;
     }
@@ -159,12 +116,15 @@
     var extraNavHTML = (p.navExtra || []).map(navBtn).join('');
     var navHTML =
       '<nav class="proj-nav">'
-      + '<a href="/#projects" class="action-btn">← Back to Portfolio</a>'
-      + (extraNavHTML ? '<div class="proj-nav-right">' + extraNavHTML + '</div>' : '')
+      + '<a href="/projects" class="action-btn">← All Projects</a>'
+      + '<div class="proj-nav-right">'
+      + extraNavHTML
+      + '<button class="theme-toggle-btn" id="themeBtn" title="Toggle theme">☾</button>'
+      + '</div>'
       + '</nav>';
 
     /* ── HEADER ── */
-    var badgesHTML = (p.headerBadges || []).map(badge).join('');
+    var badgesHTML = (p.headerBadges || p.cardBadges || []).map(badge).join('');
     var headerHTML =
       '<header class="proj-header">'
       + '<div class="proj-header-inner">'
@@ -178,7 +138,7 @@
 
     /* ── SIDEBAR ── */
     var factsHTML = (p.facts || []).map(factItem).join('');
-    var techPillsHTML = (p.techPills || []).map(function (t) {
+    var techPillsHTML = (p.techPills || p.chips || []).map(function (t) {
       return '<span class="tech-pill">' + esc(t) + '</span>';
     }).join('');
     var extraSidebarHTML = '';
@@ -196,59 +156,48 @@
 
     var sidebarHTML =
       '<aside class="proj-sidebar">'
-      + '<div class="sidebar-card">'
-      + '<div class="sidebar-title">📋 QUICK FACTS</div>'
-      + '<div class="facts-list">' + factsHTML + '</div>'
-      + '</div>'
-      + '<div class="sidebar-card">'
-      + '<div class="sidebar-title">' + (p.techTitle || '🛠️ TECH STACK') + '</div>'
-      + '<div class="tech-pill-wrap">' + techPillsHTML + '</div>'
-      + '</div>'
+      + (factsHTML ? '<div class="sidebar-card"><div class="sidebar-title">QUICK FACTS</div><div class="facts-list">' + factsHTML + '</div></div>' : '')
+      + (techPillsHTML ? '<div class="sidebar-card"><div class="sidebar-title">' + (p.techTitle || 'TECH STACK') + '</div><div class="tech-pill-wrap">' + techPillsHTML + '</div></div>' : '')
       + extraSidebarHTML
-      + '<div class="sidebar-card">'
-      + '<div class="sidebar-title">🔗 LINKS</div>'
-      + '<div class="link-list">' + linksHTML + '</div>'
-      + '</div>'
+      + (linksHTML ? '<div class="sidebar-card"><div class="sidebar-title">LINKS</div><div class="link-list">' + linksHTML + '</div></div>' : '')
       + '</aside>';
 
     /* ── GALLERY ── */
     var slidesHTML = (p.carousel || []).map(gallerySlide).join('');
-    var galleryHTML =
+    var galleryHTML = p.carousel && p.carousel.length ?
       '<section>'
-      + '<h2 class="proj-section-title">' + (p.galleryTitle || '📸 GALLERY') + '</h2>'
-      + '<div class="proj-gallery">'
-      + '<div class="g-track">' + slidesHTML + '</div>'
-      + '<button class="g-prev" aria-label="Previous">‹</button>'
-      + '<button class="g-next" aria-label="Next">›</button>'
-      + '<div class="g-dots"></div>'
+      + '<h2 class="proj-section-title">' + (p.galleryTitle || 'GALLERY & PREVIEWS') + '</h2>'
+      + '<div class="proj-gallery-carousel">'
+      + '<div class="gallery-track">' + slidesHTML + '</div>'
       + '</div>'
-      + '</section>';
+      + '</section>' : '';
 
     /* ── OVERVIEW ── */
-    var overviewParas = (p.overview || []).map(function (para) {
-      return '<p>' + para + '</p>';
-    }).join('<br>');
+    var overviewParas = p.overview ? p.overview.map(function (para) {
+      return '<p style="margin-bottom:1rem;">' + para + '</p>';
+    }).join('') : '<p style="margin-bottom:1rem;">' + esc(p.cardDesc) + '</p>';
+    
     var overviewHTML =
       '<section>'
-      + '<h2 class="proj-section-title">' + (p.overviewTitle || '📄 OVERVIEW') + '</h2>'
+      + '<h2 class="proj-section-title">' + (p.overviewTitle || 'OVERVIEW') + '</h2>'
       + '<div class="proj-overview">' + overviewParas + '</div>'
       + '</section>';
 
     /* ── FEATURES ── */
-    var featuresHTML =
+    var featuresHTML = p.features && p.features.length ?
       '<section>'
-      + '<h2 class="proj-section-title">' + (p.featuresTitle || '✨ KEY FEATURES') + '</h2>'
-      + '<div class="features-grid">' + (p.features || []).map(featureCard).join('') + '</div>'
-      + '</section>';
+      + '<h2 class="proj-section-title">' + (p.featuresTitle || 'KEY FEATURES') + '</h2>'
+      + '<div class="features-grid">' + p.features.map(featureCard).join('') + '</div>'
+      + '</section>' : '';
 
     /* ── CHALLENGE ── */
-    var challengeHTML =
+    var challengeHTML = p.challenge ?
       '<section>'
-      + '<h2 class="proj-section-title">' + (p.challengeTitle || '🛠️ THE BUILD') + '</h2>'
-      + '<div class="proj-overview" style="background:var(--dark);color:var(--cream);border-color:var(--yellow);">'
+      + '<h2 class="proj-section-title">' + (p.challengeTitle || 'THE BUILD & ARCHITECTURE') + '</h2>'
+      + '<div class="challenge-card">'
       + '<p>' + p.challenge + '</p>'
       + '</div>'
-      + '</section>';
+      + '</section>' : '';
 
     /* ── MAIN ── */
     var mainHTML =
@@ -261,44 +210,28 @@
 
     /* ── FOOTER ── */
     var currentYear = new Date().getFullYear();
-    var footerLiveHTML = p.footerLive
-      ? '<a href="' + p.footerLive.href + '" class="proj-footer-link">' + p.footerLive.label + '</a>'
-        + '<span class="proj-footer-sep">·</span>'
-      : '';
     var footerHTML =
-      '<footer class="comic-footer" role="contentinfo">'
+      '<footer class="comic-footer" role="contentinfo" style="margin-top:4rem;">'
       + '<div class="footer-inner">'
-      + '  <!-- Left: Brand -->'
       + '  <div class="footer-brand">'
       + '    <span class="footer-logo">ALOK DAS</span>'
-      + '    <span class="footer-tagline">Chemistry &amp; Code · Hojai, Assam 🇮🇳</span>'
+      + '    <span class="footer-tagline">Chemistry &amp; Code · Assam, India</span>'
       + '  </div>'
-      + '  <!-- Center: Nav -->'
       + '  <nav class="footer-nav" aria-label="Footer navigation">'
       + '    <a href="/" class="footer-nav-link">Home</a>'
       + '    <span class="footer-nav-sep" aria-hidden="true">·</span>'
-      + '    <a href="/#about" class="footer-nav-link">About</a>'
+      + '    <a href="/projects" class="footer-nav-link">Projects</a>'
       + '    <span class="footer-nav-sep" aria-hidden="true">·</span>'
-      + '    <a href="/#projects" class="footer-nav-link">Projects</a>'
-      + '    <span class="footer-nav-sep" aria-hidden="true">·</span>'
-      + '    <a href="/#games" class="footer-nav-link">Games</a>'
-      + '    <span class="footer-nav-sep" aria-hidden="true">·</span>'
-      + '    <a href="/#contact" class="footer-nav-link">Contact</a>'
+      + '    <a href="/tools" class="footer-nav-link">Tools</a>'
       + '    <span class="footer-nav-sep" aria-hidden="true">·</span>'
       + '    <a href="/resume" class="footer-nav-link">Resume</a>'
       + '  </nav>'
-      + '  <!-- Right: Socials + Back to top -->'
       + '  <div class="footer-right">'
-      + '    <div class="footer-socials">'
-      + '      <a href="mailto:alok@alokdasofficial.in" class="footer-social-link" aria-label="Email Alok" title="Email">✉</a>'
-      + '      <a href="https://github.com/MrAlokTech/" target="_blank" rel="noopener" class="footer-social-link" aria-label="GitHub" title="GitHub">⌥</a>'
-      + '      <a href="https://wa.me/message/PLW3AG4MQZNUI1" target="_blank" rel="noopener" class="footer-social-link" aria-label="WhatsApp" title="WhatsApp">📞</a>'
-      + '    </div>'
-      + '    <a href="#" class="footer-back-top" aria-label="Back to top">↑ Back to top</a>'
+      + '    <a href="#" class="footer-back-top">↑ Back to top</a>'
       + '  </div>'
       + '</div>'
       + '<div class="footer-bottom">'
-      + '  <p class="footer-copy">© ' + currentYear + ' Alok Das · Built with 💝</p>'
+      + '  <p class="footer-copy">© ' + currentYear + ' Alok Das · All rights reserved</p>'
       + '</div>'
       + '</footer>';
 
@@ -312,12 +245,23 @@
       + '</div>'
       + footerHTML;
 
-    /* ── INIT GALLERY ── */
-    var gallery = mount.querySelector('.proj-gallery');
-    if (gallery) initGallery(gallery);
+    /* Setup Theme Toggle */
+    let darkMode = localStorage.getItem('alok-theme-dark') === 'true';
+    const themeBtn = document.getElementById('themeBtn');
+    function setTheme() {
+      document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+      if (themeBtn) themeBtn.textContent = darkMode ? '☀' : '☾';
+      localStorage.setItem('alok-theme-dark', darkMode);
+    }
+    if (themeBtn) {
+      themeBtn.addEventListener('click', function () {
+        darkMode = !darkMode;
+        setTheme();
+      });
+    }
+    setTheme();
   }
 
-  /* Run on DOMContentLoaded or immediately if DOM is already ready */
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', render);
   } else {
