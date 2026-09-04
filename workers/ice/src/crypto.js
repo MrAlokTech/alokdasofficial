@@ -71,13 +71,33 @@ export async function encryptPayload(dataObj, secretKeyStr) {
  */
 export async function decryptPayload(envelope, secretKeyStr) {
   let cipherObj = envelope;
-  if (typeof cipherObj === "string") {
+  
+  // Unwrap nested JSON strings if double-stringified
+  while (typeof cipherObj === "string") {
     try {
-      cipherObj = JSON.parse(cipherObj);
-    } catch (e) {}
+      const parsed = JSON.parse(cipherObj);
+      if (parsed && (typeof parsed === "object" || typeof parsed === "string")) {
+        cipherObj = parsed;
+      } else {
+        break;
+      }
+    } catch (e) {
+      break;
+    }
   }
-  if (!cipherObj || typeof cipherObj !== "object" || !cipherObj.iv || !cipherObj.ciphertext) {
-    throw new Error("Invalid cipher envelope structure");
+
+  if (!cipherObj || typeof cipherObj !== "object") {
+    throw new Error(`Invalid cipher structure. KV content is not a valid JSON object.`);
+  }
+
+  // If user accidentally uploaded unencrypted raw person object directly to KV
+  if (cipherObj.person || cipherObj.emergencyContacts) {
+    throw new Error(`Unencrypted raw data detected in KV. Please encrypt your JSON file using 'node scripts/admin-ice.js encrypt' before uploading.`);
+  }
+
+  if (!cipherObj.iv || !cipherObj.ciphertext) {
+    const keysFound = Object.keys(cipherObj).join(", ") || "none";
+    throw new Error(`Missing 'iv' or 'ciphertext' in KV envelope (Found keys: [${keysFound}]). Please re-run 'node scripts/admin-ice.js encrypt'.`);
   }
 
   const iv = new Uint8Array(base64ToBuffer(cipherObj.iv));

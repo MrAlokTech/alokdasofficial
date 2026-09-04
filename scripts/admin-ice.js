@@ -161,7 +161,7 @@ switch (command) {
     console.log(`URL:   https://alokdasofficial.in/ice/${token}`);
     console.log('--------------------------------------------------');
     console.log('Run this Wrangler command to deploy to Cloudflare KV:\n');
-    console.log(`npx wrangler kv key put --binding=ICE_KV "ice:person:${token}" '${JSON.stringify(envelope)}'`);
+    console.log(`npx wrangler kv key put --remote --binding=ICE_KV "ice:person:${token}" '${JSON.stringify(envelope)}'`);
     console.log('==================================================\n');
     break;
   }
