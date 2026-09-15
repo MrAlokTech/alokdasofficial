@@ -20,7 +20,9 @@ export function AvailabilityBanner() {
               </h3>
 
               <p className="text-[14px] text-muted-foreground leading-relaxed">
-                Prepared for appointments including Quality Control (QC) Analyst, Quality Assurance (QA) Associate, Laboratory Assistant, or Research Project Fellow.
+                Prepared for appointments including Quality Control (QC)
+                Analyst, Quality Assurance (QA) Associate, Laboratory Assistant,
+                or Research Project Fellow.
               </p>
             </div>
 
@@ -31,7 +33,7 @@ export function AvailabilityBanner() {
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-[14px] font-medium text-primary-foreground shadow-sm hover:brightness-105 active:scale-[0.98] transition-all min-h-[44px]"
               >
                 <FileText className="h-4 w-4" />
-                <span>View Résumé</span>
+                <span>View Resume</span>
               </Link>
               <Link
                 href="/contact"

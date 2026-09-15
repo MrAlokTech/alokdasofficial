@@ -30,13 +30,18 @@ export function Hero() {
 
             {/* Concise Supporting Statement (Strictly 2 short lines on desktop) */}
             <p className="text-[16px] sm:text-[17px] text-muted-foreground leading-relaxed max-w-2xl font-normal">
-              M.Sc. Chemistry candidate focused on research, laboratory analysis, and scientific work, with additional practical experience in web and mobile development.
+              M.Sc. Chemistry candidate focused on research, laboratory
+              analysis, and scientific work, with additional practical
+              experience in web and mobile development.
             </p>
 
             {/* Subtle Professional Status Note */}
             <div className="text-[13px] text-muted-foreground flex items-center gap-2 pt-0.5">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              <span>Currently exploring Chemistry-related opportunities &middot; Hojai, Assam</span>
+              <span>
+                Currently exploring Chemistry-related opportunities &middot;
+                Hojai, Assam
+              </span>
             </div>
 
             {/* Recruiter Priority CTAs (Apple HIG 44px Touch Targets) */}
@@ -68,8 +73,8 @@ export function Hero() {
           </div>
 
           {/* Right Column: Compact Executive Profile Snapshot */}
-          <div className="lg:col-span-5 flex justify-center">
-            <div className="w-full max-w-md rounded-2xl border border-border/80 bg-card/80 backdrop-blur-xl p-6 shadow-[0_1px_4px_rgba(0,0,0,0.03)] space-y-4">
+          <div className="lg:col-span-5 flex justify-center lg:justify-end">
+            <div className="w-full max-w-none lg:max-w-md rounded-2xl border border-border/80 bg-card/80 backdrop-blur-xl p-6 shadow-[0_1px_4px_rgba(0,0,0,0.03)] space-y-4">
               {/* Header */}
               <div className="flex items-center justify-between border-b border-border/60 pb-3">
                 <div>
@@ -138,7 +143,7 @@ export function Hero() {
                   href="/resume"
                   className="inline-flex items-center gap-1 font-semibold text-primary hover:underline min-h-[44px]"
                 >
-                  <span>Complete Résumé</span>
+                  <span>Complete Resume</span>
                   <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>

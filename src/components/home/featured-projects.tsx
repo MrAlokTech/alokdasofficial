@@ -29,7 +29,8 @@ export function FeaturedProjects() {
         "Production cross-platform mobile utility built with Flutter and SQLite for offline fuel logging, efficiency metrics, and monthly expense analytics.",
       actionLabel: "Read Case Study",
       actionHref: "/projects/mileage-tracker-app",
-      externalUrl: "https://play.google.com/store/apps/details?id=in.alokdasofficial.mileage",
+      externalUrl:
+        "https://play.google.com/store/apps/details?id=in.alokdasofficial.mileage",
       externalLabel: "Google Play",
     },
     {
@@ -55,13 +56,14 @@ export function FeaturedProjects() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
           <div className="space-y-2 max-w-2xl">
             <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
-              02 &middot; Proof of Capability
+              Proof of Capability
             </span>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-foreground">
               Selected Evidence
             </h2>
             <p className="text-[15px] sm:text-[16px] text-muted-foreground leading-relaxed">
-              Verified proof points spanning laboratory research, production mobile software, and computational chemistry tools.
+              Verified proof points spanning laboratory research, production
+              mobile software, and computational chemistry tools.
             </p>
           </div>
           <Link
@@ -120,7 +122,9 @@ export function FeaturedProjects() {
                     <ExternalLink className="h-3 w-3" />
                   </a>
                 ) : (
-                  <span className="text-[12px] text-muted-foreground">Verified</span>
+                  <span className="text-[12px] text-muted-foreground">
+                    Verified
+                  </span>
                 )}
                 <Link
                   href={item.actionHref}

@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { Radio, Timer, Clock, Atom, FlaskConical, ArrowRight } from "lucide-react";
+import {
+  Radio,
+  Timer,
+  Clock,
+  Atom,
+  FlaskConical,
+  ArrowRight,
+} from "lucide-react";
 
 export function ToolsTeaser() {
   const tools = [
@@ -36,16 +43,17 @@ export function ToolsTeaser() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
           <div className="space-y-2 max-w-2xl">
             <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
-              04 &middot; Workshop &amp; Utilities
+              Workshop &amp; Utilities
             </span>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-foreground">
               Tools &amp; Experiments
             </h2>
             <p className="text-[15px] sm:text-[16px] text-muted-foreground leading-relaxed">
-              Small browser-based utilities I&apos;ve built for learning, productivity, and scientific curiosity.
+              Small browser-based utilities I&apos;ve built for learning,
+              productivity, and scientific curiosity.
             </p>
           </div>
-          <div className="flex items-center gap-4 flex-shrink-0">
+          <div className="flex items-center justify-between gap-4 flex-shrink-0">
             <Link
               href="/tools/labs"
               className="inline-flex items-center gap-1.5 text-[14px] font-semibold text-emerald-700 dark:text-emerald-400 hover:underline min-h-[44px]"

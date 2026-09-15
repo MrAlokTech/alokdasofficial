@@ -48,7 +48,7 @@ export function Footer() {
           {/* Navigation Links */}
           <div className="space-y-3">
             <h4 className="text-[12px] font-semibold text-foreground tracking-tight">
-              Navigation
+              More
             </h4>
             <ul className="space-y-2.5 text-[13px]">
               <li>

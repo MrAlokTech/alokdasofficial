@@ -1,11 +1,16 @@
-import { GraduationCap, FlaskConical, TestTube2, Smartphone } from "lucide-react";
+import {
+  GraduationCap,
+  FlaskConical,
+  TestTube2,
+  Smartphone,
+} from "lucide-react";
 
 export function IdentityStrip() {
   const facts = [
     {
       label: "Current Academic Status",
       value: "M.Sc. Chemistry",
-      detail: "RTU Hojai (Ongoing)",
+      detail: "RTV Hojai, Assam (Ongoing)",
       icon: GraduationCap,
       accent: "text-emerald-700 dark:text-emerald-400",
     },
@@ -36,15 +41,18 @@ export function IdentityStrip() {
     <section className="py-8 md:py-10 border-b border-border/60 bg-secondary/20">
       <div className="container mx-auto px-4 sm:px-6">
         {/* 4-Item Compact Professional Snapshot Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 divide-y sm:divide-y-0 sm:divide-x divide-border/60">
-          {facts.map((fact, idx) => {
+        <div className="grid grid-cols-1 gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-12">
+          {/* <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 divide-y sm:divide-y-0 sm:divide-x divide-border/60"> */}
+          {facts.map((fact) => {
+            // {facts.map((fact, idx) => {
             const Icon = fact.icon;
             return (
               <div
                 key={fact.label}
-                className={`flex flex-col space-y-1.5 ${
-                  idx === 0 ? "" : "sm:pl-6 pt-4 sm:pt-0"
-                }`}
+                className={`flex min-w-0 flex-col space-y-1.5`}
+                //   className={`flex flex-col space-y-1.5 ${
+                //   idx === 0 ? "" : "sm:pl-6 pt-4 sm:pt-0"
+                // }`}
               >
                 <div className="flex items-center gap-2">
                   <Icon className={`h-4 w-4 ${fact.accent}`} />

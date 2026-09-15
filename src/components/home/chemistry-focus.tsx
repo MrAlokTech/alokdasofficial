@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { chemistrySkillsData, dissertationData } from "@/data/chemistry";
 import { educationData } from "@/data/education";
-import { FlaskConical, GraduationCap, ArrowRight, FileText } from "lucide-react";
+import {
+  FlaskConical,
+  GraduationCap,
+  ArrowRight,
+  FileText,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export function ChemistryFocus() {
@@ -25,13 +30,14 @@ export function ChemistryFocus() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
           <div className="space-y-2 max-w-2xl">
             <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-700 dark:text-emerald-400 font-semibold">
-              01 &middot; Primary Field
+              Primary Field
             </span>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-foreground">
               Chemistry &amp; Laboratory Research
             </h2>
             <p className="text-[15px] sm:text-[16px] text-muted-foreground leading-relaxed">
-              M.Sc. Chemistry candidate building expertise across academic, laboratory, and research-oriented work.
+              M.Sc. Chemistry candidate building expertise across academic,
+              laboratory, and research-oriented work.
             </p>
           </div>
           <Link
@@ -84,7 +90,9 @@ export function ChemistryFocus() {
 
             <div className="pt-2">
               <p className="text-[12px] text-muted-foreground leading-relaxed">
-                Academic training covers inorganic complex synthesis, spectroscopy, organic reaction mechanisms, and natural product separation.
+                Academic training covers inorganic complex synthesis,
+                spectroscopy, organic reaction mechanisms, and natural product
+                separation.
               </p>
             </div>
           </div>
