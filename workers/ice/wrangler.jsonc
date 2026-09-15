@@ -1,0 +1,43 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ice-worker",
+  "main": "src/index.js",
+  "compatibility_date": "2024-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "routes": [
+    {
+      "pattern": "alokdasofficial.in/ice/*",
+      "zone_name": "alokdasofficial.in",
+    },
+    {
+      "pattern": "www.alokdasofficial.in/ice/*",
+      "zone_name": "alokdasofficial.in",
+    },
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "ICE_KV",
+      "id": "184a10931aa9414cb8e1c5f06d3a223a",
+    },
+  ],
+  "vars": {
+    "TURNSTILE_SITE_KEY": "0x4AAAAAAEY982yD7hm3-Cf1",
+    "TURNSTILE_SECRET_KEY": "0x4AAAAAAEY983NU8VdLuRDzYcd8iz8slOM",
+  },
+
+  "observability": {
+    "enabled": false,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true,
+      "invocation_logs": true,
+    },
+    // "traces": {
+    //   "enabled": true,
+    //   "persist": true,
+    //   "head_sampling_rate": 1,
+    // },
+  },
+}
