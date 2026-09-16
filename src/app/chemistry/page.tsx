@@ -6,8 +6,23 @@ import { Badge } from "@/components/ui/badge";
 import { FlaskConical, GraduationCap, CheckCircle2, FileText, ArrowRight, Microscope } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Chemistry Profile & Research",
-  description: "Academic background, M.Sc. coursework, laboratory analytical skills, and phytochemical dissertation research of Alok Das.",
+  title: "Chemistry Profile & Research — Alok Das (alokdasofficial)",
+  description:
+    "Academic background, M.Sc. coursework, laboratory analytical skills, TLC chromatography, and phytochemical dissertation research of Alok Das, chemistry graduate.",
+  keywords: [
+    "Alok Das Chemistry",
+    "chemistry graduate",
+    "alokdasofficial",
+    "alokdasoffiical",
+    "Analytical Chemistry",
+    "Phytochemical Screening",
+    "Rabindranath Tagore University Chemistry",
+    "Thin Layer Chromatography",
+    "Quality Control Analyst",
+  ],
+  alternates: {
+    canonical: "https://alokdasofficial.in/chemistry",
+  },
 };
 
 export default function ChemistryPage() {

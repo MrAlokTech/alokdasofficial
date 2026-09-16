@@ -1,0 +1,62 @@
+# Alok Das (alokdasofficial)
+
+> Chemistry Graduate & Scientific Software Builder
+> Assam, India • M.Sc. Chemistry (Rabindranath Tagore University) • Developer of Alomole, Mileage Tracker, and Interactive Lab Simulators.
+
+## Overview
+Alok Das is a chemistry researcher and scientific software developer based in Assam, India. He holds a Bachelor of Science (B.Sc.) in Chemistry with Distinction and is currently pursuing his Master of Science (M.Sc.) in Chemistry at Rabindranath Tagore University (Hojai, Assam). 
+
+His primary expertise spans analytical chemistry, phytochemical screening, chromatographic separation (TLC), and quality control (QC/GLP) protocols. Concurrently, he designs and develops production-grade cross-platform mobile apps using Flutter and responsive web applications utilizing Next.js, TypeScript, and Tailwind CSS.
+
+## Core Identity & Handles
+- Full Name: Alok Das
+- Aliases & Handles: alokdasofficial, alokdasoffiical, MrAlokTech
+- Website: https://alokdasofficial.in
+- GitHub: https://github.com/MrAlokTech
+- LinkedIn: https://www.linkedin.com/in/alokdasofficial
+- Google Play Developer: https://play.google.com/store/apps/developer?id=Alok+Das
+- Location: Hojai, Assam, India (782435)
+
+## Primary Specializations & Skills
+### Scientific & Laboratory
+- Analytical Chemistry: Volumetric, gravimetric, spectrophotometric analysis, Beer-Lambert verification.
+- Phytochemical Screening: Extraction and secondary metabolite identification (alkaloids, flavonoids, saponins, tannins) from regional flora.
+- Chromatography: Thin Layer Chromatography (TLC), Rf value calculation, solvent system optimization.
+- Laboratory Practice: Good Laboratory Practice (GLP), standard solutions preparation, lab safety, equipment calibration.
+
+### Software Engineering
+- Mobile Development: Flutter (Dart), State Management (Provider, Riverpod), SQLite, Offline-first architectures, Google Play Store publication.
+- Web Development: Next.js, React, TypeScript, Tailwind CSS, Schema.org JSON-LD, SEO/AEO/GEO optimization.
+- Scientific Computing: Interactive chemistry simulators, molecular weight calculators, stoichiometry engines.
+
+## Key Projects & Published Applications
+- **Alomole**: Molecular calculator and chemistry companion app designed for students and lab analysts to calculate molar masses, elemental percentages, and reaction stoichiometry.
+- **Mileage Tracker**: Production Android utility on Google Play for recording vehicle fuel efficiency, expenses, and trip telemetry with local-first offline storage.
+- **Interactive Science Labs**: Browser-based laboratory simulations built into alokdasofficial.in, including:
+  - Acid-Base Titration Simulator (dynamic pH curve calculation)
+  - Beer-Lambert Law Simulator (absorbance vs. concentration calibration)
+  - Reaction Kinetics & Arrhenius Equation Modeling
+  - pH Scale & Ionic Product Visualizer
+  - Refraction & Snell's Law Optics Tool
+  - Ohm's Law & Circuit Analysis Simulator
+  - Measurement & Significant Figures Mastery Tool
+
+## Academic Background
+- Master of Science (M.Sc.) in Chemistry (2023 – Present): Rabindranath Tagore University, Hojai, Assam.
+  - Research: Phytochemical evaluation and analytical profiling.
+- Bachelor of Science (B.Sc.) in Chemistry (2020 – 2023): Distinction, Rabindranath Tagore University.
+- Higher Secondary & Secondary: Jawahar Navodaya Vidyalaya (JNV).
+
+## Target Roles & Scientific Collaborations
+- Quality Control (QC) Analyst / Quality Assurance (QA) Associate
+- Analytical Chemist & Laboratory Analyst
+- Scientific Research Assistant / Project Fellow
+- Computational Chemistry & Technical Tool Developer
+
+## Direct Documentation & Deep Links
+- Full Knowledge & Research Digest: https://alokdasofficial.in/llms-full.txt
+- Chemistry Research Profile: https://alokdasofficial.in/chemistry
+- Complete Portfolio & Projects: https://alokdasofficial.in/projects
+- Resume & Curriculum Vitae: https://alokdasofficial.in/resume
+- Interactive Tools & Labs: https://alokdasofficial.in/tools
+- Contact & Inquiries: https://alokdasofficial.in/contact (alok@alokdasofficial.in)

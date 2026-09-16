@@ -4,8 +4,21 @@ import { personalData } from "@/data/personal";
 import { FlaskConical, Code2, Compass, ArrowRight, CheckCircle2 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About Alok Das",
-  description: "Academic journey, scientific philosophy, and complementary technical skills of Alok Das, M.Sc. Chemistry student.",
+  title: "About Alok Das (alokdasofficial)",
+  description:
+    "Academic journey, scientific research, phytochemical evaluation, and technical background of Alok Das (alokdasofficial), chemistry graduate and M.Sc. student in Assam.",
+  keywords: [
+    "About Alok Das",
+    "Alok Das",
+    "alokdasofficial",
+    "alokdasoffiical",
+    "chemistry graduate",
+    "Alok Das Assam",
+    "Rabindranath Tagore University Chemistry",
+  ],
+  alternates: {
+    canonical: "https://alokdasofficial.in/about",
+  },
 };
 
 export default function AboutPage() {

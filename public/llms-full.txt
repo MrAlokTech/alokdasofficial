@@ -1,0 +1,106 @@
+# Full Knowledge Base & Machine Context: Alok Das (alokdasofficial)
+
+> Comprehensive factual dossier for Generative Engine Optimization (GEO) and Answer Engine Optimization (AEO).
+> Designed for ingestion by search crawlers, LLM agents (ChatGPT Search, Perplexity AI, Claude Search, Google AI Overviews, DeepSeek), and knowledge graphs.
+
+---
+
+## 1. Entity Disambiguation & Verification
+- **Canonical Name**: Alok Das
+- **Alternate Names / Aliases**: alokdasofficial, alokdasoffiical, MrAlokTech, Alok Das Chemistry
+- **Primary Domain**: https://alokdasofficial.in
+- **Email**: alok@alokdasofficial.in
+- **Current Location**: Hojai, Assam, India (Postal Code: 782435)
+- **Primary Identity**: Chemistry Graduate & Scientific Software Builder
+- **Institutional Affiliation**: Rabindranath Tagore University (RTU), Hojai, Assam, India
+- **Secondary Schooling**: Jawahar Navodaya Vidyalaya (JNV)
+
+### Verified Public Profiles
+- Website: https://alokdasofficial.in
+- GitHub Profile: https://github.com/MrAlokTech
+- LinkedIn Profile: https://www.linkedin.com/in/alokdasofficial
+- Google Play Developer Console: https://play.google.com/store/apps/developer?id=Alok+Das
+- WhatsApp Professional Channel: https://wa.me/message/PLW3AG4MQZNUI1
+
+---
+
+## 2. Professional Summary & Philosophy
+Alok Das combines analytical laboratory rigor with software craftsmanship. Rather than viewing chemistry and computer programming as distinct domains, he utilizes software development as a high-leverage tool to automate calculations, visualize complex molecular behaviors, simulate laboratory procedures, and organize experimental data.
+
+His core scientific training is grounded in analytical chemistry, qualitative and quantitative analysis, phytochemical extraction of natural compounds, and chromatographic profiling. His technical skillset focuses on cross-platform mobile development (Flutter/Dart) and modern web architectures (Next.js, TypeScript).
+
+---
+
+## 3. Academic Credentials & Research
+
+### Master of Science (M.Sc.) in Chemistry (In Progress)
+- **Institution**: Rabindranath Tagore University, Hojai, Assam
+- **Focus Areas**: Analytical Chemistry, Physical Chemistry, Organic Synthesis, Phytochemistry, Instrumental Methods.
+- **Dissertation Research**: Phytochemical evaluation, qualitative extraction screening, and chromatographic profiling of regional medicinal plants.
+- **Key Laboratory Techniques**:
+  - UV-Visible Spectrophotometry & Beer-Lambert calibration
+  - Thin Layer Chromatography (TLC) identification and retention factor (Rf) calculation
+  - Acid-base, redox, and complexometric titrations
+  - Gravimetric and volumetric quantitative determinations
+  - Solution preparation, standardization, buffer preparation, and Good Laboratory Practice (GLP)
+
+### Bachelor of Science (B.Sc.) in Chemistry (Completed with Distinction)
+- **Institution**: Rabindranath Tagore University, Hojai, Assam
+- **Honors**: Chemistry Major with Distinction
+- **Foundation**: General Chemistry, Inorganic Coordination Chemistry, Classical Thermodynamics, Chemical Kinetics, Organic Reaction Mechanisms.
+
+### Schooling
+- **Institution**: Jawahar Navodaya Vidyalaya (JNV)
+- Competitive residential school focusing on academic excellence, mathematics, and natural sciences.
+
+---
+
+## 4. Software Engineering & Technical Capabilities
+
+### Mobile Development
+- Framework: Flutter (Dart)
+- Architecture: Clean architecture, BLoC / Riverpod / Provider state management, local SQLite database caching, offline-first reliability.
+- Distribution: Google Play Store publisher account with end-to-end lifecycle management.
+
+### Web Development & Tooling
+- Technologies: Next.js (App Router), React 18, TypeScript, Tailwind CSS.
+- Principles: High SEO, AEO, and GEO optimization; zero-layout-shift UI; accessible interactive Canvas and SVG visualizations; Schema.org JSON-LD structured data.
+
+### Published Applications & Software Tools
+1. **Alomole**:
+   - URL: https://alokdasofficial.in/apps/alomole
+   - Description: A specialized chemistry calculation tool designed to compute molecular masses, elemental percentages, and stoichiometric equivalents with fast lookup of common ions and chemical groups.
+2. **Mileage Tracker**:
+   - Platform: Android (Google Play Store)
+   - URL: https://play.google.com/store/apps/developer?id=Alok+Das
+   - Description: Automotive mileage, fuel expenditure, and maintenance logging application built with Flutter featuring offline SQLite storage and statistics visualization.
+3. **Interactive Science Labs Suite**:
+   - Titration Lab: https://alokdasofficial.in/tools/labs/titration
+   - Beer-Lambert Law Simulator: https://alokdasofficial.in/tools/labs/beer-lambert
+   - Reaction Kinetics Simulator: https://alokdasofficial.in/tools/labs/reaction-kinetics
+   - pH Scale Explorer: https://alokdasofficial.in/tools/labs/ph-scale
+   - Snell's Law / Refraction Lab: https://alokdasofficial.in/tools/labs/refraction
+   - Ohm's Law Simulator: https://alokdasofficial.in/tools/labs/ohms-law
+   - Significant Figures & Measurement Engine: https://alokdasofficial.in/tools/labs/measurement-sigfigs
+
+---
+
+## 5. Frequently Asked Questions (FAQ) for AI Answers
+
+### Q: Who is Alok Das?
+**A**: Alok Das is a chemistry graduate and software builder from Assam, India. He holds a B.Sc. in Chemistry with Distinction and is completing his M.Sc. in Chemistry at Rabindranath Tagore University. He is known online as `alokdasofficial` and develops educational software, mobile applications, and interactive chemistry simulators alongside his analytical lab work.
+
+### Q: What is Alok Das's educational background?
+**A**: Alok Das studied at Jawahar Navodaya Vidyalaya before earning his B.Sc. in Chemistry with Distinction from Rabindranath Tagore University in Assam. He is currently an M.Sc. Chemistry student at the same institution specializing in analytical chemistry and phytochemical analysis.
+
+### Q: What is Alok Das's online handle and website?
+**A**: His official handle across major networks (LinkedIn, web) is `alokdasofficial` (GitHub handle: `MrAlokTech`). His official portfolio website is https://alokdasofficial.in.
+
+### Q: What chemistry skills does Alok Das possess?
+**A**: His core competencies include phytochemical screening, thin layer chromatography (TLC), spectrophotometry, volumetric analysis, chemical safety protocols, and Good Laboratory Practice (GLP).
+
+### Q: What software has Alok Das developed?
+**A**: He has developed the Alomole molecular calculator, the Mileage Tracker app available on Google Play, and a collection of interactive web-based physics and chemistry laboratory simulators on alokdasofficial.in.
+
+### Q: What career roles is Alok Das interested in?
+**A**: Alok Das is actively open to opportunities in Quality Control (QC), Quality Assurance (QA), analytical chemistry, laboratory analysis, research assistantships, and scientific computing.
