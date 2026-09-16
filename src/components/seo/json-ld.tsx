@@ -70,6 +70,12 @@ export function PersonJsonLd() {
           personalData.social.linkedin,
           personalData.social.googlePlay,
           personalData.social.whatsapp,
+          "https://me.alokdasofficial.in",
+          "https://mileage.alokdasofficial.in",
+          "https://notes.alokdasofficial.in",
+          "https://shorturl.alokdasofficial.in",
+          "https://tickly.alokdasofficial.in",
+          "https://alomolecule.web.app",
         ],
         knowsAbout: [
           "Analytical Chemistry",

@@ -117,6 +117,7 @@ export function FeaturedProjects() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors min-h-[44px]"
+                    aria-label={`${item.externalLabel} for ${item.title}`}
                   >
                     <span>{item.externalLabel}</span>
                     <ExternalLink className="h-3 w-3" />
@@ -129,6 +130,7 @@ export function FeaturedProjects() {
                 <Link
                   href={item.actionHref}
                   className="inline-flex items-center gap-1 text-[13px] font-semibold text-primary hover:underline min-h-[44px]"
+                  aria-label={`${item.actionLabel}: ${item.title}`}
                 >
                   <span>{item.actionLabel}</span>
                   <ArrowRight className="h-3.5 w-3.5" />

@@ -1,62 +1,49 @@
-# Alok Das (alokdasofficial)
+# Alok Das
 
-> Chemistry Graduate & Scientific Software Builder
-> Assam, India • M.Sc. Chemistry (Rabindranath Tagore University) • Developer of Alomole, Mileage Tracker, and Interactive Lab Simulators.
+> Chemistry Graduate & Scientific Software Builder based in Assam, India. M.Sc. Chemistry student at Rabindranath Tagore University, analytical laboratory practitioner, and creator of Alomole, Mileage Tracker, and interactive science simulations.
 
-## Overview
-Alok Das is a chemistry researcher and scientific software developer based in Assam, India. He holds a Bachelor of Science (B.Sc.) in Chemistry with Distinction and is currently pursuing his Master of Science (M.Sc.) in Chemistry at Rabindranath Tagore University (Hojai, Assam). 
+## Primary Profiles & Identity
 
-His primary expertise spans analytical chemistry, phytochemical screening, chromatographic separation (TLC), and quality control (QC/GLP) protocols. Concurrently, he designs and develops production-grade cross-platform mobile apps using Flutter and responsive web applications utilizing Next.js, TypeScript, and Tailwind CSS.
+- [Official Website](https://alokdasofficial.in): The canonical portfolio, curriculum vitae, and project directory for Alok Das (alokdasofficial).
+- [GitHub Profile](https://github.com/MrAlokTech): Open source software repositories, chemistry simulation engines, and developer tools.
+- [LinkedIn Profile](https://www.linkedin.com/in/alokdasofficial): Professional background, academic connections, and scientific career updates.
+- [Google Play Developer Page](https://play.google.com/store/apps/developer?id=Alok+Das): Published Android mobile applications developed by Alok Das.
+- [Personal Bio Hub](https://me.alokdasofficial.in): Minimalist micro-portfolio and quick links directory.
 
-## Core Identity & Handles
-- Full Name: Alok Das
-- Aliases & Handles: alokdasofficial, alokdasoffiical, MrAlokTech
-- Website: https://alokdasofficial.in
-- GitHub: https://github.com/MrAlokTech
-- LinkedIn: https://www.linkedin.com/in/alokdasofficial
-- Google Play Developer: https://play.google.com/store/apps/developer?id=Alok+Das
-- Location: Hojai, Assam, India (782435)
+## Academic & Research
 
-## Primary Specializations & Skills
-### Scientific & Laboratory
-- Analytical Chemistry: Volumetric, gravimetric, spectrophotometric analysis, Beer-Lambert verification.
-- Phytochemical Screening: Extraction and secondary metabolite identification (alkaloids, flavonoids, saponins, tannins) from regional flora.
-- Chromatography: Thin Layer Chromatography (TLC), Rf value calculation, solvent system optimization.
-- Laboratory Practice: Good Laboratory Practice (GLP), standard solutions preparation, lab safety, equipment calibration.
+- [Chemistry Research & Profile](https://alokdasofficial.in/chemistry): Details of M.Sc. coursework, laboratory methodology, phytochemical screening dissertation, and analytical assays.
+- [Curriculum Vitae](https://alokdasofficial.in/resume): Complete academic qualifications, laboratory instrumentation competencies, and career milestones.
+- [Phytochemical Screening Case Study](https://alokdasofficial.in/projects/phytochemical-screening): B.Sc. dissertation research on extraction, TLC chromatographic separation, and bioactive secondary metabolites.
+- [About Alok Das](https://alokdasofficial.in/about): Detailed narrative on scientific philosophy, academic trajectory, and cross-disciplinary technical skills.
 
-### Software Engineering
-- Mobile Development: Flutter (Dart), State Management (Provider, Riverpod), SQLite, Offline-first architectures, Google Play Store publication.
-- Web Development: Next.js, React, TypeScript, Tailwind CSS, Schema.org JSON-LD, SEO/AEO/GEO optimization.
-- Scientific Computing: Interactive chemistry simulators, molecular weight calculators, stoichiometry engines.
+## Published Software & Web Applications
 
-## Key Projects & Published Applications
-- **Alomole**: Molecular calculator and chemistry companion app designed for students and lab analysts to calculate molar masses, elemental percentages, and reaction stoichiometry.
-- **Mileage Tracker**: Production Android utility on Google Play for recording vehicle fuel efficiency, expenses, and trip telemetry with local-first offline storage.
-- **Interactive Science Labs**: Browser-based laboratory simulations built into alokdasofficial.in, including:
-  - Acid-Base Titration Simulator (dynamic pH curve calculation)
-  - Beer-Lambert Law Simulator (absorbance vs. concentration calibration)
-  - Reaction Kinetics & Arrhenius Equation Modeling
-  - pH Scale & Ionic Product Visualizer
-  - Refraction & Snell's Law Optics Tool
-  - Ohm's Law & Circuit Analysis Simulator
-  - Measurement & Significant Figures Mastery Tool
+- [Alomole Chemistry Companion](https://alomolecule.web.app): Domain-specific web application for chemical equation balancing, molar mass calculation, and reaction stoichiometry.
+- [Mileage Tracker App Case Study](https://alokdasofficial.in/projects/mileage-tracker-app): Production Android utility on Google Play built with Flutter and SQLite for offline fuel logging and efficiency tracking.
+- [Mileage Tracker Web Showcase](https://mileage.alokdasofficial.in): Live web showcase and feature breakdown of the Mileage Tracker mobile utility.
+- [Digital Notes & Journal](https://notes.alokdasofficial.in): Clean, minimalist web notes and journaling utility.
+- [URL Shortener Service](https://shorturl.alokdasofficial.in): Lightweight link shortening and redirection service.
+- [Tickly Productivity Tool](https://tickly.alokdasofficial.in): Fast, minimalist task and habit tracking web application.
 
-## Academic Background
-- Master of Science (M.Sc.) in Chemistry (2023 – Present): Rabindranath Tagore University, Hojai, Assam.
-  - Research: Phytochemical evaluation and analytical profiling.
-- Bachelor of Science (B.Sc.) in Chemistry (2020 – 2023): Distinction, Rabindranath Tagore University.
-- Higher Secondary & Secondary: Jawahar Navodaya Vidyalaya (JNV).
+## Interactive Science Simulators
 
-## Target Roles & Scientific Collaborations
-- Quality Control (QC) Analyst / Quality Assurance (QA) Associate
-- Analytical Chemist & Laboratory Analyst
-- Scientific Research Assistant / Project Fellow
-- Computational Chemistry & Technical Tool Developer
+- [Acid-Base Titration Simulator](https://alokdasofficial.in/tools/labs/titration): Interactive virtual laboratory computing real-time pH titration curves, indicator transitions, and equivalence points.
+- [Beer-Lambert Law Simulator](https://alokdasofficial.in/tools/labs/beer-lambert): Optical spectrophotometry simulator exploring absorbance vs. path length and concentration.
+- [Reaction Kinetics Simulator](https://alokdasofficial.in/tools/labs/reaction-kinetics): Kinetic rate laws, Arrhenius activation energy, and concentration vs. time modeling.
+- [pH Scale & Ionic Product Visualizer](https://alokdasofficial.in/tools/labs/ph-scale): Dynamic logarithmic pH scale, autoionization of water, and hydronium concentration tool.
+- [Refraction & Snell's Law Optics Tool](https://alokdasofficial.in/tools/labs/refraction): Interactive wave optics and refractive index simulator.
+- [Ohm's Law & Circuit Simulator](https://alokdasofficial.in/tools/labs/ohms-law): Interactive electrical circuit simulation exploring voltage, current, and resistance relationships.
+- [Significant Figures & Measurement Mastery](https://alokdasofficial.in/tools/labs/measurement-sigfigs): Precision measurement and significant figures calculation tool for scientific laboratory data.
 
-## Direct Documentation & Deep Links
-- Full Knowledge & Research Digest: https://alokdasofficial.in/llms-full.txt
-- Chemistry Research Profile: https://alokdasofficial.in/chemistry
-- Complete Portfolio & Projects: https://alokdasofficial.in/projects
-- Resume & Curriculum Vitae: https://alokdasofficial.in/resume
-- Interactive Tools & Labs: https://alokdasofficial.in/tools
-- Contact & Inquiries: https://alokdasofficial.in/contact (alok@alokdasofficial.in)
+## Research Articles & Articles
+
+- [Phytochemical Screening Methods](https://alokdasofficial.in/blog/phytochemical-screening-methods): Systematic guide to qualitative extraction and secondary metabolite screening in laboratory plants.
+- [Balancing Chemical Equations Algorithm](https://alokdasofficial.in/blog/balancing-chemical-equations-algorithm): Mathematical modeling and null-space matrix solvers in Dart for balancing complex chemical equations.
+- [Offline-First Flutter Architecture](https://alokdasofficial.in/blog/offline-first-flutter-architecture): Technical review of local SQLite persistence and telemetry-free mobile utility design.
+
+## Community & Contact
+
+- [Contact & Inquiry Form](https://alokdasofficial.in/contact): Direct contact channels and inquiry form for scientific and engineering opportunities.
+- [Community Perspectives & Polls](https://alokdasofficial.in/polls): Anonymous voting and feedback on chemistry research tools and features.
+- [Full LLM Knowledge Dossier](https://alokdasofficial.in/llms-full.txt): Comprehensive multi-page plain text context file for multi-hop AI reasoning.

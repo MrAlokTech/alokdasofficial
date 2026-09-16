@@ -68,13 +68,28 @@ His core scientific training is grounded in analytical chemistry, qualitative an
 
 ### Published Applications & Software Tools
 1. **Alomole**:
-   - URL: https://alokdasofficial.in/apps/alomole
+   - Web App URL: https://alomolecule.web.app
+   - Project Profile: https://alokdasofficial.in/projects/alomole-chemistry-tool
    - Description: A specialized chemistry calculation tool designed to compute molecular masses, elemental percentages, and stoichiometric equivalents with fast lookup of common ions and chemical groups.
 2. **Mileage Tracker**:
    - Platform: Android (Google Play Store)
-   - URL: https://play.google.com/store/apps/developer?id=Alok+Das
+   - Web App / Showcase: https://mileage.alokdasofficial.in
+   - Project Profile: https://alokdasofficial.in/projects/mileage-tracker-app
+   - Google Play URL: https://play.google.com/store/apps/developer?id=Alok+Das
    - Description: Automotive mileage, fuel expenditure, and maintenance logging application built with Flutter featuring offline SQLite storage and statistics visualization.
-3. **Interactive Science Labs Suite**:
+3. **Digital Notes & Journal**:
+   - Web App URL: https://notes.alokdasofficial.in
+   - Description: A lightweight, responsive web notes and journaling utility.
+4. **URL Shortener**:
+   - Web App URL: https://shorturl.alokdasofficial.in
+   - Description: Custom link shortening and redirection utility.
+5. **Tickly**:
+   - Web App URL: https://tickly.alokdasofficial.in
+   - Description: Clean, minimal task management and productivity app.
+6. **Personal Bio & Quick Links**:
+   - Web URL: https://me.alokdasofficial.in
+   - Description: Minimalist links hub and bio landing page.
+7. **Interactive Science Labs Suite**:
    - Titration Lab: https://alokdasofficial.in/tools/labs/titration
    - Beer-Lambert Law Simulator: https://alokdasofficial.in/tools/labs/beer-lambert
    - Reaction Kinetics Simulator: https://alokdasofficial.in/tools/labs/reaction-kinetics

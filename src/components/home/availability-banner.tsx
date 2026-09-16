@@ -15,9 +15,9 @@ export function AvailabilityBanner() {
                 </span>
               </div>
 
-              <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground leading-snug">
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground leading-snug">
                 Currently exploring Chemistry-related opportunities
-              </h3>
+              </h2>
 
               <p className="text-[14px] text-muted-foreground leading-relaxed">
                 Prepared for appointments including Quality Control (QC)

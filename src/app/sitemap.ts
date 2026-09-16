@@ -39,7 +39,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const allRoutes = [...coreRoutes, ...blogRoutes, ...projectRoutes, ...pollRoutes];
 
-  return allRoutes.map((route) => {
+  const internalRoutes = allRoutes.map((route) => {
     let priority = 0.7;
     let changeFrequency: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never" = "monthly";
 
@@ -67,4 +67,45 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority,
     };
   });
+
+  const externalUrls: MetadataRoute.Sitemap = [
+    {
+      url: "https://me.alokdasofficial.in",
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: "https://mileage.alokdasofficial.in",
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: "https://notes.alokdasofficial.in",
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.75,
+    },
+    {
+      url: "https://shorturl.alokdasofficial.in",
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.75,
+    },
+    {
+      url: "https://tickly.alokdasofficial.in",
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.75,
+    },
+    {
+      url: "https://alomolecule.web.app",
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+  ];
+
+  return [...internalRoutes, ...externalUrls];
 }

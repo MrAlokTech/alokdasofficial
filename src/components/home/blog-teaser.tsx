@@ -79,6 +79,7 @@ export async function HomeBlogTeaser() {
                 <Link
                   href={`/blog/${post.slug}`}
                   className="inline-flex items-center gap-1 font-semibold text-primary hover:underline min-h-[44px]"
+                  aria-label={`Read article: ${post.title}`}
                 >
                   <span>Read Article</span>
                   <ArrowRight className="h-3.5 w-3.5" />

@@ -29,9 +29,9 @@ export async function HomePollTeaser() {
               </span>
             </div>
 
-            <h3 className="text-[16px] sm:text-[17px] font-bold tracking-tight text-foreground">
+            <h2 className="text-[16px] sm:text-[17px] font-bold tracking-tight text-foreground">
               {activePoll.question}
-            </h3>
+            </h2>
 
             <p className="text-[12px] sm:text-[13px] text-muted-foreground leading-relaxed">
               Anonymous community poll &middot; No name or email requested.

@@ -1,0 +1,33 @@
+# Cloudflare Pages / Static Hosting Cache & Security Headers
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/*.jpg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/*.ico
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/llms.txt
+  Cache-Control: public, max-age=86400, stale-while-revalidate=3600
+
+/llms-full.txt
+  Cache-Control: public, max-age=86400, stale-while-revalidate=3600
+
+/sitemap.xml
+  Cache-Control: public, max-age=86400, stale-while-revalidate=3600
+
+/robots.txt
+  Cache-Control: public, max-age=86400, stale-while-revalidate=3600

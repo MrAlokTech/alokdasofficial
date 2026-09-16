@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import Image from "next/image";
@@ -74,7 +74,7 @@ export function SitePreloaderProvider({
 }) {
   const pathname = usePathname();
   const [mounted, setMounted] = React.useState(false);
-  const [isInitialLoad, setIsInitialLoad] = React.useState(true);
+  const [isInitialLoad, setIsInitialLoad] = React.useState(false);
   const [isRouteTransitioning, setIsRouteTransitioning] = React.useState(false);
   const [customMessage, setCustomMessage] = React.useState<{
     title: string;
@@ -116,6 +116,7 @@ export function SitePreloaderProvider({
   // Check prefers-reduced-motion
   React.useEffect(() => {
     setMounted(true);
+    lastPathnameRef.current = pathname;
     if (typeof window !== "undefined") {
       const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
       setPrefersReducedMotion(mediaQuery.matches);
@@ -123,17 +124,7 @@ export function SitePreloaderProvider({
       mediaQuery.addEventListener("change", handleChange);
       return () => mediaQuery.removeEventListener("change", handleChange);
     }
-  }, []);
-
-  // Initial welcome dismiss (zero artificial delay; brief ~350ms fade-out)
-  React.useEffect(() => {
-    if (!mounted) return;
-    const timer = setTimeout(() => {
-      setIsInitialLoad(false);
-      lastPathnameRef.current = pathname;
-    }, 380);
-    return () => clearTimeout(timer);
-  }, [mounted, pathname]);
+  }, [pathname]);
 
   // Handle route change completion (when destination page loads and pathname changes)
   React.useEffect(() => {
