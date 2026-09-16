@@ -14,6 +14,43 @@ export interface ToolItem {
 
 export const toolsData: ToolItem[] = [
   {
+    id: "pdf",
+    slug: "pdf",
+    name: "Client-Side PDF Studio",
+    tagline: "Compress, merge, split, sign, redact, and convert camera photos to searchable PDFs.",
+    category: "Utility",
+    badge: "100% Private",
+    iconName: "FileText",
+    description:
+      "A complete in-browser PDF power suite. Merge documents with page-to-page reordering, split into individual PDFs or ZIP archives, compress file size up to 80%, add authentic signatures, erase unwanted elements with Whiteout, and convert camera photos to searchable PDFs with OCR.",
+    href: "/tools/pdf",
+    features: [
+      "Merge multiple PDFs with visual thumbnail drag-and-drop & interleaving",
+      "Split PDF by custom page ranges or batch export into ZIP",
+      "Compress PDF with customizable DPI presets and live size savings",
+      "Sign documents via draw, cursive typography, or photo stamp",
+      "Redact confidential data or erase elements with permanent Whiteout",
+      "Device camera scan with CamScanner-grade Magic Color & Tesseract OCR",
+    ],
+    faq: [
+      {
+        question: "Are my PDF documents uploaded to any server?",
+        answer:
+          "No. All PDF processing, image optimization, and OCR recognition execute 100% inside your browser's local memory using WebAssembly and Web Workers. No files ever leave your device.",
+      },
+      {
+        question: "How does the Whiteout / Eraser feature work?",
+        answer:
+          "The Whiteout eraser places opaque white layers that are permanently baked into the PDF content stream, obliterating underlying text and graphics so they cannot be highlighted or extracted.",
+      },
+      {
+        question: "Can I search text in PDFs created from photos?",
+        answer:
+          "Yes. When you run OCR on a photo or camera scan, the tool embeds an invisible searchable text layer directly over the image, allowing you to search, highlight, and copy text in any PDF reader.",
+      },
+    ],
+  },
+  {
     id: "morse",
     slug: "morse",
     name: "Morse Code Practice Tool",
