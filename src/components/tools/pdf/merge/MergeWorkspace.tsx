@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { PdfDropzone } from "../common/PdfDropzone";
 import { PageThumbnailGrid, PageItem } from "../common/PageThumbnailGrid";
 import { getPdfJs, renderPageThumbnail } from "@/lib/pdf/pdfjs-loader";
-import { formatBytes } from "@/lib/pdf/page-geometry";
+import { formatBytes, formatDownloadFileName } from "@/lib/pdf/page-geometry";
 import {
   Download,
   Plus,
@@ -15,6 +15,9 @@ import {
   ArrowUpDown,
   Sparkles,
   Layers,
+  FileUp,
+  GripVertical,
+  Loader2,
 } from "lucide-react";
 
 interface UploadedFileRef {
@@ -22,6 +25,16 @@ interface UploadedFileRef {
   name: string;
   buffer: ArrayBuffer;
   pageCount: number;
+}
+
+interface ImportDialogState {
+  isOpen: boolean;
+  totalFiles: number;
+  currentFileIndex: number;
+  currentFileName: string;
+  currentPage: number;
+  totalPagesInCurrentFile: number;
+  renderedTotal: number;
 }
 
 export const MergeWorkspace: React.FC = () => {
@@ -32,21 +45,51 @@ export const MergeWorkspace: React.FC = () => {
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [mergedStats, setMergedStats] = useState<{ size: number; pageCount: number } | null>(null);
 
+  const [importDialog, setImportDialog] = useState<ImportDialogState>({
+    isOpen: false,
+    totalFiles: 0,
+    currentFileIndex: 0,
+    currentFileName: "",
+    currentPage: 0,
+    totalPagesInCurrentFile: 0,
+    renderedTotal: 0,
+  });
+
   const processFiles = async (files: File[]) => {
+    if (files.length === 0) return;
     setIsProcessing(true);
     setLoadingStatus("Reading and rendering pages...");
-    const pdfjs = await getPdfJs();
 
+    setImportDialog({
+      isOpen: true,
+      totalFiles: files.length,
+      currentFileIndex: 1,
+      currentFileName: files[0].name,
+      currentPage: 0,
+      totalPagesInCurrentFile: 0,
+      renderedTotal: 0,
+    });
+
+    const pdfjs = await getPdfJs();
     const newFiles: UploadedFileRef[] = [];
     const newPages: PageItem[] = [];
+    let pageCounter = 0;
 
-    for (const file of files) {
+    for (let fIdx = 0; fIdx < files.length; fIdx++) {
+      const file = files[fIdx];
       const fileId = "file_" + Date.now() + "_" + Math.random().toString(36).substring(2, 6);
       const buffer = await file.arrayBuffer();
 
       const loadingTask = pdfjs.getDocument({ data: buffer.slice(0) });
       const doc = await loadingTask.promise;
       const numPages = doc.numPages;
+
+      setImportDialog((prev) => ({
+        ...prev,
+        currentFileIndex: fIdx + 1,
+        currentFileName: file.name,
+        totalPagesInCurrentFile: numPages,
+      }));
 
       newFiles.push({
         id: fileId,
@@ -56,7 +99,14 @@ export const MergeWorkspace: React.FC = () => {
       });
 
       for (let p = 1; p <= numPages; p++) {
+        pageCounter++;
         setLoadingStatus(`Rendering ${file.name} (page ${p}/${numPages})...`);
+        setImportDialog((prev) => ({
+          ...prev,
+          currentPage: p,
+          renderedTotal: pageCounter,
+        }));
+
         const thumb = await renderPageThumbnail(doc, p, 240);
         newPages.push({
           id: `p_${fileId}_${p}_${Date.now()}_${Math.random().toString(36).substring(2, 5)}`,
@@ -74,6 +124,11 @@ export const MergeWorkspace: React.FC = () => {
     setIsProcessing(false);
     setLoadingStatus("");
     setDownloadUrl(null);
+
+    // Brief delay so user sees 100% completion in dialog
+    setTimeout(() => {
+      setImportDialog((prev) => ({ ...prev, isOpen: false }));
+    }, 450);
   };
 
   const handleRotatePage = (id: string) => {
@@ -270,6 +325,14 @@ export const MergeWorkspace: React.FC = () => {
             </div>
           </div>
 
+          {/* Drag & Reorder UX Hint Banner */}
+          <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-primary/5 border border-primary/15 text-xs text-primary font-medium">
+            <GripVertical className="h-4 w-4 shrink-0 text-primary/70" />
+            <span>
+              <strong>Tip:</strong> Drag and drop any page thumbnail to reorder. Use the rotate, duplicate, or delete buttons on each page card for fine-grained control.
+            </span>
+          </div>
+
           {/* Interactive Thumbnail Grid */}
           <PageThumbnailGrid
             pages={pages}
@@ -299,7 +362,7 @@ export const MergeWorkspace: React.FC = () => {
               {downloadUrl && mergedStats ? (
                 <a
                   href={downloadUrl}
-                  download="merged_document.pdf"
+                  download={formatDownloadFileName(sourceFiles[0]?.name || "merged", "merged")}
                   className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-lg shadow-emerald-600/20 transition-all animate-in zoom-in-95"
                 >
                   <Download className="h-4 w-4" />
@@ -325,6 +388,62 @@ export const MergeWorkspace: React.FC = () => {
                   )}
                 </button>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Importing Progress Dialog */}
+      {importDialog.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative w-full max-w-md bg-card border border-border rounded-3xl p-6 shadow-2xl space-y-5 animate-in zoom-in-95 duration-200">
+            {/* Header */}
+            <div className="flex items-center gap-3.5">
+              <div className="h-11 w-11 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                <Loader2 className="h-5 w-5 animate-spin" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-base font-semibold text-foreground truncate">
+                  Importing Documents
+                </h3>
+                <p className="text-xs text-muted-foreground truncate">
+                  File {importDialog.currentFileIndex} of {importDialog.totalFiles} • {importDialog.currentFileName}
+                </p>
+              </div>
+            </div>
+
+            {/* Progress Bar & Counter */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs font-medium">
+                <span className="text-muted-foreground">
+                  {importDialog.totalPagesInCurrentFile > 0
+                    ? `Rendering page ${importDialog.currentPage} of ${importDialog.totalPagesInCurrentFile}`
+                    : "Reading document structure..."}
+                </span>
+                <span className="text-primary font-mono">
+                  {importDialog.totalPagesInCurrentFile > 0
+                    ? `${Math.round((importDialog.currentPage / importDialog.totalPagesInCurrentFile) * 100)}%`
+                    : "..."}
+                </span>
+              </div>
+              <div className="h-2.5 w-full bg-secondary rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary rounded-full transition-all duration-200 ease-out"
+                  style={{
+                    width: importDialog.totalPagesInCurrentFile > 0
+                      ? `${Math.min(100, Math.max(5, (importDialog.currentPage / importDialog.totalPagesInCurrentFile) * 100))}%`
+                      : "25%",
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Info badge */}
+            <div className="flex items-center justify-between pt-2 border-t border-border/60 text-[11px] text-muted-foreground">
+              <span>Total pages loaded: <strong className="text-foreground">{importDialog.renderedTotal}</strong></span>
+              <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
+                ✓ 100% In-Browser Privacy
+              </span>
             </div>
           </div>
         </div>

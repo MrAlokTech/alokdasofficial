@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { PdfDropzone } from "../common/PdfDropzone";
 import { SignaturePadModal } from "./SignaturePadModal";
 import { getPdfJs, renderPageToCanvas } from "@/lib/pdf/pdfjs-loader";
-import { formatBytes } from "@/lib/pdf/page-geometry";
+import { formatBytes, formatDownloadFileName } from "@/lib/pdf/page-geometry";
 import {
   Download,
   PenTool,
@@ -361,7 +361,7 @@ export const SignWorkspace: React.FC = () => {
               {downloadUrl ? (
                 <a
                   href={downloadUrl}
-                  download={`signed_${fileName}`}
+                  download={formatDownloadFileName(fileName, "signed")}
                   className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-lg shadow-emerald-600/20 transition-all animate-in zoom-in-95"
                 >
                   <Download className="h-4 w-4" />

@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Camera, Upload, Wand2, Copy, Check, Sparkles, Download, Trash2, RotateCw, FileText, ChevronRight } from "lucide-react";
 import { applyScannerFilter, ScannerFilterType } from "@/lib/pdf/image-filters";
-import { calculatePageLayout, PageFormatKey, formatBytes } from "@/lib/pdf/page-geometry";
+import { calculatePageLayout, PageFormatKey, formatBytes, formatDownloadFileName } from "@/lib/pdf/page-geometry";
 import { runOcr, OcrResult } from "@/lib/pdf/ocr-service";
 
 interface ScannedPage {
@@ -531,7 +531,7 @@ export const ScanWorkspace: React.FC = () => {
             {downloadUrl ? (
               <a
                 href={downloadUrl}
-                download="scanned_document.pdf"
+                download={formatDownloadFileName("scan", "scanned")}
                 className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-lg shadow-emerald-600/20 transition-all animate-in zoom-in-95"
               >
                 <Download className="h-4 w-4" />

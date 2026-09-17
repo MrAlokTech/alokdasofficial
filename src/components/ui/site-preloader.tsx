@@ -102,7 +102,7 @@ export function SitePreloaderProvider({
 }) {
   const pathname = usePathname();
   const [mounted, setMounted] = React.useState(false);
-  const [isInitialLoad, setIsInitialLoad] = React.useState(false);
+  const [isInitialLoad, setIsInitialLoad] = React.useState(true);
   const [isRouteTransitioning, setIsRouteTransitioning] = React.useState(false);
   const [customMessage, setCustomMessage] = React.useState<{
     title: string;
@@ -110,7 +110,6 @@ export function SitePreloaderProvider({
   } | null>(null);
   const [prefersReducedMotion, setPrefersReducedMotion] = React.useState(false);
 
-  const lastPathnameRef = React.useRef<string | null>(null);
   const hideTimerRef = React.useRef<NodeJS.Timeout | null>(null);
   const safetyTimerRef = React.useRef<NodeJS.Timeout | null>(null);
 
@@ -132,7 +131,7 @@ export function SitePreloaderProvider({
       safetyTimerRef.current = setTimeout(() => {
         setIsRouteTransitioning(false);
         setCustomMessage(null);
-      }, 1200);
+      }, 6000);
     },
     [],
   );
@@ -149,7 +148,8 @@ export function SitePreloaderProvider({
     );
   }, [prefersReducedMotion]);
 
-  // Check prefers-reduced-motion once on mount
+  // Initial Request & Completion Trigger:
+  // Shows preloader immediately, then fades out once window load event fires and scripts/styles are ready
   React.useEffect(() => {
     setMounted(true);
     if (typeof window !== "undefined") {
@@ -157,29 +157,62 @@ export function SitePreloaderProvider({
       setPrefersReducedMotion(mediaQuery.matches);
       const handleChange = () => setPrefersReducedMotion(mediaQuery.matches);
       mediaQuery.addEventListener("change", handleChange);
-      return () => mediaQuery.removeEventListener("change", handleChange);
+
+      const onInitialLoadComplete = () => {
+        // Wait one animation frame so initial DOM & layout are painted without glitches
+        requestAnimationFrame(() => {
+          setIsInitialLoad(false);
+        });
+      };
+
+      if (document.readyState === "complete") {
+        // Already loaded (e.g. hydration completed or cached page)
+        const timer = setTimeout(onInitialLoadComplete, 300);
+        return () => {
+          mediaQuery.removeEventListener("change", handleChange);
+          clearTimeout(timer);
+        };
+      } else {
+        window.addEventListener("load", onInitialLoadComplete, { once: true });
+        return () => {
+          mediaQuery.removeEventListener("change", handleChange);
+          window.removeEventListener("load", onInitialLoadComplete);
+        };
+      }
     }
   }, []);
 
-  // Handle route change completion (when destination page loads and pathname changes)
+  // Route Transition Completion Trigger:
+  // Once pathname updates to the new route, wait for the browser layout & paint pass
+  // so the user only sees the fully formed page with no raw text or layout glitches
   React.useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || isInitialLoad) return;
 
     if (safetyTimerRef.current) {
       clearTimeout(safetyTimerRef.current);
       safetyTimerRef.current = null;
     }
 
-    // Dismiss transition overlay promptly once route updates
-    const timer = setTimeout(
-      () => {
-        setIsRouteTransitioning(false);
-        setCustomMessage(null);
-      },
-      prefersReducedMotion ? 40 : 180,
-    );
-    return () => clearTimeout(timer);
-  }, [pathname, mounted, prefersReducedMotion]);
+    let rafId2: number;
+    const rafId1 = requestAnimationFrame(() => {
+      rafId2 = requestAnimationFrame(() => {
+        // Delay slightly for smooth fade transition
+        const timer = setTimeout(
+          () => {
+            setIsRouteTransitioning(false);
+            setCustomMessage(null);
+          },
+          prefersReducedMotion ? 40 : 150,
+        );
+        return () => clearTimeout(timer);
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(rafId1);
+      cancelAnimationFrame(rafId2);
+    };
+  }, [pathname, mounted, isInitialLoad, prefersReducedMotion]);
 
   // Intercept user link click inputs to trigger preloader immediately BEFORE destination data/route loads
   React.useEffect(() => {
@@ -257,12 +290,12 @@ export function SitePreloaderProvider({
       setCustomMessage(targetMsg);
       setIsRouteTransitioning(true);
 
-      // Automatic safety timeout to ensure preloader is NEVER permanently frozen
+      // Generous fallback safety timeout (6s) so network drop never freezes page
       if (safetyTimerRef.current) clearTimeout(safetyTimerRef.current);
       safetyTimerRef.current = setTimeout(() => {
         setIsRouteTransitioning(false);
         setCustomMessage(null);
-      }, 1200);
+      }, 6000);
     };
 
     document.addEventListener("click", handleDocumentClick, { capture: true });

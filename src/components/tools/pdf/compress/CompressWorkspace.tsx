@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { PdfDropzone } from "../common/PdfDropzone";
 import { compressPdf, COMPRESSION_PRESETS, CompressionPreset } from "@/lib/pdf/compress-engine";
-import { formatBytes } from "@/lib/pdf/page-geometry";
+import { formatBytes, formatDownloadFileName } from "@/lib/pdf/page-geometry";
 import { getPdfJs } from "@/lib/pdf/pdfjs-loader";
 import {
   Download,
@@ -269,7 +269,7 @@ export const CompressWorkspace: React.FC = () => {
 
                 <a
                   href={compressedResult.url}
-                  download={`compressed_${fileName}`}
+                  download={formatDownloadFileName(fileName, "compressed")}
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-md shadow-emerald-600/20 transition-all"
                 >
                   <Download className="h-4 w-4" />

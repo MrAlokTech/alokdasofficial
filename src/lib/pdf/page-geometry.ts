@@ -108,3 +108,21 @@ export function formatBytes(bytes: number, decimals = 2): string {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
 }
+
+/**
+ * Format download filename with custom action prefix and the standard '_alokdasofficial.in' suffix.
+ * Example: original 'invoice.pdf' with prefix 'signed' -> 'invoice_signed_alokdasofficial.in.pdf'
+ * Example: original 'report.pdf' with prefix 'compressed' -> 'report_compressed_alokdasofficial.in.pdf'
+ */
+export function formatDownloadFileName(
+  originalFileName: string,
+  actionPrefix?: string,
+  extension = "pdf"
+): string {
+  const cleanName = originalFileName.replace(/\.[^/.]+$/, "").trim() || "document";
+  const ext = extension.startsWith(".") ? extension : `.${extension}`;
+  if (actionPrefix) {
+    return `${cleanName}_${actionPrefix}_alokdasofficial.in${ext}`;
+  }
+  return `${cleanName}_alokdasofficial.in${ext}`;
+}

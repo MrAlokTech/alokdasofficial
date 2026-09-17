@@ -5,7 +5,7 @@ import { PdfDropzone } from "../common/PdfDropzone";
 import { PageThumbnailGrid, PageItem } from "../common/PageThumbnailGrid";
 import { PageRangeInput } from "../common/PageRangeInput";
 import { getPdfJs, renderPageThumbnail } from "@/lib/pdf/pdfjs-loader";
-import { formatBytes } from "@/lib/pdf/page-geometry";
+import { formatBytes, formatDownloadFileName } from "@/lib/pdf/page-geometry";
 import {
   Download,
   Scissors,
@@ -147,7 +147,7 @@ export const SplitWorkspace: React.FC = () => {
         const outBytes = await newDoc.save({ useObjectStreams: true });
         const blob = new Blob([outBytes as any], { type: "application/pdf" });
         setDownloadUrl(URL.createObjectURL(blob));
-        setDownloadName(`${baseName}_extracted.pdf`);
+        setDownloadName(formatDownloadFileName(fileName, "extracted"));
         setResultSize(blob.size);
       } else if (splitMode === "all_individual") {
         // Package individual pages into a ZIP
@@ -174,7 +174,7 @@ export const SplitWorkspace: React.FC = () => {
         setStatusMessage("Compressing ZIP archive...");
         const zipBlob = await zip.generateAsync({ type: "blob" });
         setDownloadUrl(URL.createObjectURL(zipBlob));
-        setDownloadName(`${baseName}_split_pages.zip`);
+        setDownloadName(formatDownloadFileName(fileName, "split_pages", "zip"));
         setResultSize(zipBlob.size);
       } else if (splitMode === "interval") {
         // Split by interval (e.g. every 2 pages) into a ZIP
@@ -204,7 +204,7 @@ export const SplitWorkspace: React.FC = () => {
 
         const zipBlob = await zip.generateAsync({ type: "blob" });
         setDownloadUrl(URL.createObjectURL(zipBlob));
-        setDownloadName(`${baseName}_parts.zip`);
+        setDownloadName(formatDownloadFileName(fileName, "parts", "zip"));
         setResultSize(zipBlob.size);
       }
     } catch (err) {
