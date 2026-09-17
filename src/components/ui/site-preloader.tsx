@@ -34,6 +34,34 @@ export const ROUTE_LOADING_MESSAGES: Record<
     title: "A few useful things to try.",
     subtitle: "Everyday interactive utilities and focus helpers.",
   },
+  "/tools/pdf": {
+    title: "Client-Side PDF Studio.",
+    subtitle: "100% private, in-browser PDF power suite.",
+  },
+  "/tools/pdf/merge": {
+    title: "Merge PDF Documents.",
+    subtitle: "Visual page-by-page organizer and combiner.",
+  },
+  "/tools/pdf/split": {
+    title: "Split PDF Pages.",
+    subtitle: "Extract custom pages and batch ZIP splitter.",
+  },
+  "/tools/pdf/compress": {
+    title: "Compress PDF.",
+    subtitle: "Multi-preset stream and image optimizer.",
+  },
+  "/tools/pdf/sign": {
+    title: "Digital Signature Studio.",
+    subtitle: "Draw, type, or stamp authentic signatures.",
+  },
+  "/tools/pdf/edit": {
+    title: "Redact & Edit PDF.",
+    subtitle: "Whiteout eraser and custom annotations.",
+  },
+  "/tools/pdf/scan": {
+    title: "Scan & OCR to PDF.",
+    subtitle: "Device camera capture with searchable text layer.",
+  },
   "/blog": {
     title: "A few things I've been learning and writing about.",
     subtitle: "Articles on chemistry, technology, and continuous discovery.",
@@ -84,6 +112,7 @@ export function SitePreloaderProvider({
 
   const lastPathnameRef = React.useRef<string | null>(null);
   const hideTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+  const safetyTimerRef = React.useRef<NodeJS.Timeout | null>(null);
 
   // Manual trigger methods for programmatic user inputs
   const showPreloader = React.useCallback(
@@ -98,12 +127,19 @@ export function SitePreloaderProvider({
         setCustomMessage(null);
       }
       setIsRouteTransitioning(true);
+
+      if (safetyTimerRef.current) clearTimeout(safetyTimerRef.current);
+      safetyTimerRef.current = setTimeout(() => {
+        setIsRouteTransitioning(false);
+        setCustomMessage(null);
+      }, 1200);
     },
     [],
   );
 
   const hidePreloader = React.useCallback(() => {
     if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    if (safetyTimerRef.current) clearTimeout(safetyTimerRef.current);
     hideTimerRef.current = setTimeout(
       () => {
         setIsRouteTransitioning(false);
@@ -113,10 +149,9 @@ export function SitePreloaderProvider({
     );
   }, [prefersReducedMotion]);
 
-  // Check prefers-reduced-motion
+  // Check prefers-reduced-motion once on mount
   React.useEffect(() => {
     setMounted(true);
-    lastPathnameRef.current = pathname;
     if (typeof window !== "undefined") {
       const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
       setPrefersReducedMotion(mediaQuery.matches);
@@ -124,25 +159,27 @@ export function SitePreloaderProvider({
       mediaQuery.addEventListener("change", handleChange);
       return () => mediaQuery.removeEventListener("change", handleChange);
     }
-  }, [pathname]);
+  }, []);
 
   // Handle route change completion (when destination page loads and pathname changes)
   React.useEffect(() => {
-    if (!mounted || isInitialLoad) return;
+    if (!mounted) return;
 
-    if (lastPathnameRef.current && lastPathnameRef.current !== pathname) {
-      lastPathnameRef.current = pathname;
-      // Fade out transition overlay once the new route is active
-      const timer = setTimeout(
-        () => {
-          setIsRouteTransitioning(false);
-          setCustomMessage(null);
-        },
-        prefersReducedMotion ? 60 : 250,
-      );
-      return () => clearTimeout(timer);
+    if (safetyTimerRef.current) {
+      clearTimeout(safetyTimerRef.current);
+      safetyTimerRef.current = null;
     }
-  }, [pathname, mounted, isInitialLoad, prefersReducedMotion]);
+
+    // Dismiss transition overlay promptly once route updates
+    const timer = setTimeout(
+      () => {
+        setIsRouteTransitioning(false);
+        setCustomMessage(null);
+      },
+      prefersReducedMotion ? 40 : 180,
+    );
+    return () => clearTimeout(timer);
+  }, [pathname, mounted, prefersReducedMotion]);
 
   // Intercept user link click inputs to trigger preloader immediately BEFORE destination data/route loads
   React.useEffect(() => {
@@ -185,12 +222,16 @@ export function SitePreloaderProvider({
       }
 
       const currentPath = window.location.pathname;
+      const normCurrent = currentPath.replace(/\/+$/, "") || "/";
+      const normTarget = targetPath.replace(/\/+$/, "") || "/";
+
       // If clicking same path without search params changes, skip
-      if (targetPath === currentPath) return;
+      if (normTarget === normCurrent) return;
 
       // Match destination loading message
       const targetMsg =
         ROUTE_LOADING_MESSAGES[targetPath] ||
+        ROUTE_LOADING_MESSAGES[normTarget] ||
         (targetPath.startsWith("/tools/")
           ? {
               title: "A few useful things to try.",
@@ -215,6 +256,13 @@ export function SitePreloaderProvider({
 
       setCustomMessage(targetMsg);
       setIsRouteTransitioning(true);
+
+      // Automatic safety timeout to ensure preloader is NEVER permanently frozen
+      if (safetyTimerRef.current) clearTimeout(safetyTimerRef.current);
+      safetyTimerRef.current = setTimeout(() => {
+        setIsRouteTransitioning(false);
+        setCustomMessage(null);
+      }, 1200);
     };
 
     document.addEventListener("click", handleDocumentClick, { capture: true });
