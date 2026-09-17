@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { toolsData } from "@/data/tools";
 import { Badge } from "@/components/ui/badge";
-import { Radio, Timer, Clock, Atom, FlaskConical, ArrowRight, Vote, FileText } from "lucide-react";
+import { Radio, Timer, Clock, Atom, FlaskConical, ArrowRight, Vote, FileText, Image as ImageIcon } from "lucide-react";
 import { ToolFooter } from "@/components/tools/tool-footer";
 
 export const metadata: Metadata = {
@@ -27,6 +27,7 @@ const iconMap: Record<string, React.ElementType> = {
   Clock,
   Atom,
   FileText,
+  ImageIcon,
 };
 
 export default function ToolsHubPage() {

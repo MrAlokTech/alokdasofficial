@@ -14,6 +14,43 @@ export interface ToolItem {
 
 export const toolsData: ToolItem[] = [
   {
+    id: "image",
+    slug: "image",
+    name: "Client-Side Image Studio",
+    tagline: "Compress MB to KB, resize, crop, rotate, transcode, watermark, and apply LUT filters.",
+    category: "Utility",
+    badge: "100% Private",
+    iconName: "ImageIcon",
+    description:
+      "A complete in-browser image power suite. Compress images to exact target KB limits (under 50KB or 200KB) with iterative binary search, resize dimensions with aspect ratio lock, crop with visual handles, rotate and mirror, convert formats (JPG, PNG, WEBP), apply 12+ aesthetic LUT filters, stamp custom text/logo watermarks, and export bulk images to PDF with zero server latency.",
+    href: "/tools/image",
+    features: [
+      "Binary-search target KB optimizer for strict exam and portal file size limits",
+      "Interactive draggable cropper with 1:1, 16:9, 4:3, and Passport presets",
+      "Aspect-ratio locked dimension resizing with percentage and standard presets",
+      "12+ Aesthetic LUT presets (Cinematic, Vintage, Noir, Cyberpunk) & color grading",
+      "Custom text and logo watermarks with diagonal repeating security tiles",
+      "Multi-image bulk processing with independent per-file overrides & ZIP/PDF export",
+    ],
+    faq: [
+      {
+        question: "Are my photos or images sent to any server?",
+        answer:
+          "No. All image operations, pixel transformations, filter convolutions, and compression passes execute 100% locally inside your browser memory using HTML5 Canvas 2D and modern browser graphics APIs. Zero bytes are uploaded.",
+      },
+      {
+        question: "How does the Target File Size (KB) feature work?",
+        answer:
+          "The compressor runs an iterative binary-search algorithm directly on your browser canvas to discover the highest quality tier that remains strictly beneath your specified KB threshold, downscaling dimensions only if necessary.",
+      },
+      {
+        question: "Can I customize output settings for each image independently?",
+        answer:
+          "Yes! When you upload multiple images, you can apply actions in bulk or expand individual cards to set distinct target KB sizes, dimensions, or rotations for each file.",
+      },
+    ],
+  },
+  {
     id: "pdf",
     slug: "pdf",
     name: "Client-Side PDF Studio",
