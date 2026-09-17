@@ -51,6 +51,19 @@ export function ToolFooter() {
             );
           })}
         </div>
+
+        <div className="pt-4 border-t border-border/50 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-muted-foreground">
+          <span>Client-Side PDF Studio: 100% in-browser processing &bull; Zero server uploads</span>
+          <div className="flex items-center gap-3">
+            <Link href="/tools/pdf/privacy" className="hover:text-foreground hover:underline">
+              PDF Privacy Policy
+            </Link>
+            <span>&bull;</span>
+            <Link href="/tools/pdf/terms" className="hover:text-foreground hover:underline">
+              PDF Terms &amp; Conditions
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );

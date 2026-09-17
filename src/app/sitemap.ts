@@ -23,6 +23,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/tools/pdf/sign",
     "/tools/pdf/edit",
     "/tools/pdf/scan",
+    "/tools/pdf/privacy",
+    "/tools/pdf/terms",
     "/tools/morse",
     "/tools/pomodoro",
     "/tools/world-clock",

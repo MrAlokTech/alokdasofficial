@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   Cpu,
   Lock,
+  Scale,
 } from "lucide-react";
 import { ToolFooter } from "@/components/tools/tool-footer";
 
@@ -200,21 +201,50 @@ export default function PdfSuiteHubPage() {
           })}
         </div>
 
-        {/* Security / Architecture Card */}
+        {/* Security / Architecture Card & Legals */}
         <div className="p-6 sm:p-8 rounded-3xl border border-border bg-gradient-to-br from-secondary/40 via-card to-card space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-              <ShieldCheck className="h-5 w-5" />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                <ShieldCheck className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">Why Client-Side Matters</h3>
+                <p className="text-xs text-muted-foreground">Absolute data confidentiality by architectural design</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-lg font-bold text-foreground">Why Client-Side Matters</h3>
-              <p className="text-xs text-muted-foreground">Absolute data confidentiality by architectural design</p>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/tools/pdf/privacy"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border/80 bg-card hover:border-emerald-500/40 hover:text-foreground text-xs font-semibold text-muted-foreground transition-all"
+              >
+                <Lock className="h-3.5 w-3.5 text-emerald-500" />
+                <span>Privacy Policy</span>
+              </Link>
+              <Link
+                href="/tools/pdf/terms"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border/80 bg-card hover:border-primary/40 hover:text-foreground text-xs font-semibold text-muted-foreground transition-all"
+              >
+                <Scale className="h-3.5 w-3.5 text-primary" />
+                <span>Terms &amp; Conditions</span>
+              </Link>
             </div>
           </div>
 
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
             Most online PDF tools upload your contracts, tax returns, and confidential receipts to third-party cloud servers for processing. This PDF Studio uses client-side JavaScript, WebAssembly, HTML5 Canvas, and Web Workers. Your documents remain strictly inside your device&apos;s memory and are destroyed the moment you close the tab.
           </p>
+
+          <div className="pt-2 flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-muted-foreground border-t border-border/40">
+            <span className="font-semibold text-foreground/80">Legal &amp; Compliance:</span>
+            <Link href="/tools/pdf/privacy" className="hover:text-primary underline">
+              Zero-Server Privacy Policy
+            </Link>
+            <span>&bull;</span>
+            <Link href="/tools/pdf/terms" className="hover:text-primary underline">
+              Terms &amp; Disclaimers
+            </Link>
+          </div>
         </div>
 
         {/* Tool Footer */}

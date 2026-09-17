@@ -139,6 +139,22 @@ export function Footer() {
                   <ExternalLink className="h-3 w-3" />
                 </a>
               </li>
+              <li className="pt-1 border-t border-border/40">
+                <Link
+                  href="/tools/pdf/privacy"
+                  className="text-muted-foreground hover:text-foreground transition-colors text-[12px]"
+                >
+                  PDF Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/tools/pdf/terms"
+                  className="text-muted-foreground hover:text-foreground transition-colors text-[12px]"
+                >
+                  PDF Terms &amp; Conditions
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -182,9 +198,21 @@ export function Footer() {
 
         {/* Hairline Separator and Footer Bottom */}
         <div className="mt-12 pt-6 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-[12px] text-muted-foreground">
-          <p>
-            &copy; {currentYear} {personalData.name}. All rights reserved.
-          </p>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <p>
+              &copy; {currentYear} {personalData.name}. All rights reserved.
+            </p>
+            <span className="hidden sm:inline">&bull;</span>
+            <div className="flex items-center gap-2.5">
+              <Link href="/tools/pdf/privacy" className="hover:text-foreground hover:underline transition-colors">
+                PDF Privacy
+              </Link>
+              <span>&bull;</span>
+              <Link href="/tools/pdf/terms" className="hover:text-foreground hover:underline transition-colors">
+                PDF Terms
+              </Link>
+            </div>
+          </div>
           <p className="italic text-muted-foreground/80">
             &ldquo;Chemistry first. Technology as a complementary skill.
             Building useful things.&rdquo;
