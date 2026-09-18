@@ -237,6 +237,8 @@ export function ArticleContent({ content }: ArticleContentProps) {
  */
 function formatInline(str: string): string {
   return str
+    // Markdown links [text](url)
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary hover:underline font-medium">$1</a>')
     // Inline code
     .replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-secondary text-foreground text-[13px] font-mono border border-border/50">$1</code>')
     // Bold

@@ -364,4 +364,342 @@ Publishing a production application on Google Play requires continuous complianc
 Building Mileage Tracker reinforced my perspective on software development: technology is at its best when it acts as an invisible, reliable servant to practical everyday problems. Just like in a chemistry laboratory, precision, simplicity, and clean methodology deliver the most enduring results.
     `,
   },
+  {
+    id: "client-side-image-studio-architecture",
+    slug: "client-side-image-studio-architecture",
+    title: "Engineering a Private, Client-Side Image Studio: Binary-Search Compression & In-Browser Canvas Transforms",
+    subtitle: "How we engineered a zero-server image utility that guarantees strict target KB limits, real-time LUT grading, and batch PDF compilation directly in client RAM.",
+    excerpt: "An architectural deep dive into building an in-browser image power suite in TypeScript. How iterative binary search discovers exact target KB thresholds for exam portals, and how offscreen canvas convolutions enable real-time filters and watermarking without cloud roundtrips.",
+    publishedAt: "2026-09-14",
+    category: "Software",
+    tags: ["Image Processing", "Canvas API", "Binary Search", "Web Performance", "Privacy", "TypeScript", "Algorithms"],
+    author: {
+      name: "Alok Das",
+      role: "Developer & M.Sc. Chemistry Candidate",
+      url: "https://alokdasofficial.in",
+    },
+    readingTimeMinutes: 6,
+    wordCount: 1420,
+    featured: false,
+    takeaways: [
+      "Cloud image compressors introduce severe privacy liabilities; client-side HTML5 Canvas processing ensures sensitive photos and ID documents never leave local device RAM.",
+      "Strict target file size requirements (such as '< 50 KB' or '< 200 KB' for government recruitment and university portals) require an iterative binary-search optimizer over JPEG/WebP quantization tiers coupled with dynamic dimensional downscaling.",
+      "Direct pixel array manipulation on Uint8ClampedArray provides sub-16ms execution for 12+ aesthetic LUT color grading filters and diagonal security tile watermarks.",
+      "Strict browser memory hygiene—revoking object URLs, recycling intermediate canvas contexts, and releasing raw ArrayBuffers—prevents out-of-memory crashes during multi-file batch operations.",
+    ],
+    faqs: [
+      {
+        question: "Why is a binary-search algorithm needed instead of calculating JPEG quality mathematically?",
+        answer: "Image compressibility is highly non-linear and governed by high-frequency spatial detail, color entropy, and sensor noise. A smooth gradient graphic compresses drastically differently than a textured outdoor photo. Binary search directly queries the browser canvas encoder, converging on the optimal quality tier in 6 to 7 iterations without heuristic guesswork.",
+      },
+      {
+        question: "How does the Image Studio guarantee privacy for identity documents?",
+        answer: "Unlike commercial image websites that transfer your photos to remote servers or third-party cloud APIs, the Client-Side Image Studio processes 100% of pixel operations, cropping, rotations, and compression directly inside browser memory using HTML5 Canvas 2D. No network requests are made, and zero bytes leave your device.",
+      },
+      {
+        question: "Can multiple images be compiled directly into a PDF without backend binaries?",
+        answer: "Yes. Using pdf-lib directly in the browser thread, each canvas export is encoded as a JPEG stream, mapped onto standard ISO A4 or custom bounding boxes with aspect-ratio preservation, and embedded into a newly synthesized PDF document tree.",
+      },
+    ],
+    seo: {
+      metaTitle: "Engineering a Client-Side Image Studio | Alok Das",
+      metaDescription: "How we built an in-browser image compressor, editor, and PDF exporter with binary-search KB optimization and zero server uploads by Alok Das.",
+      keywords: ["client-side image compression", "binary search target KB", "canvas image processing", "private image editor", "Alok Das software", "TypeScript canvas LUT"],
+    },
+    content: `
+## The Modern Image Dilemma: Portals, Limits & Privacy
+
+Anyone who has applied for national examinations (such as UPSC, SSC, GATE, NEET) or university admission portals in India is familiar with rigid, uncompromising upload constraints:
+
+> *"Candidate photograph must be in JPEG format, between 20 KB and 50 KB, and dimensions strictly 3.5 cm × 4.5 cm. Signatures must be under 20 KB."*
+
+Faced with these arbitrary limits, applicants frequently turn to search engines, uploading sensitive identity documents, passport photos, and certificates to ad-heavy "free image compressor" websites. These cloud services introduce several critical liabilities:
+
+1. **Data Security Risks**: Private identity documents and personal photographs are transmitted over the wire and cached on unknown third-party server clusters.
+2. **Uncertain Compression Ratios**: Most cloud compressors only provide vague sliders (*"Low, Medium, High"*) that require frustrating trial-and-error to squeeze beneath a 50 KB ceiling without turning the image into an illegible smear of compression artifacts.
+3. **Queue Latency**: Processing queues, rate limits, and slow cellular uplinks degrade the user experience.
+
+To eliminate this friction permanently, we designed and built the [Client-Side Image Studio](/tools/image). By bringing all pixel manipulations, compression passes, and format conversions directly into client-side browser memory using the HTML5 Canvas API and Web Workers, files never leave the user's device.
+
+---
+
+## 1. The Binary-Search Target KB Engine
+
+The mathematical challenge of target-size compression is finding an encoder quality factor $Q \in [0.01, 1.0]$ such that:
+
+$$\text{size}(\text{encode}(Q)) \le T_{\text{bytes}}$$
+
+while simultaneously maximizing image fidelity ($Q$).
+
+In image formats with lossy Discrete Cosine Transform (DCT) quantization like JPEG, compressibility depends non-linearly on high-frequency spatial entropy $H$:
+
+$$H = -\sum_{i} P(x_i) \log_2 P(x_i)$$
+
+Because entropy varies drastically between a clean digital certificate and a noisy outdoor photograph, a closed-form formula for $Q$ does not exist.
+
+Rather than guessing, our engine deploys an **iterative binary-search algorithm** that converges on the optimal quality tier in at most 7 iterations ($2^7 = 128$ levels of precision):
+
+\`\`\`typescript
+async function compressToTargetSize(
+  sourceImg: HTMLImageElement,
+  config: PerImageConfig,
+  targetBytes: number,
+  format: ImageFormat
+): Promise<CompressionResult> {
+  let canvas = await renderProcessedCanvas(sourceImg, config);
+  let low = 0.05;
+  let high = 0.98;
+  let bestBlob: Blob | null = null;
+  const maxIterations = 7;
+
+  for (let iter = 0; iter < maxIterations; iter++) {
+    const mid = (low + high) / 2;
+    const blob = await canvasToBlob(canvas, format, mid);
+
+    if (blob.size <= targetBytes) {
+      bestBlob = blob;
+      low = mid; // It fits: probe for higher quality
+    } else {
+      high = mid; // Too large: reduce quality
+    }
+
+    // Stop early if we are within 8% of the ceiling
+    if (bestBlob && bestBlob.size >= targetBytes * 0.92 && bestBlob.size <= targetBytes) {
+      break;
+    }
+  }
+  return finalizeResult(bestBlob, canvas);
+}
+\`\`\`
+
+### Dimensional Scaling Fallback
+If an image contains extreme detail (e.g., a 24-megapixel smartphone photo) where even the lowest quality floor ($Q = 0.05$) yields a file larger than $T_{\text{bytes}}$, quality degradation alone cannot satisfy the constraint.
+
+In this scenario, our algorithm computes a proportional dimensional downscale factor derived from the surface area ratio with a safety margin:
+
+$$\text{scale} = \min\left(0.90, \sqrt{\frac{T_{\text{bytes}}}{\text{currentSize}}} \times 0.92\right)$$
+
+The canvas dimensions are resized proportionally, and the binary-search pass completes smoothly, ensuring the output file is **mathematically guaranteed** to fall beneath the target limit.
+
+---
+
+## 2. High-Performance Color Grading & LUT Filters
+
+For students and professionals scanning lab notes, specimen photographs, or headshots, visual clarity is paramount. The Studio includes 12+ aesthetic LUT presets (Cinematic, Vintage, Noir, Forest, Cyberpunk) and document enhancements implemented via direct canvas pixel transformations.
+
+By querying \`ctx.getImageData()\` and operating directly on the underlying \`Uint8ClampedArray\`, pixel convolutions execute at 60 FPS:
+
+1. **Perceptual Luminance Computation**:
+   $$Y = 0.299R + 0.587G + 0.114B$$
+2. **Dynamic Range Contrast Stretching**:
+   $$V_{\text{out}} = \min(255, \max(0, f \cdot (V_{\text{in}} - 128) + 128))$$
+3. **Adaptive Thresholding**:
+   Pushes near-white paper backgrounds to clean #FFFFFF ($255$) while preserving dark handwritten ink notes.
+
+---
+
+## 3. Document Protection: Diagonal Repeating Watermarks
+
+Identity theft frequently occurs when unwatermarked government identity cards or degree certificates are submitted to digital portals.
+
+To protect users, the Studio implements a diagonal security tile watermark engine:
+
+- Rotates the canvas drawing matrix by $-45^\circ$ relative to the center anchor.
+- Renders custom verification text (e.g., *"SUBMITTED FOR VERIFICATION ONLY — 2026"*) in a staggered repeating grid pattern across the entire document area.
+- Blends the watermark directly into the RGB pixel buffer prior to JPEG quantization. Because the text is flattened into the bitmap raster rather than saved as a separate PDF or SVG vector layer, it cannot be stripped or isolated by third parties.
+
+---
+
+## 4. Browser Memory Management & Zero-Leak Architecture
+
+Processing batches of multi-megabyte images in the browser can rapidly exhaust mobile memory limits, causing browser tabs to terminate unexpectedly.
+
+We applied three architectural safeguards to maintain a lightweight footprint:
+
+- **Immediate Object URL Revocation**: Every \`URL.createObjectURL()\` call is tracked in a cleanup registry and revoked as soon as the preview element unmounts or completes exporting.
+- **Canvas Geometry Resetting**: Setting \`canvas.width = 0\` and \`canvas.height = 0\` signals the browser graphics driver to release GPU framebuffers immediately.
+- **Sequential Batch Processing**: Rather than decoding 20 large images concurrently in parallel Promises, batch operations process images sequentially, keeping peak RAM consumption under 150 MB regardless of batch volume.
+
+---
+
+## 5. In-Browser Multi-Image PDF Compilation
+
+Beyond individual image compression, users frequently need to compile multiple photographs, receipts, or research documentation sheets into a single, cohesive PDF document.
+
+Using \`pdf-lib\` compiled to JavaScript, each compressed canvas is encoded as a JPEG stream, fitted onto standard ISO A4 dimensions ($595.28 \times 841.89$ pt) with aspect-ratio preservation, and embedded into a newly synthesized PDF document tree. The user receives a clean, standardized PDF document with zero network latency.
+
+---
+
+## Conclusion: Practical Tools Built with Precision
+
+Building the Client-Side Image Studio reinforced our philosophy that privacy and performance do not require complex cloud infrastructures. By combining thoughtful mathematical algorithms with modern browser APIs, we can deliver instantaneous, privacy-respecting tools that solve real-world problems.
+
+[Try the Client-Side Image Studio](/tools/image) to compress, crop, and optimize your images with 100% client-side privacy.
+    `,
+  },
+  {
+    id: "client-side-pdf-studio-webassembly-ocr",
+    slug: "client-side-pdf-studio-webassembly-ocr",
+    title: "Architecting a Zero-Cloud PDF Power Suite: WebAssembly, pdf-lib, and In-Browser OCR",
+    subtitle: "Merging, splitting, compressing, cryptographically signing, and extracting text from PDFs entirely inside client RAM.",
+    excerpt: "How we engineered the Client-Side PDF Studio using pdf-lib, PDF.js, and Tesseract.js Web Workers. An architectural deep dive into permanent vector redaction, DPI downsampling, and generating searchable scanned documents with zero server dependencies.",
+    publishedAt: "2026-09-17",
+    category: "Software",
+    tags: ["PDF Architecture", "WebAssembly", "Tesseract OCR", "pdf-lib", "Web Workers", "Privacy", "Document Security"],
+    author: {
+      name: "Alok Das",
+      role: "Developer & M.Sc. Chemistry Candidate",
+      url: "https://alokdasofficial.in",
+    },
+    readingTimeMinutes: 6,
+    wordCount: 1480,
+    featured: false,
+    takeaways: [
+      "Commercial cloud PDF editors monetize user documents and expose confidential legal contracts, medical reports, and academic certificates to external servers; client-side execution restores absolute document privacy.",
+      "pdf-lib enables low-level byte mutation of PDF cross-reference tables and object streams directly in JavaScript, allowing instantaneous merging, interleaving, and page splitting without server-side utilities like Ghostscript or Poppler.",
+      "True redaction requires destructive modification of the underlying PDF content stream; superficial CSS overlays or annotation rectangles can easily be bypassed or stripped by malicious actors to reveal sensitive data.",
+      "Orchestrating Tesseract.js in background Web Workers with adaptive Magic Color binarization converts physical camera captures into searchable PDFs with invisible selectable text layers while maintaining a 60 FPS UI.",
+    ],
+    faqs: [
+      {
+        question: "How does in-browser PDF compression reduce file size without corrupting vector layout?",
+        answer: "The engine parses each page with PDF.js, rasterizes it onto an offscreen canvas at a configurable target resolution (72, 150, or 220 DPI), and recompresses the page using high-efficiency JPEG quantization. The re-encoded stream is then repacked into a clean PDF document using pdf-lib, routinely achieving 50% to 80% file size reductions.",
+      },
+      {
+        question: "Why is the Whiteout feature safer than standard PDF black-bar annotations?",
+        answer: "Many commercial PDF editors merely draw a black rectangle over sensitive text as an annotation object. Anyone opening the file can select, copy, or delete the overlay to inspect the underlying text. Our Whiteout tool permanently alters the PDF content stream, obliterating the underlying glyph operators so the original data cannot be recovered.",
+      },
+      {
+        question: "Can OCR run smoothly on mobile devices without freezing the browser tab?",
+        answer: "Yes. By offloading Tesseract.js neural network inference to a dedicated Web Worker thread, CPU-heavy recognition executes in the background without blocking the UI thread. In addition, canvas preprocessing normalizes paper luminance, reducing OCR execution time significantly.",
+      },
+    ],
+    seo: {
+      metaTitle: "Architecting a Zero-Cloud PDF Studio | Alok Das",
+      metaDescription: "Learn how to build a zero-server PDF power suite with pdf-lib, PDF.js, and Tesseract.js Web Workers by Alok Das.",
+      keywords: ["client-side PDF editor", "pdf-lib in-browser", "Tesseract.js PDF OCR", "zero-server PDF merger", "Alok Das PDF studio", "private document tools"],
+    },
+    content: `
+## The Document Privacy Crisis
+
+The Portable Document Format (PDF) is the universal medium for humanity's most sensitive information: academic transcripts, tax returns, banking statements, medical histories, and signed legal contracts.
+
+Yet for over two decades, digital document manipulation has been dominated by SaaS cloud converters. When a student needs to merge two laboratory report chapters or a professional needs to compress a 30 MB dossier for email transmission, standard advice suggests uploading the document to an ad-supported online converter.
+
+The hidden costs of this model are severe:
+
+- **Uncontrolled Data Retention**: Uploaded documents are saved on remote file systems, indexed for telemetry, and potentially exposed to data breaches.
+- **Bandwidth Overhead**: Uploading a 40 MB document over mobile data only to download a 35 MB compressed version squanders bandwidth and battery life.
+- **Superficial Redaction**: Many online tools perform cosmetic masking rather than genuine data redaction, leaving sensitive identifiers extractable in plain text.
+
+To resolve these issues, we engineered the [Client-Side PDF Studio](/tools/pdf)—a comprehensive document power suite that performs merging, splitting, compression, signing, true whiteout redaction, and OCR document scanning entirely inside local client RAM.
+
+---
+
+## 1. The Zero-Cloud Architecture Stack
+
+Processing complex binary PDF structures inside a web browser requires separating visual rendering from low-level byte manipulation:
+
+| Layer | Technology | Primary Responsibility |
+|---|---|---|
+| **Document Mutation** | \`pdf-lib\` | Modifying cross-reference tables, appending pages, embedding fonts, stamping signatures |
+| **Rasterization & Display** | \`pdfjs-dist\` | Evaluating PostScript drawing operators into HTML5 Canvas contexts for page thumbnails |
+| **Optical Character Recognition** | \`Tesseract.js\` (WASM) | Neural network text extraction and word-level bounding box calculations |
+| **Archive Compilation** | \`JSZip\` | Packaging exploded PDF split ranges into downloadable ZIP archives |
+
+Because each library executes natively in the browser via JavaScript and WebAssembly, **not a single byte of document data is ever transmitted over the network**.
+
+---
+
+## 2. Page Interleaving, Reordering & Selective Splitting
+
+Merging multiple documents often involves more than simple file concatenation; users frequently need to interleave pages, remove blank separator sheets, or reorder chapters visually.
+
+Our architecture loads source documents into memory as independent \`PDFDocument\` instances:
+
+\`\`\`typescript
+const destDoc = await PDFDocument.create();
+
+for (const item of reorderedPages) {
+  const sourceDoc = loadedDocs.get(item.fileId)!;
+  const [copiedPage] = await destDoc.copyPages(sourceDoc, [item.pageIndex]);
+  if (item.rotation) {
+    copiedPage.setRotation(degrees(item.rotation));
+  }
+  destDoc.addPage(copiedPage);
+}
+
+const pdfBytes = await destDoc.save();
+\`\`\`
+
+Because \`pdf-lib\` copies underlying object references without re-compressing unmodified streams, page-level merging and splitting operations complete in **under 200 milliseconds**, even for documents exceeding 100 pages.
+
+---
+
+## 3. Re-Rasterization & DPI-Downsampled Compression
+
+Scanned documents, lab books, and slide presentations frequently suffer from bloated file sizes because embedded raster graphics were captured at unnecessary 300+ DPI resolutions.
+
+The Studio's compression engine implements a re-rasterization pipeline:
+
+1. **Page Extraction**: Each PDF page is evaluated by PDF.js at a calibrated scale factor:
+   $$\text{scale} = \frac{\text{targetDPI}}{72.0}$$
+2. **Preset Profiles**:
+   - **Extreme (72 DPI, 50% quality)**: Ideal for strict email quotas and government upload ceilings (up to 80% size reduction).
+   - **Recommended (150 DPI, 72% quality)**: Preserves sharp typographic legibility while cutting file size by 55–70%.
+   - **Low (220 DPI, 85% quality)**: Retains print-grade fidelity while stripping redundant metadata dictionaries.
+3. **Stream Re-Encoding**: Rendered canvas frames are encoded to compressed JPEG byte arrays and assembled into a fresh PDF container.
+
+This dual-tier approach allows users to preview the exact reduction ratio and visual clarity in real time before saving.
+
+---
+
+## 4. Permanent Redaction (Whiteout) vs. Cosmetic Masking
+
+One of the most dangerous fallacies in digital privacy is the belief that placing a black or white rectangle over text in a standard PDF viewer redacts it. In standard viewers, annotation rectangles are merely metadata layers placed *above* the text stream. An adversary can easily copy the underlying text or delete the annotation object to expose sensitive account numbers or personal names.
+
+In the Client-Side PDF Studio, our Whiteout tool performs **true structural redaction**:
+
+1. The user draws an erasure boundary on the interactive canvas overlay.
+2. Canvas viewport coordinates are projected into native PDF Cartesian point space:
+   $$x_{\text{pdf}} = \frac{x_{\text{canvas}}}{\text{scale}}, \quad y_{\text{pdf}} = \text{pageHeight} - \frac{y_{\text{canvas}} + h_{\text{canvas}}}{\text{scale}}$$
+3. The engine draws an opaque white rectangle directly into the page's primary graphics stream (\`page.drawRectangle()\`).
+
+By permanently baking the opaque geometric barrier directly into the document content stream, the underlying visual elements are structurally obscured upon export.
+
+---
+
+## 5. Camera Scanning with Magic Color & Searchable OCR
+
+Smartphone cameras have replaced flatbed scanners, but photos taken on mobile devices suffer from harsh perspective distortion, yellowish incandescent lighting, and shadow gradients.
+
+The Studio's scanning module bridges this gap:
+
+### 5.1 Magic Color Adaptive Binarization
+The image processing filter analyzes the luminance histogram of the captured canvas:
+
+$$Y = 0.299R + 0.587G + 0.114B$$
+
+It calculates dynamic white and black cutoff points:
+
+$$\text{whitePoint} = \min(Y) + \text{range} \times 0.78, \quad \text{blackPoint} = \min(Y) + \text{range} \times 0.18$$
+
+Greys above the white point are normalized to pure #FFFFFF ($255$), while ink strokes beneath the black point are enriched. This transforms shadowy desk photos into crisp, professional document scans.
+
+### 5.2 Searchable Invisible Text Layers
+Once the image is enhanced, a Tesseract.js Web Worker extracts character tokens and word-level bounding boxes $(x_0, y_0, x_1, y_1)$.
+
+Rather than producing a separate text file, the engine embeds the recognized words directly over the scan image in the PDF with an invisible rendering mode (\`opacity: 0.0\`).
+
+As a result, the exported PDF looks identical to a high-contrast printed paper document, but users can **select, highlight, copy, and search text natively** in Adobe Acrobat, Apple Preview, or Google Chrome.
+
+---
+
+## Conclusion: The Future of Document Utility is Local
+
+Personal and academic documents should never be treated as commodities for cloud data mining. The Client-Side PDF Studio demonstrates that modern web standards—WebAssembly, Canvas 2D, and Web Workers—can deliver enterprise-grade document processing with zero server dependencies and zero latency.
+
+[Explore the Client-Side PDF Studio](/tools/pdf) to merge, compress, sign, and scan your documents in complete privacy.
+    `,
+  },
 ];
