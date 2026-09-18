@@ -10,7 +10,7 @@ export function FeaturedProjects() {
       year: "2025",
       badgeVariant: "chem" as const,
       title: "Phytochemical Analysis of Medicinal Plants",
-      subtitle: "B.Sc. Research Dissertation (69.07% Distinction)",
+      subtitle: "B.Sc. Research Dissertation",
       description:
         "Investigated bioactive phytochemical constituents of local medicinal flora via solvent extraction, TLC chromatography, and qualitative reagent assays.",
       actionLabel: "Read Case Study",

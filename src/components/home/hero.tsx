@@ -107,9 +107,9 @@ export function Hero() {
                 </div>
 
                 <div className="flex items-start justify-between gap-4">
-                  <span className="text-muted-foreground">B.Sc. Score</span>
+                  <span className="text-muted-foreground">B.Sc. Research</span>
                   <span className="font-medium text-foreground text-right">
-                    69.07% &middot; Phytochemical Research
+                    Phytochemical Screening
                   </span>
                 </div>
 

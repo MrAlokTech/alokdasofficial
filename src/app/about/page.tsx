@@ -76,7 +76,7 @@ export default function AboutPage() {
                 2022 – 2025
               </span>
               <h3 className="text-[16px] font-bold text-foreground">
-                Bachelor of Science in Chemistry (69.07%) &middot; RTU Hojai
+                Bachelor of Science in Chemistry &middot; RTU Hojai
               </h3>
               <p className="text-[13px] text-muted-foreground leading-relaxed">
                 Completed fundamental university chemistry curricula. Undertook my final-year dissertation researching the phytochemical properties of local medicinal flora, standardizing solvent extraction techniques, and performing Thin Layer Chromatography.
@@ -92,7 +92,7 @@ export default function AboutPage() {
                 Secondary &amp; Higher Secondary Schooling &middot; JNV Karbi Anglong
               </h3>
               <p className="text-[13px] text-muted-foreground leading-relaxed">
-                Developed disciplined scientific thinking within a residential Jawahar Navodaya Vidyalaya campus, scoring 78.80% in Senior Secondary Science (10+2).
+                Developed disciplined scientific thinking within a residential Jawahar Navodaya Vidyalaya campus in Senior Secondary Science (10+2).
               </p>
             </div>
           </div>

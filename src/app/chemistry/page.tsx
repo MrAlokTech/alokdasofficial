@@ -86,8 +86,8 @@ export default function ChemistryPage() {
             <div className="rounded-2xl border border-border/80 bg-card p-7 sm:p-8 space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
               <div className="flex items-center justify-between">
                 <Badge variant="secondary">GRADUATED DEGREE</Badge>
-                <span className="text-[11px] font-mono font-medium text-foreground">
-                  Score: 69.07%
+                <span className="text-[11px] font-mono text-muted-foreground">
+                  2022 – 2025
                 </span>
               </div>
               <div className="space-y-1">
@@ -95,7 +95,7 @@ export default function ChemistryPage() {
                   {bsc?.degree} in {bsc?.field}
                 </h3>
                 <p className="text-[13px] font-medium text-muted-foreground">
-                  {bsc?.institution}, {bsc?.location} &middot; 2022 – 2025
+                  {bsc?.institution}, {bsc?.location}
                 </p>
               </div>
               <ul className="space-y-2 text-[13px] text-muted-foreground pt-1">

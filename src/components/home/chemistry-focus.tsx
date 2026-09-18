@@ -84,7 +84,7 @@ export function ChemistryFocus() {
                     {bsc?.institution}, {bsc?.location}
                   </span>
                 </div>
-                <Badge variant="outline">69.07% &middot; 2022–2025</Badge>
+                <Badge variant="outline">2022–2025</Badge>
               </div>
             </div>
 
