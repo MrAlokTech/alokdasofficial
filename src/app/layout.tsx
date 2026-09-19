@@ -7,6 +7,7 @@ import { PersonJsonLd } from "@/components/seo/json-ld";
 import { personalData } from "@/data/personal";
 import { PomodoroProvider } from "@/context/pomodoro-context";
 import { SitePreloaderProvider } from "@/components/ui/site-preloader";
+import { ClarityProvider } from "@/components/analytics/clarity-provider";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://alokdasofficial.in"),
@@ -104,6 +105,7 @@ export default function RootLayout({
         >
           <PomodoroProvider>
             <SitePreloaderProvider>
+              <ClarityProvider />
               <PersonJsonLd />
               <Navbar />
               <main className="flex-1">{children}</main>
