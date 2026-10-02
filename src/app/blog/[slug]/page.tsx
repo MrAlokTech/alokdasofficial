@@ -14,6 +14,7 @@ import {
   HelpCircle,
   FlaskConical,
   FileText,
+  Vote,
 } from "lucide-react";
 
 interface BlogPostPageProps {
@@ -277,8 +278,34 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </div>
           </div>
 
-          {/* Associated Project Case Study */}
-          {post.relatedProjectSlug && (
+          {/* Survey Banner or Associated Project Case Study */}
+          {post.surveyBanner ? (
+            <div className="rounded-2xl border border-rose-500/30 bg-gradient-to-br from-rose-500/10 via-background to-rose-500/5 p-6 sm:p-7 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 shadow-sm">
+              <div className="space-y-1.5 max-w-xl">
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-rose-600 dark:text-rose-400 font-bold uppercase tracking-wider">
+                    <Vote className="h-3.5 w-3.5" />
+                    <span>{post.surveyBanner.badgeText || "Community Survey & Feedback"}</span>
+                  </span>
+                </div>
+                <h4 className="text-[18px] font-bold text-foreground">
+                  {post.surveyBanner.title}
+                </h4>
+                <p className="text-[13px] text-muted-foreground leading-relaxed">
+                  {post.surveyBanner.description}
+                </p>
+              </div>
+              <div className="shrink-0">
+                <Link
+                  href={post.surveyBanner.surveyUrl}
+                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-[13px] font-bold transition-all shadow-md min-h-[44px]"
+                >
+                  <span>{post.surveyBanner.buttonText || "Take 2-Min Survey"}</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+          ) : post.relatedProjectSlug ? (
             <div className="rounded-2xl border border-primary/20 bg-primary/[0.02] p-6 sm:p-7 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
               <div className="space-y-1 max-w-lg">
                 <span className="text-[11px] font-mono text-primary font-semibold uppercase tracking-wider">
@@ -301,7 +328,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 </Link>
               </div>
             </div>
-          )}
+          ) : null}
 
           {/* Author Profile Footer */}
           <div className="rounded-2xl border border-border/70 bg-card p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">

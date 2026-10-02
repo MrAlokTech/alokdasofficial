@@ -4,7 +4,12 @@ import * as React from "react";
 import Link from "next/link";
 import { FlaskConical, Home, FileText } from "lucide-react";
 
+import { EmergencyResponderWrapper } from "@/components/em-assist/emergency-responder-wrapper";
+
 export default function NotFound() {
+  const [isEmergencyRoute, setIsEmergencyRoute] = React.useState(false);
+  const [profileId, setProfileId] = React.useState("");
+
   React.useEffect(() => {
     if (typeof window !== "undefined") {
       const path = window.location.pathname;
@@ -13,9 +18,26 @@ export default function NotFound() {
         if (slug) {
           window.location.replace(`/polls?poll=${encodeURIComponent(slug)}`);
         }
+      } else if (path.startsWith("/u/")) {
+        const parts = path.split("/").filter(Boolean);
+        const uIdx = parts.indexOf("u");
+        if (uIdx !== -1 && parts[uIdx + 1]) {
+          setProfileId(parts[uIdx + 1]);
+          setIsEmergencyRoute(true);
+        }
       }
     }
   }, []);
+
+  if (isEmergencyRoute) {
+    return (
+      <>
+        <link rel="preconnect" href="https://firestore.googleapis.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
+        <EmergencyResponderWrapper initialProfileId={profileId} />
+      </>
+    );
+  }
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4 py-16">
       <div className="max-w-md w-full text-center space-y-6">

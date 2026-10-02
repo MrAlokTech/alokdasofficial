@@ -2,6 +2,7 @@ export type BlogCategory =
   | "Chemistry"
   | "Research"
   | "Software"
+  | "Healthcare"
   | "Laboratory"
   | "Methodology";
 
@@ -37,6 +38,13 @@ export interface BlogPost {
   faqs?: BlogFaq[];
   relatedProjectSlug?: string;
   relatedProjectTitle?: string;
+  surveyBanner?: {
+    title: string;
+    description: string;
+    surveyUrl: string;
+    buttonText?: string;
+    badgeText?: string;
+  };
   seo?: {
     metaTitle?: string;
     metaDescription?: string;

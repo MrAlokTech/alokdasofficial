@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { href: "/about", label: "About" },
   { href: "/projects", label: "Projects" },
   { href: "/tools", label: "Tools" },
+  { href: "/em-assist", label: "EM Assist", badge: "Beta" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -61,8 +62,15 @@ export function Navbar() {
     } else {
       document.body.style.overflow = "unset";
     }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
       document.body.style.overflow = "unset";
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [mobileMenuOpen]);
 
@@ -70,7 +78,7 @@ export function Navbar() {
     <>
       <header
         className={cn(
-          "no-print sticky top-0 z-50 w-full transition-all duration-200 h-16 flex items-center",
+          "no-print sticky top-0 z-[100] w-full transition-all duration-200 h-16 flex items-center",
           scrolled
             ? "bg-background/95 backdrop-blur-xl border-b border-border/80 shadow-[0_1px_4px_rgba(0,0,0,0.04)]"
             : "bg-background/90 backdrop-blur-lg border-b border-border/50",
@@ -125,7 +133,12 @@ export function Navbar() {
                       : "text-muted-foreground hover:text-foreground",
                   )}
                 >
-                  {link.label}
+                  <span>{link.label}</span>
+                  {"badge" in link && link.badge && (
+                    <span className="px-1.5 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-tight bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 leading-none">
+                      {link.badge}
+                    </span>
+                  )}
                 </Link>
               );
             })}
@@ -150,77 +163,90 @@ export function Navbar() {
             <ThemeToggle />
             <button
               type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="flex h-[42px] w-[42px] items-center justify-center rounded-xl border border-border/70 bg-card text-foreground active:scale-95 transition-transform"
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="relative z-10 flex h-[42px] w-[42px] cursor-pointer items-center justify-center rounded-xl border border-border/70 bg-card text-foreground active:scale-95 transition-transform"
               aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-navigation"
             >
               {mobileMenuOpen ? (
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5 text-foreground" />
               ) : (
-                <Menu className="h-5 w-5" />
+                <Menu className="h-5 w-5 text-foreground" />
               )}
             </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile Liquid Glass Sheet Drawer (Decoupled from header backdrop-filter stacking context) */}
+      {/* Mobile Drawer Overlay and Navigation */}
       {mobileMenuOpen && (
-        <div
-          id="mobile-navigation"
-          className="lg:hidden fixed inset-x-0 top-16 bottom-0 z-40 bg-background/98 backdrop-blur-2xl border-t border-border/80 flex flex-col justify-between p-5 sm:p-6 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-200"
-          style={{ height: "calc(100dvh - 4rem)" }}
-        >
-          <nav className="flex flex-col space-y-1">
-            <Link
-              href="/"
-              onClick={() => setMobileMenuOpen(false)}
-              className={cn(
-                "flex items-center justify-between min-h-[48px] px-4 rounded-xl text-[15px] font-medium transition-colors",
-                pathname === "/"
-                  ? "bg-secondary text-foreground font-semibold"
-                  : "text-muted-foreground hover:text-foreground hover:bg-secondary/40",
-              )}
-            >
-              <span>Home</span>
-            </Link>
-            {NAV_LINKS.map((link) => {
-              const isActive = pathname?.startsWith(link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={cn(
-                    "flex items-center justify-between min-h-[48px] px-4 rounded-xl text-[15px] font-medium transition-colors",
-                    isActive
-                      ? "bg-secondary text-foreground font-semibold"
-                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/40",
-                  )}
-                >
-                  <span className="flex items-center gap-2">{link.label}</span>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground/60" />
-                </Link>
-              );
-            })}
-          </nav>
+        <>
+          {/* Backdrop overlay */}
+          <div
+            className="lg:hidden fixed inset-0 z-[80] bg-black/40 backdrop-blur-xs"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
 
-          <div className="pt-6 border-t border-border/60 space-y-3 mt-4">
-            <Link
-              href="/resume"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full flex items-center justify-center gap-2 min-h-[48px] rounded-xl bg-primary text-primary-foreground font-medium text-[14px] shadow-sm active:scale-[0.99]"
-            >
-              <FileText className="h-4 w-4" />
-              <span>View Resume (Print Ready)</span>
-            </Link>
-            <p className="text-center text-[12px] text-muted-foreground pt-1">
-              {personalData.location.full}
-            </p>
+          {/* Drawer Sheet */}
+          <div
+            id="mobile-navigation"
+            className="lg:hidden fixed inset-x-0 top-16 bottom-0 z-[90] bg-background/98 dark:bg-background/98 backdrop-blur-2xl border-t border-border/80 flex flex-col justify-between p-5 sm:p-6 overflow-y-auto"
+          >
+            <nav className="flex flex-col space-y-1">
+              <Link
+                href="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className={cn(
+                  "flex items-center justify-between min-h-[48px] px-4 rounded-xl text-[15px] font-medium transition-colors",
+                  pathname === "/"
+                    ? "bg-secondary text-foreground font-semibold"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary/40",
+                )}
+              >
+                <span>Home</span>
+              </Link>
+              {NAV_LINKS.map((link) => {
+                const isActive = pathname?.startsWith(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={cn(
+                      "flex items-center justify-between min-h-[48px] px-4 rounded-xl text-[15px] font-medium transition-colors",
+                      isActive
+                        ? "bg-secondary text-foreground font-semibold"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary/40",
+                    )}
+                  >
+                    <span className="flex items-center gap-2">
+                      {link.label}
+                      {"badge" in link && link.badge && (
+                        <span className="px-1.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-tight bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 leading-none">
+                          {link.badge}
+                        </span>
+                      )}
+                    </span>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground/60" />
+                  </Link>
+                );
+              })}
+            </nav>
+
+            <div className="pt-6 border-t border-border/60 space-y-3 mt-4">
+              <Link
+                href="/resume"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full flex items-center justify-center gap-2 min-h-[48px] rounded-xl bg-primary text-primary-foreground font-medium text-[14px] shadow-sm active:scale-[0.99]"
+              >
+                <FileText className="h-4 w-4" />
+                <span>View Resume</span>
+              </Link>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );

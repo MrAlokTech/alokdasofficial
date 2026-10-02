@@ -6,6 +6,9 @@ import {
   Vote,
   ShieldCheck,
   FileText,
+  HeartPulse,
+  ArrowRight,
+  Sparkles,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -63,6 +66,31 @@ export default async function PollsPage() {
             <p className="text-[16px] sm:text-[18px] text-muted-foreground leading-relaxed font-normal">
               Help choose which browser tools to build next, share opinions on laboratory learning methods, and participate in brief, anonymous votes with zero account requirements.
             </p>
+          </div>
+
+          {/* Featured Active Survey Banner: EM Assist */}
+          <div className="rounded-3xl border border-rose-500/30 bg-gradient-to-br from-rose-500/10 via-card to-rose-500/5 p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm">
+            <div className="space-y-2 max-w-2xl">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30">
+                <Sparkles className="h-3 w-3" />
+                <span>Featured Product Survey</span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground">
+                EM Assist — Emergency Medical Identity Validation
+              </h2>
+              <p className="text-[14px] text-muted-foreground leading-relaxed">
+                Help validate India&apos;s dynamic emergency medical identity network. 2-minute public feedback survey to ensure responders have the life-saving data they need in the golden hour.
+              </p>
+            </div>
+            <div className="shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+              <Link
+                href="/polls/em-assist"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-[13px] font-bold shadow-md transition-all min-h-[44px]"
+              >
+                <span>Take Survey (2 min)</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
 
           {/* Dynamic Google Sheet / Client-Side Poll List with Fallback */}

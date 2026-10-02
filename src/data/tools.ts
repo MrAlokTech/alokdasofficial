@@ -14,6 +14,43 @@ export interface ToolItem {
 
 export const toolsData: ToolItem[] = [
   {
+    id: "em-assist",
+    slug: "em-assist",
+    name: "EM Assist — Emergency Medical ID",
+    tagline: "Dynamic medical identity, permanent QR tags, granular privacy toggles, and live responder alerts.",
+    category: "Utility",
+    badge: "Beta",
+    iconName: "HeartPulse",
+    description:
+      "A life-saving dynamic medical ID and emergency response platform tailored for Indian users. Generates static QR codes linking to dynamic cloud profiles with granular field privacy toggles, multi-user family sync, real-time responder access notifications with GPS coordinates, and 4 pre-made print layouts (wallet card, helmet sticker, keychain tag, and A4 document).",
+    href: "/em-assist",
+    features: [
+      "Permanent 8-16 char alphanumeric ID with static QR pointing to dynamic emergency profile",
+      "Tailored for Indian users: quick 112/108 emergency dials, +91 phone numbers, and 28 Indian states/UTs",
+      "Granular field-level privacy toggles: control what paramedics and responders can view",
+      "Real-time responder access audit with device info, timestamp, and GPS map pin notification",
+      "Multi-user family management with automatic sync when siblings or parents log in with their email",
+      "4 pre-made physical print layouts: Business Card, Helmet Sticker, Keychain Tag, and A4 Document",
+    ],
+    faq: [
+      {
+        question: "How does EM Assist protect my personal medical data?",
+        answer:
+          "Normal users have granular switch toggles for every single piece of data (blood group, mobile, contacts, medications, allergies, illnesses, notes, and address). Responders must verify their identity before viewing critical details, their access is logged immediately with device metadata, and medical data is never persistently cached on the responder's device.",
+      },
+      {
+        question: "Does my QR code change when I update my medical information or contacts?",
+        answer:
+          "No. Your physical QR code is static and permanent, pointing to https://alokdasofficial.in/u/{your-id}. Whenever you change your address, medication, or emergency contacts, the responder sees your updated information in real time without needing a new print.",
+      },
+      {
+        question: "How does family and dependent sync work?",
+        answer:
+          "You can manage profiles for parents, siblings, children, or pets under one primary account. If you enter your sibling or parent's email address in their profile, when they log in to EM Assist with that email, their profile automatically syncs with them.",
+      },
+    ],
+  },
+  {
     id: "image",
     slug: "image",
     name: "Client-Side Image Studio",
